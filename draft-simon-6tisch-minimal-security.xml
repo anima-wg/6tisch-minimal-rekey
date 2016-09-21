@@ -1,0 +1,365 @@
+﻿<?xml version="1.0"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?rfc toc="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc subcompact="yes"?>
+<rfc category="info" ipr="trust200902" docName="draft-simon-6tisch-minimal-security-00">
+<front>
+    <title abbrev="6tisch-minimal-security">
+        Minimal Security Framework for 6TiSCH
+    </title>
+   <author initials="J" surname="Simon" fullname="Jonathan Simon" role="editor">
+      <organization>Linear Technology</organization>
+      <address>
+         <postal>
+            <street>32990 Alvarado-Niles Road, Suite 910</street>
+            <city>Union City</city>
+            <region>CA</region>
+            <code>94587</code>
+            <country>USA</country>
+         </postal>
+         <email>jsimon@linear.com</email>
+      </address>
+   </author>
+    <author initials="K" surname="Pister" fullname="Kris Pister">
+        <organization>University of California Berkeley</organization>
+        <address>
+            <postal>
+                <street>490 Cory Hall</street>
+                <city>Berkeley</city>
+                <region>California</region>
+                <code>94720</code>
+                <country>USA</country>
+         </postal>
+         <email>kpister@eecs.berkeley.edu</email>
+      </address>
+   </author>
+    <author initials="M" surname="Vucinic" fullname="Malisa Vucinic">
+        <organization>INRIA</organization>
+        <address>
+            <postal>
+                <street>2 Rue Simone Iff</street>
+                <city>Paris</city>
+                <code>75012</code>
+                <country>France</country>
+            </postal>
+            <email>malisa.vucinic@inria.fr</email>
+        </address>
+    </author>
+    <date/>
+    <area>Internet Area</area>
+    <workgroup>6TiSCH</workgroup>
+    <keyword>Draft</keyword>
+    <abstract>
+        <t>
+            This draft describes the minimal mechanisms required to support secure initial configuration of the 6top layer in a device being added to a 6TiSCH network. 
+            The goal of this configuration is to set link-layer keys, and to establish a session with a coordinating entity who may set a communications schedule or otherwise configure the joining device’s 6top layer, and do so in a “touchless” manner.
+            Additional security behaviors and mechanisms may be added on top of this minimal framework.
+        </t>
+    </abstract>
+    <note title="Requirements Language">
+        <t>
+            The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <xref target="RFC2119">RFC 2119</xref>.
+        </t>
+    </note>
+</front>
+<middle>
+    <section title="Introduction"                                    anchor="sec_intro">
+        <t>
+            When a previously unknown device seeks admission to a 6TiSCH[6TiSCH] Network (to “join”), it must first synchronize to the network, and then validate itself to the network (and vice versa). 
+            At this point can it expect to interact with the network to configure its 6top layer  <xref target="I-D.wang-6tisch-6top-sublayer"/> – at first to configure link-layer keying material, and perhaps additional communications resources to other peers for redundancy and to maintain synchronization.  
+            Only then does the node establish an end-to-end secure transport sessions (dTLS)  <xref target="RFC6347"/> with a host. 
+            Once the application requirements are known, the device will interact with the PCE to request additional resources as needed, or to be reconfigured as the network changes.
+        </t>
+        <t>
+            This document describes the mechanisms comprising a minimal feature set for a device to join a 6TiSCH network, up to the point where it can establish a dTLS session with an internet host. 
+            Thus it is potentially a subset of the mechanisms described in  <xref target="I-D.richardson-6tisch--security-6top"/>.
+        </t>
+        <t>
+            It presumes a network as described by <xref target="I-D.ietf-6tisch-architecture"/>, <xref target="I-D.ietf-6tisch-6top-interface"/>, and <xref target="I-D.wang-6tisch-6top-sublayer"/>. 
+        </t>
+    </section>
+    <section title="Acronyms" anchor="sec_acronyms">
+        <t>
+            6TiSCH: 6LoWPAN on top of a TSCH MAC
+        </t>
+        <t>
+            6top:  The 6TiSCH Operational sublayer – the “vocabulary” used to configure an 802.15.4e MAC for use in a 6TiSCH network.
+        </t>
+        <t>
+            CoAP:  Constrained Application Protocol (RFC 7252)
+        </t>
+        <t>
+            COSE:  CBOR Object Signing and Encryption
+        </t>
+        <t>
+            OSCoAP: Object Security for CoAP
+        </t>
+        <t>
+            TSCH: Time-Slotted Channel Hopping mode of the IEEE 802.15.4 MAC
+        </t>
+        <t>
+            SH: Security Handshake
+        </t>
+        <t>
+            MAC: Media Access Control
+        </t>
+        <t>
+            JN:  Joining node
+        </t>
+        <t>
+            JCE: Join coordinating entity responsible for identifying and arbitrating communications resources for joining devices
+        </t>
+        <t>
+            JA:  Join assistant – the device within radio range of the JN that generates EBs and facilitates end-to-end communications between the JN and JCE.
+        </t>
+        <t>
+            EB:  Enhanced Beacon
+        </t>
+        <t>
+            ASN: Absolute slot number
+        </t>
+        <t>
+            PK:  Public Key (asymmetric) based on ECC
+        </t>
+        <t>
+            PSK:  Pre-shared Key
+        </t>
+        <t>
+            PCE:  Path computation entity responsible for managing communications resources in the 6TiSCH network.
+        </t>
+        <t>
+            ECC:  Elliptic curve cryptography
+        </t>
+    </section>
+    <section title="Join Overview" anchor="sec_overview">
+        <t>
+        This section describes the steps taken by a joining node (JN) in a 6TiSCH network. When a previously unknown device seeks admission to a 6TiSCH [6TiSCH] network, the following exchange occurs:
+            <list style="numbers">
+                <t>
+                The JN listens for an Enhanced Beacon (EB) frame <xref target="IEEE802154e"/>. 
+                This frame provides network synchronization information, and tells the device when it can send a frame to the Beaconer (the Join Assistant, JA), and when it can expect to receive a frame from the JA.
+                It does not contain information about communication schedules being uses in the network, about the security used in the network, or any other network information.
+                </t>
+                <t>
+                    The JN sends frames to the JA device that securely identifies the new device to the network. 
+                    These frames are directed to the Join Coordination Entity or JCE, which may be the JA or another device.
+                </t>
+                <t>
+                    The JN receives one or more frames from JCE (via the JA) that sets up one or more link-layer keys used to authenticate subsequent transmissions to peers.
+                </t>
+            </list>
+            From the joining node’s perspective, minimal joining is a local phenomenon – the JN only interacts with the JA, and it need not know how far it is from the DAG root, or how to route to the JCE or PCE.  Only after establishing one or more link-layer keys does it “care” about the particulars of a 6TiSCH network.
+
+            The handshake is shown as a transaction diagram in <xref target="fig_messagesequence"/>:
+
+            <figure title="Message sequence for JOIN message" anchor="fig_messagesequence">
+<artwork><![CDATA[
+  +-----+               +----------+              +-----------+
+   | JCE |               |    JA    |              |     JN    |
+   |     |               |          |              |           |
+   +-----+               +----------+              +-----------+
+      |                        |                            |
+      |                        |-------ENH BEACON (1)------>|
+      |                        |                            |
+      |<-Sec. Handshake (2a)-->|<--Security Handshake (2)-->|
+      |                        |                            |
+      |<--Join request (3a)----|<----Join request (3) ------|
+      |                        |                            |
+      |---Join response (4a)-->|----Join response (4) ----->|
+      |                        |                            |
+      |<=====6top config =====>|<======6top config  =======>|
+      |                        |                            |
+]]></artwork>
+            </figure>
+            The details of each step are described in the following sections.
+        </t>
+        <section title="Step 1 - Enhanced Beacon" anchor="sec_enhanced">
+            <t>
+                     The JN hears an EB from the JA and synchronizes itself to the joining schedule.
+                     At this point the JN may proceed to step 2, or continue to listen for additional EBs. 
+                     If more than one EB is heard, the JN may use a metric (not described here) based on DAG rank and RSL of the EB, or other factors to decide which JA to use for the security handshake in step 2.
+            </t>
+        </section>
+        <section title="Step 2 - Security Handshake" anchor="sec_handshake">
+            <t>
+                The security handshake uses Ephemeral Diffie-Hellman over COSE (EDHOC) <xref target="I-D.selander-ace-cose-ecdhe"/> to establish the shared secret used to encrypt the join request and join response. 
+            </t>
+            <section title="Pre-Shared Key" anchor="sec_psk">
+                <t>
+                    When using a pre-shared symmetric key, the Diffe-Hellman key exchange can take place immediately following the JN hearing an EB. 
+                    This cuts down on traffic between JCE and JN, but requires pre-configuration of the shared key on both devices.
+                </t>
+
+                <t>
+                    TODO – some details
+                </t>
+            </section>
+            <section title="ECC Asymmetric Key" anchor="sec_ecc">
+                <t>
+                    When using an asymmetric key, the JN and JCE need to receive and validate each other’s public key certificate before conducting the Diffe-Hellman key exchange. 
+                    This process is described in <xref target="sec_asymmetric"/>.
+                </t>
+            </section>
+        </section>
+        <section title="Step 3 - Join Request" anchor="sec_joinrequest">
+            <t>
+                The join request is sent from the JN to the JA using the slot information (to Beaconer) from the EB, and addressed to the JCE. 
+            </t>
+            <t>
+                The join request is authenticated/encrypted at the link layer using CCM* per [IEEE802154e] using the shared secret from step 2 as the key. 
+                The CCM* nonce is constructed from the JN’s EUI64 prepended to a monotonically increasing 5-Byte counter initialized to 0 when first starting. 
+            </t>
+            <t>
+                TODO – specify well-known link-layer address of JCE (e.g. FF02::02) or describe how JN gets it.
+            </t>
+        </section>
+        <section title="Step 4 - Join Response" anchor="sec_joinresponse">
+            <t>
+                The join response is sent from the JCE to the JN’s stateless autoconfigured address with the JA immediately preceding it in the source route. 
+                The JA delivers it to the JN using the slot information (from Beaconer) from the EB.
+            </t>
+            <t>
+                The join response is encrypted using CCM* with the shared secret from step 2. 
+                The CCM* nonce is constructed from the JCE’s well-known link-local address, and a monotonically increasing counter matching that of the join request. 
+            </t>
+            <t>
+                The join response contains one or more (per-peer) link-layer key(s) K2 that the JN will use for subsequent communication.
+            </t>
+        </section>
+    </section>
+    <section title="Link-layer requirements" anchor="sec_llreq">
+
+        <t>
+            All frames in a 6TiSCH network MUST use link-layer frame security. 
+            The frame security options MUST include frame authentication, and MAY include frame encryption for frames that do not include a 6LoWPAN dispatch byte, i.e. link-layer content only frames.
+        </t>
+        <t>
+            In order for the JN to be able to validate that the Enahanced Beacon frame is coming from a 6TiSCH network, EB frames are authenticated at the link layer using CCM* per <xref target="IEEE802154e"/>.
+            The frame is protected with a 16-byte key, and a 13-byte nonce constructed from current ASN and the JAs address, as shown in <xref target="fig_nonceconstruction"/>:
+            <figure title="CCM* nonce construction" anchor="fig_nonceconstruction">
+<artwork><![CDATA[
+            +-------------------------------------------+
+            |  Address (8B or 00-padded 2B) | ASN (5B)  |
+            +-------------------------------------------+
+]]></artwork>
+            </figure>
+        </t>
+        <t>
+            The JN uses the initial key until it is configured with a new link-layer key K2 as described below in 5.
+        </t>
+
+        <t>
+            As the EB itself does not contain security information, where the link key is known, an attacker may craft a frame that appears to be a valid EB, since the JN can neither know the ASN a priori or verify the address of the JA.
+            This permits a Denial of Service (DoS) attack at the JN.  Beacon authentication keys are discussed in <xref target="sec_wellknown"/> and <xref target="sec_privatekey"/>.
+        </t>
+        <section title="Well-known beacon authentication key" anchor="sec_wellknown">
+            <t>
+                For touchless operation, where any 6TiSCH device can attempt to join any 6TiSCH network out of the box, a well-known EB link-layer key MUST be used.
+            </t>
+            <t>
+            This key MUST be set to the value:
+            </t>
+            <t>
+                              0x2851f6d0c0f936a6bc1570856978b36
+            </t>
+        </section>
+        <section title="Private beacon authentication key" anchor="sec_privatekey">
+            <t>
+                In practice, some pre-configuration is done when the device is manufactured or designated for a specific network (i.e. the network is not touchless) or a network operator may not wish to allow arbitrary devices to try to join.
+                A private (per-vendor, or per-installation) EB link-layer key MAY be used in place of a well-known key to create a private network.                
+            </t>
+        </section>
+    </section>
+    <section title="Asymmetric Keys" anchor="sec_asymmetric">
+        <t>
+                    Certificates may be used to exchange “public” keys between the JN and JCE.  
+                    The key pair is generated using ECC curve secp256r1, and the certificate containing the public key is signed using ECDSA.
+                    The certificate itself may be a compact representation of an X.509 certificate, or a full X.509 certificate. 
+                    The certificate is signed by a root CA whose certificate is installed on all nodes participating in a particular 6TiSCH network, allowing each node to validate the certificate of the JCE or JN as appropriate.
+        </t>
+        <section title="Compact X.509" anchor="sec_compactx509">
+            <t>
+                In order to minimize traffic between the JCE and JN, a compact representation of the X.509 certificate MAY be used.
+                All fields other than the public key and signature are elided. 
+            </t>
+        </section>
+    </section>
+    <section title="Security Considerations" anchor="sec_securityconsiderations">
+        <t>
+            Discussion of weaknesses in the above approach.
+        </t>
+        <t>
+            DoS – “stealing” motes with malicious beacons
+        </t>
+        <t>
+            DoS – sending in bogus joins to clog the network
+        </t>
+        <t>
+            Compact cert – makes expiration, revocation impossible. Requires CA that is common to all devices.
+        </t>
+    </section>
+    <section title="IANA Considerations" anchor="sec_ianaconsiderations">
+        <t>
+               There is no IANA action required for this document.
+        </t>
+    </section>
+    </middle>
+<back>
+    <references title="Normative References">
+        <!-- RFC 6TiSCH-->
+        <!-- RFC others -->
+        <?rfc include='reference.RFC.2119'?>                         <!-- Key words for use in RFCs to Indicate Requirement Levels -->
+        <?rfc include='reference.RFC.6347'?>
+        <!-- I-D 6TiSCH -->
+        <!-- I-D others -->
+        <!-- external -->
+        <?rfc include='reference.I-D.ietf-cose-msg'?>
+        <?rfc include='reference.I-D.selander-ace-object-security'?>
+        <?rfc include='reference.I-D.selander-ace-cose-ecdhe'?>
+    </references>
+    <references title="Informative References">
+        <!-- RFC 6TiSCH-->
+        <?rfc include='reference.RFC.7554'?>                         <!-- Using IEEE 802.15.4e Time-Slotted Channel Hopping (TSCH) in the Internet of Things (IoT): Problem Statement -->
+        <!-- RFC others -->
+        <!-- I-D 6TiSCH -->
+        <?rfc include='reference.I-D.ietf-6tisch-terminology'?>
+        <?rfc include='reference.I-D.wang-6tisch-6top-sublayer'?>
+        <?rfc include='reference.I-D.ietf-6tisch-6top-interface'?>
+        <?rfc include='reference.I-D.ietf-6tisch-architecture'?>
+        <?rfc include='reference.I-D.richardson-6tisch--security-6top'?>
+        <!-- I-D others -->
+        <!-- external -->
+    </references>
+    <references title="External Informative References">
+        <reference anchor="IEEE802154">
+         <front>
+            <title>IEEE std. 802.15.4, Part. 15.4: Wireless Medium Access 
+            Control (MAC) and Physical Layer (PHY) Specifications for Low-Rate 
+            Wireless Personal Area Networks
+            </title>
+            <author>
+               <organization>IEEE standard for Information Technology</organization>
+            </author>
+            <date/>
+         </front>
+      </reference>
+      <reference anchor="IEEE802154e">
+         <front>
+            <title>IEEE standard for Information Technology, IEEE std.
+         802.15.4, Part. 15.4: Wireless Medium Access Control (MAC)
+         and Physical Layer (PHY) Specifications for Low-Rate
+         Wireless Personal Area Networks, June 2011 as amended by IEEE std.
+         802.15.4e, Part. 15.4: Low-Rate Wireless Personal Area
+         Networks (LR-WPANs) Amendment 1: MAC sublayer
+         </title>
+            <author>
+               <organization>IEEE standard for Information Technology</organization>
+            </author>
+            <date month="April" year="2012"/>
+         </front>
+      </reference>
+    </references>
+</back>
+</rfc>
