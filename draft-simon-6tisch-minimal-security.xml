@@ -244,14 +244,47 @@
         </t>
         <t>
             JN SHALL designate a JA as a proxy by including in the CoAP requests the Proxy-URI option with JCE's global IPv6 address and "join" as the URI-Path.
-            In order to facilitate a stateless implementation of JA proxying, JN shall encode in the CoAP message the information necessary for the JA to send the response back and be stateless.
-            For this purpose, JN uses the "Sender ID" parameter of OSCOAP's security context structure that makes part of Additional Authentication Data (AAD) and is therefore sent in clear, understandable by JA, and echoed back in the response from JCE.
-            This makes JA's implementation of a CoAP proxy fully stateless in order to counter Denial of Service attacks. 
+            In order to facilitate a stateless implementation of JA proxying, JN shall encode in the CoAP message the information necessary for the JA to send the response back and be stateless - "relay_info".
+            For this purpose, JN uses the "Sender ID" parameter of OSCOAP's security context structure that makes part of Additional Authentication Data (AAD) and is therefore sent in clear, readable by JA, and echoed back in the response from JCE. 
+            This makes possible to implement JA's CoAP proxy in a stateless manner, in order to counter Denial of Service attacks. 
             It also allows JCE to look up the right security context for communication with a given JN.
         </t>
-        <t>
-            TODO: Specify relay info encoding precisely -- JN's EUI64; JN's source port; JN's CoAP token;
-        </t>
+        <section title="Implementation of relay_info" anchor="sec_implemrelayinfo">
+            <t>
+                The relay_info is implemented as a CBOR <xref target="RFC7049"/> array object containing:
+                 <list style="symbols">
+                    <t>
+                        EUI-64: JN's EUI-64 address
+                    </t>
+                    <t>
+                        source_port: JN's UDP source port
+                    </t>
+                    <t>
+                        token: JN's CoAP token
+                    </t>
+                </list>
+<figure>
+<artwork><![CDATA[
+   relay_info = [
+       EUI-64 : bstr,
+       source_port : uint,
+       token : uint
+   ]
+]]></artwork>
+</figure>
+                JN SHALL wrap the relay_info object as a bstr and use it to set the "Sender ID" parameter of OSCOAP.
+            </t>
+        </section>
+        <section title="Implementation of Join Request" anchor="sec_implemjoinrequest">
+            <t>
+                Join Request message SHALL be mapped to a CoAP GET request at "/join" with "Sender ID" parameter of OSCOAP set, as described above.
+            </t>
+        </section>
+        <section title="Implementation of Join Response" anchor="sec_implemjoinresponse">
+            <t>
+                Join Response message SHALL be a CoAP response to the GET request with payload formatted as a CBOR array.
+            </t>
+        </section>
     </section>
     <section title="Link-layer requirements" anchor="sec_llreq">
 
@@ -348,6 +381,7 @@
         <!-- RFC 6TiSCH-->
         <?rfc include='reference.RFC.7554'?>                         <!-- Using IEEE 802.15.4e Time-Slotted Channel Hopping (TSCH) in the Internet of Things (IoT): Problem Statement -->
         <!-- RFC others -->
+        <?rfc include='reference.RFC.7049'?>                        <!-- CBOR -->
         <?rfc include='reference.RFC.5869'?>                        <!-- HMAC -->
         <!-- I-D 6TiSCH -->
         <?rfc include='reference.I-D.ietf-6tisch-terminology'?>
