@@ -244,7 +244,7 @@
         </t>
         <t>
             JN SHALL designate a JA as a proxy by including in the CoAP requests the Proxy-URI option with JCE's global IPv6 address and "join" as the URI-Path.
-            In order to facilitate a stateless implementation of JA proxying, JN shall encode in the CoAP message the information necessary for the JA to send the response back and be stateless - "relay_info".
+            In order to facilitate a stateless implementation of JA proxying, JN shall encode in the CoAP message the information necessary for the JA to send the response back - "relay_info".
             For this purpose, JN uses the "Sender ID" parameter of OSCOAP's security context structure that makes part of Additional Authentication Data (AAD) and is therefore sent in clear, readable by JA, and echoed back in the response from JCE. 
             This makes possible to implement JA's CoAP proxy in a stateless manner, in order to counter Denial of Service attacks. 
             It also allows JCE to look up the right security context for communication with a given JN.
@@ -277,12 +277,15 @@
         </section>
         <section title="Implementation of Join Request" anchor="sec_implemjoinrequest">
             <t>
-                Join Request message SHALL be mapped to a CoAP GET request at "/join" with "Sender ID" parameter of OSCOAP set, as described above.
+                Join Request message SHALL be mapped to a CoAP GET request, Uri-Path "join", with "Sender ID" parameter of OSCOAP set, as described above.
             </t>
         </section>
         <section title="Implementation of Join Response" anchor="sec_implemjoinresponse">
             <t>
-                Join Response message SHALL be a CoAP response to the GET request with payload formatted as a CBOR array.
+                If OSCOAP processing is a success, Join Response message SHALL be a CoAP response, Code 2.05 (Content) with payload formatted as a COSE Key Set.
+                Each key in the Key Set SHALL be a symmetric key (see <xref target="I-D.ietf-cose-msg"/>).
+                Key that is present in the Key Set and does not have an identifier is assumed to be "K2" link-layer key from <xref target="I-D.ietf-6tisch-minimal"/>.
+                Parameter "kid" of the COSE Key structure SHALL be used to denote pair-wise keys if present, where the value SHALL be set to the EUI-64 address of the corresponding peer.
             </t>
         </section>
     </section>
@@ -384,6 +387,7 @@
         <?rfc include='reference.RFC.7049'?>                        <!-- CBOR -->
         <?rfc include='reference.RFC.5869'?>                        <!-- HMAC -->
         <!-- I-D 6TiSCH -->
+        <?rfc include='reference.I-D.ietf-6tisch-minimal'?>
         <?rfc include='reference.I-D.ietf-6tisch-terminology'?>
         <?rfc include='reference.I-D.wang-6tisch-6top-sublayer'?>
         <?rfc include='reference.I-D.ietf-6tisch-6top-interface'?>
