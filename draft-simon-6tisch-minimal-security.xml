@@ -211,8 +211,10 @@
                 The join request is authenticated/encrypted at end-to-end using CCM* and the shared secret from step 2 as the key. 
                 The CCM* nonce is constructed from the JN’s EUI64 prepended to a monotonically increasing 5-Byte counter initialized to 0 when first starting. 
             </t>
-            <t>
-                TODO – specify well-known link-layer address of JCE (e.g. FF02::02) or describe how JN gets it.
+            <t> 
+                TODO:
+                EBs are formatted to carry JCE's global address in the payload of the frame.
+                JN learns JCE's address upon reception of an EB from JA.
             </t>
         </section>
         <section title="Step 4 - Join Response" anchor="sec_joinresponse">
