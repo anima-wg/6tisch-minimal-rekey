@@ -188,7 +188,7 @@
             </t>
             <section title="Pre-Shared Key" anchor="sec_psk">
                 <t>
-                    When using a pre-shared symmetric key, the Diffe-Hellman key exchange can take place immediately following the JN hearing an EB. 
+                    When using a pre-shared symmetric key, the Diffe-Hellman key exchange and the use of EDHOC is optional. 
                     This cuts down on traffic between JCE and JN, but requires pre-configuration of the shared key on both devices.
                 </t>
 
