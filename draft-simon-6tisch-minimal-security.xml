@@ -208,7 +208,7 @@
                 The join request is sent from the JN to the JA using the slot information (to Beaconer) from the EB, and addressed to the JCE. 
             </t>
             <t>
-                The join request is authenticated/encrypted at the link layer using CCM* per [IEEE802154e] using the shared secret from step 2 as the key. 
+                The join request is authenticated/encrypted at end-to-end using CCM* and the shared secret from step 2 as the key. 
                 The CCM* nonce is constructed from the JN’s EUI64 prepended to a monotonically increasing 5-Byte counter initialized to 0 when first starting. 
             </t>
             <t>
