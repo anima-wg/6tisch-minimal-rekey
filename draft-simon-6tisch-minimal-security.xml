@@ -211,11 +211,11 @@
         </section>
         <section title="Step 3 - Join Request" anchor="sec_joinrequest">
             <t>
-                The join request is sent from the JN to the JA using the slot information (to Beaconer) from the EB, and addressed to the JCE. 
+                The join request is sent from the JN to the JA using the slot information from the EB, and addressed to the JCE. 
             </t>
             <t>
-                The join request is authenticated/encrypted end-to-end using CCM* and the shared secret from step 2 as the key. 
-                The CCM* nonce is constructed from the JN’s EUI64 prepended to a monotonically increasing 5-Byte counter initialized to 0 when first starting. 
+                The join request is authenticated/encrypted end-to-end using AES-CCM-16-64-128 algorithm from <xref target="I-D.ietf-cose-msg"/>  and the shared secret from step 2 as the key. 
+                The nonce is constructed from the JN’s EUI64 prepended to a monotonically increasing 5-Byte counter initialized to 0 when first starting. 
             </t>
             <t> 
                 TODO:
@@ -229,8 +229,8 @@
                 The JA delivers it to the JN using the slot information from the EB.
             </t>
             <t>
-                The join response is encrypted using CCM* with the shared secret from step 2. 
-                The CCM* nonce is constructed from the JCE’s well-known link-local address, and a monotonically increasing counter matching that of the join request. 
+                The join response is authenticated/encrypted using AES-CCM-16-64-128 algorithm from <xref target="I-D.ietf-cose-msg"/> with the shared secret from step 2. 
+                The nonce is constructed from the JCE’s link-local address, and a monotonically increasing counter matching that of the join request. 
             </t>
             <t>
                 The join response contains one or more (per-peer) link-layer key(s) K2 that the JN will use for subsequent communication.
