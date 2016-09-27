@@ -192,9 +192,14 @@
                     When using a pre-shared symmetric key, the Diffie-Hellman key exchange and the use of EDHOC is OPTIONAL. 
                     This cuts down on traffic between JCE and JN, but requires pre-configuration of the shared key on both devices.
                 </t>
-
                 <t>
-                    TODO – some details
+                    In case EDHOC step was omitted, the key used for protection of the join request and join response in the next step is the PSK.
+                    This means that the protocol trades off perfect forward secrecy for reduced traffic load between JN and JCE.
+                    A consequence is that if long-term PSK is compromised, keying material transfered as part of the join response is compromised as well.
+                    However, compromise of the JN where PSK is stored would also imply the compromise of the same keying material, as it is likely to be found in node's memory.
+                </t>
+                <t>
+                    It is RECOMMENDED to use unique PSKs for each JN.
                 </t>
             </section>
             <section title="ECC Asymmetric Key" anchor="sec_ecc">
