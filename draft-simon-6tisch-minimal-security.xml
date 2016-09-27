@@ -67,7 +67,7 @@
 <middle>
     <section title="Introduction"                                    anchor="sec_intro">
         <t>
-            When a previously unknown device seeks admission to a 6TiSCH <xref target"RFC7554"> Network (to “join”), it must first synchronize to the network, and then authenticate itself to the network (and vice versa). 
+            When a previously unknown device seeks admission to a 6TiSCH <xref target="RFC7554"/> Network (to “join”), it must first synchronize to the network, and then authenticate itself to the network (and vice versa). 
             At this point it can expect to interact with the network to configure its 6top layer  <xref target="I-D.wang-6tisch-6top-sublayer"/> – at first to configure link-layer keying material, and perhaps additional communications resources to other peers for redundancy and to maintain synchronization.  
             Only then the node may establish an end-to-end secure transport sessions (DTLS)  <xref target="RFC6347"/> with a host. 
             Once the application requirements are known, the device will interact with the PCE to request additional resources as needed, or to be reconfigured as the network changes.
@@ -135,7 +135,7 @@
     </section>
     <section title="Join Overview" anchor="sec_overview">
         <t>
-        This section describes the steps taken by a joining node (JN) in a 6TiSCH network. When a previously unknown device seeks admission to a 6TiSCH [6TiSCH] network, the following exchange occurs:
+        This section describes the steps taken by a joining node (JN) in a 6TiSCH network. When a previously unknown device seeks admission to a 6TiSCH <xref target="RFC7554"/> network, the following exchange occurs:
             <list style="numbers">
                 <t>
                 The JN listens for an Enhanced Beacon (EB) frame <xref target="IEEE802154e"/>. 
@@ -150,7 +150,8 @@
                     The JN receives one or more frames from JCE (via the JA) that sets up one or more link-layer keys used to authenticate subsequent transmissions to peers.
                 </t>
             </list>
-            From the joining node’s perspective, minimal joining is a local phenomenon – the JN only interacts with the JA, and it need not know how far it is from the DAG root, or how to route to the JCE or PCE.  Only after establishing one or more link-layer keys does it “care” about the particulars of a 6TiSCH network.
+            From the joining node’s perspective, minimal joining is a local phenomenon – the JN only interacts with the JA, and it need not know how far it is from the DAG root, or how to route to the JCE or PCE.
+            Only after establishing one or more link-layer keys does it “care” about the particulars of a 6TiSCH network.
 
             The handshake is shown as a transaction diagram in <xref target="fig_messagesequence"/>:
 
@@ -188,7 +189,7 @@
             </t>
             <section title="Pre-Shared Key" anchor="sec_psk">
                 <t>
-                    When using a pre-shared symmetric key, the Diffe-Hellman key exchange and the use of EDHOC is optional. 
+                    When using a pre-shared symmetric key, the Diffie-Hellman key exchange and the use of EDHOC is OPTIONAL. 
                     This cuts down on traffic between JCE and JN, but requires pre-configuration of the shared key on both devices.
                 </t>
 
@@ -208,13 +209,13 @@
                 The join request is sent from the JN to the JA using the slot information (to Beaconer) from the EB, and addressed to the JCE. 
             </t>
             <t>
-                The join request is authenticated/encrypted at end-to-end using CCM* and the shared secret from step 2 as the key. 
+                The join request is authenticated/encrypted end-to-end using CCM* and the shared secret from step 2 as the key. 
                 The CCM* nonce is constructed from the JN’s EUI64 prepended to a monotonically increasing 5-Byte counter initialized to 0 when first starting. 
             </t>
             <t> 
                 TODO:
-                EBs are formatted to carry JCE's global address in the payload of the frame.
-                JN learns JCE's address upon reception of an EB from JA.
+                This document assumes that EBs are formatted to carry JCE's global address in the payload of the frame.
+                JN thus learns JCE's address upon reception of an EB from JA.
             </t>
         </section>
         <section title="Step 4 - Join Response" anchor="sec_joinresponse">
