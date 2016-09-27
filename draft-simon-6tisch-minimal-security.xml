@@ -225,8 +225,8 @@
         </section>
         <section title="Step 4 - Join Response" anchor="sec_joinresponse">
             <t>
-                The join response is sent from the JCE to the JN’s stateless autoconfigured address with the JA immediately preceding it in the source route.
-                The JA delivers it to the JN using the slot information (from Beaconer) from the EB.
+                The join response is sent from the JCE to the JN through JA that serves as a relay.
+                The JA delivers it to the JN using the slot information from the EB.
             </t>
             <t>
                 The join response is encrypted using CCM* with the shared secret from step 2. 
