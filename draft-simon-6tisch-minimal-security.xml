@@ -9,19 +9,19 @@
     <title abbrev="6tisch-minimal-security">
         Minimal Security Framework for 6TiSCH
     </title>
-   <author initials="J" surname="Simon" fullname="Jonathan Simon" role="editor">
-      <organization>Linear Technology</organization>
-      <address>
-         <postal>
-            <street>32990 Alvarado-Niles Road, Suite 910</street>
-            <city>Union City</city>
-            <region>CA</region>
-            <code>94587</code>
-            <country>USA</country>
-         </postal>
-         <email>jsimon@linear.com</email>
-      </address>
-   </author>
+    <author initials="J" surname="Simon" fullname="Jonathan Simon" role="editor">
+        <organization>Linear Technology</organization>
+        <address>
+            <postal>
+                <street>32990 Alvarado-Niles Road, Suite 910</street>
+                <city>Union City</city>
+                <region>CA</region>
+                <code>94587</code>
+                <country>USA</country>
+            </postal>
+            <email>jsimon@linear.com</email>
+        </address>
+    </author>
     <author initials="K" surname="Pister" fullname="Kris Pister">
         <organization>University of California Berkeley</organization>
         <address>
@@ -36,7 +36,7 @@
       </address>
    </author>
     <author initials="M" surname="Vucinic" fullname="Malisa Vucinic">
-        <organization>INRIA</organization>
+        <organization>Inria</organization>
         <address>
             <postal>
                 <street>2 Rue Simone Iff</street>
@@ -272,11 +272,11 @@
                 </list>
 <figure>
 <artwork><![CDATA[
-   relay_info = [
-       EUI-64 : bstr,
-       source_port : uint,
-       token : uint
-   ]
+    relay_info = [
+        EUI-64 : bstr,
+        source_port : uint,
+        token : uint
+    ]
 ]]></artwork>
 </figure>
                 JN SHALL wrap the relay_info object as a byte string and use it to set the "Sender ID" parameter of OSCOAP.
@@ -297,7 +297,6 @@
         </section>
     </section>
     <section title="Link-layer requirements" anchor="sec_llreq">
-
         <t>
             All frames in a 6TiSCH network MUST use link-layer frame security. 
             The frame security options MUST include frame authentication, and MAY include frame encryption for frames that do not include a 6LoWPAN dispatch byte, i.e. link-layer content only frames.
@@ -316,7 +315,6 @@
         <t>
             The JN uses the initial key until it is configured with a new link-layer key K2 as described below in 5.
         </t>
-
         <t>
             As the EB itself does not contain security information, where the link key is known, an attacker may craft a frame that appears to be a valid EB, since the JN can neither know the ASN a priori or verify the address of the JA.
             This permits a Denial of Service (DoS) attack at the JN.  Beacon authentication keys are discussed in <xref target="sec_wellknown"/> and <xref target="sec_privatekey"/>.
@@ -341,10 +339,10 @@
     </section>
     <section title="Asymmetric Keys" anchor="sec_asymmetric">
         <t>
-                    Certificates may be used to exchange “public” keys between the JN and JCE.  
-                    The key pair is generated using ECC curve secp256r1, and the certificate containing the public key is signed using ECDSA.
-                    The certificate itself may be a compact representation of an X.509 certificate, or a full X.509 certificate. 
-                    The certificate is signed by a root CA whose certificate is installed on all nodes participating in a particular 6TiSCH network, allowing each node to validate the certificate of the JCE or JN as appropriate.
+            Certificates may be used to exchange “public” keys between the JN and JCE.  
+            The key pair is generated using ECC curve secp256r1, and the certificate containing the public key is signed using ECDSA.
+            The certificate itself may be a compact representation of an X.509 certificate, or a full X.509 certificate. 
+            The certificate is signed by a root CA whose certificate is installed on all nodes participating in a particular 6TiSCH network, allowing each node to validate the certificate of the JCE or JN as appropriate.
         </t>
         <section title="Compact X.509" anchor="sec_compactx509">
             <t>
@@ -378,8 +376,8 @@
         <!-- RFC 6TiSCH-->
         <!-- RFC others -->
         <?rfc include='reference.RFC.2119'?>                         <!-- Key words for use in RFCs to Indicate Requirement Levels -->
-        <?rfc include='reference.RFC.7252'?>                        <!-- CoAP RFC-->
-        <?rfc include='reference.RFC.6347'?>                        <!-- DTLS RFC-->
+        <?rfc include='reference.RFC.7252'?>                         <!-- CoAP RFC-->
+        <?rfc include='reference.RFC.6347'?>                         <!-- DTLS RFC-->
         <!-- I-D 6TiSCH -->
         <!-- I-D others -->
         <!-- external -->
@@ -391,8 +389,8 @@
         <!-- RFC 6TiSCH-->
         <?rfc include='reference.RFC.7554'?>                         <!-- Using IEEE 802.15.4e Time-Slotted Channel Hopping (TSCH) in the Internet of Things (IoT): Problem Statement -->
         <!-- RFC others -->
-        <?rfc include='reference.RFC.7049'?>                        <!-- CBOR -->
-        <?rfc include='reference.RFC.5869'?>                        <!-- HMAC -->
+        <?rfc include='reference.RFC.7049'?>                         <!-- CBOR -->
+        <?rfc include='reference.RFC.5869'?>                         <!-- HMAC -->
         <!-- I-D 6TiSCH -->
         <?rfc include='reference.I-D.ietf-6tisch-minimal'?>
         <?rfc include='reference.I-D.ietf-6tisch-terminology'?>
@@ -405,32 +403,27 @@
     </references>
     <references title="External Informative References">
         <reference anchor="IEEE802154">
-         <front>
-            <title>IEEE std. 802.15.4, Part. 15.4: Wireless Medium Access 
-            Control (MAC) and Physical Layer (PHY) Specifications for Low-Rate 
-            Wireless Personal Area Networks
-            </title>
-            <author>
-               <organization>IEEE standard for Information Technology</organization>
-            </author>
-            <date/>
-         </front>
-      </reference>
-      <reference anchor="IEEE802154e">
-         <front>
-            <title>IEEE standard for Information Technology, IEEE std.
-         802.15.4, Part. 15.4: Wireless Medium Access Control (MAC)
-         and Physical Layer (PHY) Specifications for Low-Rate
-         Wireless Personal Area Networks, June 2011 as amended by IEEE std.
-         802.15.4e, Part. 15.4: Low-Rate Wireless Personal Area
-         Networks (LR-WPANs) Amendment 1: MAC sublayer
-         </title>
-            <author>
-               <organization>IEEE standard for Information Technology</organization>
-            </author>
-            <date month="April" year="2012"/>
-         </front>
-      </reference>
+            <front>
+                <title>
+                    IEEE std. 802.15.4, Part. 15.4: Wireless Medium Access Control (MAC) and Physical Layer (PHY) Specifications for Low-Rate Wireless Personal Area Networks
+                </title>
+                <author>
+                    <organization>IEEE standard for Information Technology</organization>
+                </author>
+                <date/>
+            </front>
+        </reference>
+        <reference anchor="IEEE802154e">
+            <front>
+                <title>
+                    IEEE standard for Information Technology, IEEE std.802.15.4, Part. 15.4: Wireless Medium Access Control (MAC) and Physical Layer (PHY) Specifications for Low-Rate Wireless Personal Area Networks, June 2011 as amended by IEEE std. 802.15.4e, Part. 15.4: Low-Rate Wireless Personal Area Networks (LR-WPANs) Amendment 1: MAC sublayer
+                </title>
+                <author>
+                    <organization>IEEE standard for Information Technology</organization>
+                </author>
+                <date month="April" year="2012"/>
+            </front>
+        </reference>
     </references>
 </back>
 </rfc>
