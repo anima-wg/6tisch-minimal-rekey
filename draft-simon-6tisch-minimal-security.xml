@@ -54,7 +54,7 @@
     <abstract>
         <t>
             This draft describes the minimal mechanisms required to support secure initial configuration of the 6top layer in a device being added to a 6TiSCH network. 
-            The goal of this configuration is to set link-layer keys, and to establish a session with a coordinating entity who may set a communications schedule or otherwise configure the joining device’s 6top layer, and do so in a “touchless” manner.
+            The goal of this configuration is to set link-layer keys, and to establish a session with a coordinating entity who may set a communications schedule or otherwise configure the joining device's 6top layer, and do so in a "touchless" manner.
             Additional security behaviors and mechanisms may be added on top of this minimal framework.
         </t>
     </abstract>
@@ -67,7 +67,7 @@
 <middle>
     <section title="Introduction"                                    anchor="sec_intro">
         <t>
-            When a previously unknown device seeks admission to a 6TiSCH <xref target="RFC7554"/> Network (to “join”), it must first synchronize to the network, and then validate itself to the network (and vice versa). 
+            When a previously unknown device seeks admission to a 6TiSCH <xref target="RFC7554"/> Network (to "join"), it must first synchronize to the network, and then validate itself to the network (and vice versa). 
             At this point it can expect to interact with the network to configure its 6top layer  <xref target="I-D.wang-6tisch-6top-sublayer"/> – at first to configure link-layer keying material, and perhaps additional communications resources to other peers for redundancy and to maintain synchronization.  
             Only then the node may establish an end-to-end secure session with an Internet host using DTLS <xref target="RFC6347"/> or OSCOAP <xref target="I-D.selander-ace-object-security"/>. 
             Once the application requirements are known, the device will interact with the PCE to request additional resources as needed, or to be reconfigured as the network changes.
@@ -84,7 +84,7 @@
             6TiSCH: 6LoWPAN on top of a TSCH MAC
         </t>
         <t>
-            6top:  The 6TiSCH Operational sublayer – the “vocabulary” used to configure an 802.15.4e MAC for use in a 6TiSCH network.
+            6top:  The 6TiSCH Operational sublayer – the "vocabulary" used to configure an 802.15.4e MAC for use in a 6TiSCH network.
         </t>
         <t>
             CoAP:  Constrained Application Protocol (RFC 7252)
@@ -149,8 +149,8 @@
                     The JN receives one or more frames from JCE (via the JA) that sets up one or more link-layer keys used to authenticate subsequent transmissions to peers.
                 </t>
             </list>
-            From the joining node’s perspective, minimal joining is a local phenomenon – the JN only interacts with the JA, and it need not know how far it is from the DAG root, or how to route to the JCE or PCE.
-            Only after establishing one or more link-layer keys does it “care” about the particulars of a 6TiSCH network.
+            From the joining node's perspective, minimal joining is a local phenomenon – the JN only interacts with the JA, and it need not know how far it is from the DAG root, or how to route to the JCE or PCE.
+            Only after establishing one or more link-layer keys does it "care" about the particulars of a 6TiSCH network.
 
             The handshake is shown as a transaction diagram in <xref target="fig_messagesequence"/>:
 
@@ -207,7 +207,7 @@
             </section>
             <section title="ECC Asymmetric Key" anchor="sec_ecc">
                 <t>
-                    When using an asymmetric key, the JN and JCE need to receive and validate each other’s public key certificate before conducting the Diffie-Hellman key exchange. 
+                    When using an asymmetric key, the JN and JCE need to receive and validate each other's public key certificate before conducting the Diffie-Hellman key exchange. 
                     This process is described in <xref target="sec_asymmetric"/>.
                 </t>
             </section>
@@ -228,7 +228,7 @@
             </t>
             <t>
                 The join response is authenticated/encrypted using AES-CCM-16-64-128 algorithm from <xref target="I-D.ietf-cose-msg"/> with the shared secret from step 2. 
-                TODO:The nonce is constructed from the JCE’s link-local address, and a monotonically increasing counter matching that of the join request. 
+                TODO:The nonce is constructed from the JCE's link-local address, and a monotonically increasing counter matching that of the join request. 
 
             </t>
             <t>
@@ -339,7 +339,7 @@
     </section>
     <section title="Asymmetric Keys" anchor="sec_asymmetric">
         <t>
-            Certificates may be used to exchange “public” keys between the JN and JCE.  
+            Certificates may be used to exchange "public" keys between the JN and JCE.  
             The key pair is generated using ECC curve secp256r1, and the certificate containing the public key is signed using ECDSA.
             The certificate itself may be a compact representation of an X.509 certificate, or a full X.509 certificate. 
             The certificate is signed by a root CA whose certificate is installed on all nodes participating in a particular 6TiSCH network, allowing each node to validate the certificate of the JCE or JN as appropriate.
@@ -356,7 +356,7 @@
             Discussion of weaknesses in the above approach.
         </t>
         <t>
-            DoS – “stealing” motes with malicious beacons
+            DoS – "stealing" motes with malicious beacons
         </t>
         <t>
             DoS – sending in bogus joins to clog the network
