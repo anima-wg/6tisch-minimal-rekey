@@ -228,7 +228,7 @@
             </t>
             <t>
                 The join response is authenticated/encrypted using AES-CCM-16-64-128 algorithm from <xref target="I-D.ietf-cose-msg"/> with the shared secret from step 2. 
-                TODO:The nonce is constructed from the JCE's link-local address, and a monotonically increasing counter matching that of the join request. 
+                The nonce is derived from the shared secret, JN's EUI-64 and a monotonically increasing counter matching that of the join request. 
 
             </t>
             <t>
@@ -300,7 +300,7 @@
                 </list>
                 The derivation in <xref target="I-D.selander-ace-object-security"/> results in traffic keys, static IVs, and sequence numbers for each side of the conversation.
                 Nonces are constructed by xoring the static IV with current sequence number.
-                Note that the address of JCE does not take part in nonce construction.
+                Note that the address of JCE does not take part in nonce construction and that Sender ID values of each side distinguish between a request and a response.
                 The context derivation process occurs exactly once.
                 Implementations MUST ensure that multiple CoAP requests to different JCEs result in the use of the same OSCOAP context so that sequence numbers are properly incremented for each request.
                 This may happen in a scenario where there are multiple 6TiSCH networks present and the JN tries to join one network at a time.
