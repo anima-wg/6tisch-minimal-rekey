@@ -76,7 +76,7 @@
             This document describes the mechanisms comprising a minimal feature set for a device to join a 6TiSCH network, up to the point where it can establish a secure session with an Internet host. 
         </t>
         <t>
-            It presumes a network as described by <xref target="I-D.ietf-6tisch-architecture"/> and <xref target="I-D.ietf-6tisch-6top-protocol"/>. 
+            It presumes a network as described by <xref target="I-D.ietf-6tisch-architecture"/>, <xref target="I-D.ietf-6tisch-6top-protocol"/>, and <xref target="I-D.ietf-6tisch-terminology"/>. 
         </t>
     </section>
     <section title="Acronyms" anchor="sec_acronyms">
@@ -199,7 +199,7 @@
                     In case EDHOC step was omitted, the key used for protection of the join request and join response in the next step is the PSK.
                     This means that the protocol trades off perfect forward secrecy for reduced traffic load between JN and JCE.
                     A consequence is that if long-term PSK is compromised, keying material transfered as part of the join response is compromised as well.
-                    However, compromise of the JN where PSK is stored would also imply the compromise of the same keying material, as it is likely to be found in node's memory.
+                    Physical compromise of the JN, however, would also imply the compromise of the same keying material, as it is likely to be found in node's memory.
                 </t>
                 <t>
                     It is RECOMMENDED to use unique PSKs for each JN.
@@ -207,7 +207,7 @@
             </section>
             <section title="ECC Asymmetric Key" anchor="sec_ecc">
                 <t>
-                    When using an asymmetric key, the JN and JCE need to receive and validate each other's public key certificate before conducting the Diffie-Hellman key exchange. 
+                    When using asymmetric keys, the JN and JCE need to receive and validate each other's public key certificate before conducting the Diffie-Hellman key exchange using EDHOC <xref target="I-D.selander-ace-cose-ecdhe"/>. 
                     This process is described in <xref target="sec_asymmetric"/>.
                 </t>
             </section>
@@ -229,7 +229,6 @@
             <t>
                 The join response is authenticated/encrypted using AES-CCM-16-64-128 algorithm from <xref target="I-D.ietf-cose-msg"/> with the shared secret from step 2. 
                 The nonce is derived from the shared secret, JN's EUI-64 and a monotonically increasing counter matching that of the join request. 
-
             </t>
             <t>
                 The join response contains one or more (per-peer) link-layer key(s) K2 that the JN will use for subsequent communication.
@@ -298,7 +297,7 @@
                         Sender ID of JN SHALL be set to 0x00, while the ID of JCE SHALL be set to 0x01.
                     </t>
                 </list>
-                The derivation in <xref target="I-D.selander-ace-object-security"/> results in traffic keys, static IVs, and sequence numbers for each side of the conversation.
+                The derivation in <xref target="I-D.selander-ace-object-security"/> results in traffic keys and static IVs for each side of the conversation.
                 Nonces are constructed by xoring the static IV with current sequence number.
                 Note that the address of JCE does not take part in nonce construction and that Sender ID values of each side distinguish between a request and a response.
                 The context derivation process occurs exactly once.
@@ -360,11 +359,12 @@
             </figure>
         </t>
         <t>
-            The JN uses the initial key until it is configured with a new link-layer key K2 as described below in 5.
+            The JN uses the initial key K1 until it is configured with a new link-layer key K2 as described above.
         </t>
         <t>
             As the EB itself does not contain security information, where the link key is known, an attacker may craft a frame that appears to be a valid EB, since the JN can neither know the ASN a priori or verify the address of the JA.
-            This permits a Denial of Service (DoS) attack at the JN.  Beacon authentication keys are discussed in <xref target="sec_wellknown"/> and <xref target="sec_privatekey"/>.
+            This permits a Denial of Service (DoS) attack at the JN.  
+            Beacon authentication keys are discussed in <xref target="sec_wellknown"/> and <xref target="sec_privatekey"/>.
         </t>
         <section title="Well-known beacon authentication key" anchor="sec_wellknown">
             <t>
@@ -426,27 +426,25 @@
         <!-- RFC others -->
         <?rfc include='reference.RFC.2119'?>                         <!-- Key words for use in RFCs to Indicate Requirement Levels -->
         <?rfc include='reference.RFC.7252'?>                         <!-- CoAP RFC-->
-        <?rfc include='reference.RFC.6347'?>                         <!-- DTLS RFC-->
+        <?rfc include='reference.RFC.7049'?>                         <!-- CBOR -->
+        <?rfc include='reference.RFC.5869'?>                         <!-- HMAC -->
         <!-- I-D 6TiSCH -->
         <!-- I-D others -->
-        <!-- external -->
         <?rfc include='reference.I-D.ietf-cose-msg'?>
         <?rfc include='reference.I-D.selander-ace-object-security'?>
         <?rfc include='reference.I-D.selander-ace-cose-ecdhe'?>
+        <!-- external -->
     </references>
     <references title="Informative References">
         <!-- RFC 6TiSCH-->
         <?rfc include='reference.RFC.7554'?>                         <!-- Using IEEE 802.15.4e Time-Slotted Channel Hopping (TSCH) in the Internet of Things (IoT): Problem Statement -->
         <!-- RFC others -->
-        <?rfc include='reference.RFC.7049'?>                         <!-- CBOR -->
-        <?rfc include='reference.RFC.5869'?>                         <!-- HMAC -->
+        <?rfc include='reference.RFC.6347'?>                         <!-- DTLS RFC-->
         <!-- I-D 6TiSCH -->
         <?rfc include='reference.I-D.ietf-6tisch-minimal'?>
-        <?rfc include='reference.I-D.ietf-6tisch-terminology'?>
-        <?rfc include='reference.I-D.ietf-6tisch-6top-protocol'?>
-        <?rfc include='reference.I-D.ietf-6tisch-6top-interface'?>
         <?rfc include='reference.I-D.ietf-6tisch-architecture'?>
-        <?rfc include='reference.I-D.richardson-6tisch--security-6top'?>
+        <?rfc include='reference.I-D.ietf-6tisch-6top-protocol'?>
+        <?rfc include='reference.I-D.ietf-6tisch-terminology'?>
         <!-- I-D others -->
         <!-- external -->
     </references>
