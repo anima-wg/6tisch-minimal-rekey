@@ -311,13 +311,13 @@
                 Join Request message SHALL be mapped to a CoAP request:
                 <list style="symbols">
                     <t>
-                        The request method is GET
+                        The request method is GET.
                     </t>
                     <t>
-                        The Proxy-URI shall be constructed from JCE's global IPv6 address
+                        The Proxy-URI shall be constructed from JCE's global IPv6 address.
                     </t>
                     <t>
-                        The Uri-Path is "6j"
+                        The Uri-Path is "6j".
                     </t>
                     <t>
                         The object security option SHALL be set according to <xref target="I-D.selander-ace-object-security"/> and OSCOAP parameters set as described above.
@@ -327,10 +327,19 @@
         </section>
         <section title="Implementation of Join Response" anchor="sec_implemjoinresponse">
             <t>
-                If OSCOAP processing is a success, Join Response message SHALL be a CoAP response, Code 2.05 (Content) with payload formatted as a COSE Key Set.
-                Each key in the Key Set SHALL be a symmetric key (see <xref target="I-D.ietf-cose-msg"/>).
-                Key that is present in the Key Set and does not have an identifier is assumed to be "K2" link-layer key from <xref target="I-D.ietf-6tisch-minimal"/>.
-                Parameter "kid" of the COSE Key structure SHALL be used to denote pair-wise keys if present, where the value SHALL be set to the EUI-64 address of the corresponding peer.
+                If OSCOAP processing is a success, Join Response message SHALL be a CoAP response:
+                <list style="symbols">
+                    <t>
+                        The response Code is 2.05 (Content).
+                    </t>
+
+                    <t>
+                        The payload is a COSE Key Set.
+                        Each key in the Key Set SHALL be a symmetric key (see <xref target="I-D.ietf-cose-msg"/>).
+                        Key that is present in the Key Set and does not have an identifier is assumed to be "K2" link-layer key from <xref target="I-D.ietf-6tisch-minimal"/>.
+                        Parameter "kid" of the COSE Key structure SHALL be used to denote pair-wise keys if present, where the value SHALL be set to the EUI-64 address of the corresponding peer.
+                    </t>
+                </list>
             </t>
         </section>
     </section>
