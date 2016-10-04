@@ -53,8 +53,8 @@
     <keyword>Draft</keyword>
     <abstract>
         <t>
-            This draft describes the minimal mechanisms required to support secure initial configuration of the 6top layer in a device being added to a 6TiSCH network. 
-            The goal of this configuration is to set link-layer keys, and to establish a session with a coordinating entity who may set a communications schedule or otherwise configure the joining device's 6top layer, and do so in a "touchless" manner.
+            This draft describes the minimal mechanisms required to support secure initial configuration in a device being added to a 6TiSCH network. 
+            The goal of this configuration is to set link-layer keys, and to establish a session with a coordinating entity who may set a communications schedule or otherwise configure the joining device, and do so in a "touchless" manner.
             Additional security behaviors and mechanisms may be added on top of this minimal framework.
         </t>
     </abstract>
@@ -67,16 +67,16 @@
 <middle>
     <section title="Introduction"                                    anchor="sec_intro">
         <t>
-            When a previously unknown device seeks admission to a 6TiSCH <xref target="RFC7554"/> Network (to "join"), it must first synchronize to the network, and then validate itself to the network (and vice versa). 
-            At this point it can expect to interact with the network to configure its 6top layer  <xref target="I-D.wang-6tisch-6top-sublayer"/> – at first to configure link-layer keying material, and perhaps additional communications resources to other peers for redundancy and to maintain synchronization.  
+            When a previously unknown device seeks admission to a 6TiSCH <xref target="RFC7554"/> network (to "join"), it must first synchronize to the network, and then validate itself to the network (and vice versa). 
+            At this point it can expect to interact with the network to configure its link-layer keying material, and perhaps additional communications resources to other peers for redundancy and to maintain synchronization <xref target="I-D.ietf-6tisch-6top-protocol"/>.
             Only then the node may establish an end-to-end secure session with an Internet host using DTLS <xref target="RFC6347"/> or OSCOAP <xref target="I-D.selander-ace-object-security"/>. 
-            Once the application requirements are known, the device will interact with the PCE to request additional resources as needed, or to be reconfigured as the network changes.
+            Once the application requirements are known, the device will interact with the PCE or its peers to request additional resources as needed, or to be reconfigured as the network changes.
         </t>
         <t>
             This document describes the mechanisms comprising a minimal feature set for a device to join a 6TiSCH network, up to the point where it can establish a secure session with an Internet host. 
         </t>
         <t>
-            It presumes a network as described by <xref target="I-D.ietf-6tisch-architecture"/>, <xref target="I-D.ietf-6tisch-6top-interface"/>, and <xref target="I-D.wang-6tisch-6top-sublayer"/>. 
+            It presumes a network as described by <xref target="I-D.ietf-6tisch-architecture"/> and <xref target="I-D.ietf-6tisch-6top-protocol"/>. 
         </t>
     </section>
     <section title="Acronyms" anchor="sec_acronyms">
@@ -443,7 +443,7 @@
         <!-- I-D 6TiSCH -->
         <?rfc include='reference.I-D.ietf-6tisch-minimal'?>
         <?rfc include='reference.I-D.ietf-6tisch-terminology'?>
-        <?rfc include='reference.I-D.wang-6tisch-6top-sublayer'?>
+        <?rfc include='reference.I-D.ietf-6tisch-6top-protocol'?>
         <?rfc include='reference.I-D.ietf-6tisch-6top-interface'?>
         <?rfc include='reference.I-D.ietf-6tisch-architecture'?>
         <?rfc include='reference.I-D.richardson-6tisch--security-6top'?>
