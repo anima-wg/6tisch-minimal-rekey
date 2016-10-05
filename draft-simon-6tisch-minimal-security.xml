@@ -485,5 +485,10 @@
             </front>
         </reference>
     </references>
+    <section title="Examples" anchor="sec_examples">
+        <t>
+            TODO: Add some examples once protocol specification section is finalized.
+        </t>
+    </section>
 </back>
 </rfc>
