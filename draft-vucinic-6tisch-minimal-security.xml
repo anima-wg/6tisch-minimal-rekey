@@ -4,12 +4,24 @@
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
 <?rfc subcompact="yes"?>
-<rfc category="info" ipr="trust200902" docName="draft-simon-6tisch-minimal-security-00">
+<rfc category="std" ipr="trust200902" docName="draft-vucinic-6tisch-minimal-security-00">
 <front>
-    <title abbrev="6tisch-minimal-security">
+    <title abbrev="vucinic-6tisch-minimal-security">
         Minimal Security Framework for 6TiSCH
     </title>
-    <author initials="J" surname="Simon" fullname="Jonathan Simon" role="editor">
+    <author initials="M" surname="Vucinic" fullname="Malisa Vucinic" role="editor">
+        <organization>Inria</organization>
+        <address>
+            <postal>
+                <street>2 Rue Simone Iff</street>
+                <city>Paris</city>
+                <code>75012</code>
+                <country>France</country>
+            </postal>
+            <email>malisa.vucinic@inria.fr</email>
+        </address>
+    </author>
+    <author initials="J" surname="Simon" fullname="Jonathan Simon">
         <organization>Linear Technology</organization>
         <address>
             <postal>
@@ -35,18 +47,6 @@
          <email>kpister@eecs.berkeley.edu</email>
       </address>
    </author>
-    <author initials="M" surname="Vucinic" fullname="Malisa Vucinic">
-        <organization>Inria</organization>
-        <address>
-            <postal>
-                <street>2 Rue Simone Iff</street>
-                <city>Paris</city>
-                <code>75012</code>
-                <country>France</country>
-            </postal>
-            <email>malisa.vucinic@inria.fr</email>
-        </address>
-    </author>
     <date/>
     <area>Internet Area</area>
     <workgroup>6TiSCH</workgroup>
