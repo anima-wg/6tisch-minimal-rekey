@@ -107,6 +107,9 @@
                     This frame provides network synchronization information, and tells the device when it can send a frame to the node sending the beacons, which plays the role of Join Assistant (JA) for the JN, and when it can expect to receive a frame.
                 </t>
                 <t>
+                    The JN configures its link-local IPv6 address and advertizes it to JA. 
+                </t>
+                <t>
                     The JN sends packets to the JA device that securely identifies the new device to the network. 
                     These packets are directed to the Join Coordination Entity or JCE, which may be the JA or another device.
                 </t>
