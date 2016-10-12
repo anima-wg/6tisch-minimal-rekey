@@ -119,7 +119,7 @@
 
             The handshake is shown as a transaction diagram in <xref target="fig_messagesequence"/>:
 
-            <figure title="Message sequence for JOIN message" anchor="fig_messagesequence">
+            <figure title="Message sequence for join protocol." anchor="fig_messagesequence">
 <artwork><![CDATA[
    +-----+               +----------+              +-----------+
    | JCE |               |    JA    |              |     JN    |
@@ -147,10 +147,6 @@
                 If more than one EB is heard, the JN MAY use a metric based on DAG rank and received signal level of the EB, or other factors to decide which JA to use for the security handshake in step 3.
                 Details about how a JN chooses the JA are out of scope of this specification.
             </t>
-            <t>
-                TODO: This document assumes that EBs are formatted to carry JCE's global address in the payload of the frame.
-                JN thus learns JCE's address upon reception of an EB from JA.
-            </t>
         </section>
         <section title="Step 2 - Neighbor Discovery" anchor="sec_nd">
             <t>
@@ -159,7 +155,7 @@
         </section>
         <section title="Step 3 - Security Handshake" anchor="sec_handshake">
             <t>
-                The security handshake uses Ephemeral Diffie-Hellman over COSE (EDHOC) <xref target="I-D.selander-ace-cose-ecdhe"/> to establish the shared secret used to encrypt the join request and join response.
+                The optional security handshake uses Ephemeral Diffie-Hellman over COSE (EDHOC) <xref target="I-D.selander-ace-cose-ecdhe"/> to establish the shared secret used to encrypt the join request and join response.
             </t>
             <section title="Pre-Shared Key" anchor="sec_psk">
                 <t>
@@ -178,7 +174,7 @@
             </section>
             <section title="Asymmetric Key" anchor="sec_ecc">
                 <t>
-                    When using asymmetric keys, the JN and JCE need to receive and validate each other's public key certificate before conducting the Diffie-Hellman key exchange using EDHOC <xref target="I-D.selander-ace-cose-ecdhe"/>. 
+                    When using asymmetric keys, the Security Handshake step is required. Before conducting the Diffie-Hellman key exchange using EDHOC <xref target="I-D.selander-ace-cose-ecdhe"/> the JN and JCE need to receive and validate each other's public key certificate. 
                     This process is described in <xref target="sec_asymmetric"/>.
                 </t>
             </section>
@@ -194,9 +190,11 @@
         </section>
         <section title="Step 5 - Join Response" anchor="sec_joinresponse">
             <t>
-                The join response is sent from the JCE to the JN through JA that serves as a relay.
+                The join response is sent from the JCE to the JN through JA that serves as a stateless relay.
+                Packet contaning the join response travels on the path from JCE to JA using pre-established routes in the network.
                 The JA delivers it to the JN using the slot information from the EB.
-                TODO: More details on how it is relayed.
+                JA operates as the application layer proxy and does not keep any state to relay the packet.
+                It uses information sent in clear within the join response to decide where to forward the message.
             </t>
             <t>
                 The join response is authenticated/encrypted using AES-CCM-16-64-128 algorithm from <xref target="I-D.ietf-cose-msg"/> with the shared secret from step 3. 
@@ -210,21 +208,29 @@
     <section title="Protocol Specification" anchor="sec_details">
         <t>
             The join protocol in <xref target="fig_messagesequence"/> is implemented over Constrained Application Protocol (CoAP) <xref  target="RFC7252"/>.
-            JN SHALL play the role of a CoAP client, JCE the role of a CoAP server, while JA SHALL implement CoAP forward proxy functionality <xref target="RFC7252"/>.
-            Note that since JA is likely a constrained device, it does not need to implement a cache but rather process proxy-related CoAP options and make requests on behalf of JN that is not yet part of the network.
+            JN shall play the role of a CoAP client, JCE the role of a CoAP server, while JA shall implement CoAP forward proxy functionality <xref target="RFC7252"/>.
+            Since JA is likely a constrained device, it does not need to implement a cache but rather process proxy-related CoAP options and make requests on behalf of JN that is not yet part of the network.
         </t>
         <t>
-            JN and JCE SHALL protect their exchange end-to-end (i.e. through the proxy) using Object Security of CoAP (OSCOAP) <xref target="I-D.selander-ace-object-security"/>.
+            JN and JCE MUST protect their exchange end-to-end (i.e. through the proxy) using Object Security of CoAP (OSCOAP) <xref target="I-D.selander-ace-object-security"/>.
         </t>
         <section title="Proxy Operation of JA" anchor="sec_proxy">
         <t>
-            JN SHALL designate a JA as a proxy by including in the CoAP requests to JA's link-local IPv6 address the Proxy-URI option with JCE's global IPv6 address.
+            JN designates a JA as a proxy by including in the CoAP requests to JA the Proxy-URI option with string "6tisch.jce" as the host part.
+            JN does not need to learn the actual IPv6 address of JCE at any time during the join protocol.
+            JA resolves the address by performing a GET request at "/jce" resource of its parent in the DODAG.
+        </t>
+        <t>
+            Note that the CoAP proxy by default keeps state information in order to forward the response towards the originator of the request.
+            This state information comprises CoAP token, but the implementations also need to keep track of the IPv6 address of the host, as well as the corresponding UDP source port number.
+            In the setting where the proxy is a constrained device, as in the case of JA, this makes it prone to Denial of Service (DoS) attacks, due to the limited memory.
+        </t>
+        <t>
             In order to facilitate a stateless implementation of JA proxying, JN shall encode in the CoAP message the information necessary for the JA to send the response back - "origin_info".
             For this purpose, JN uses the "Context Identifier (Cid)" parameter of OSCOAP's security context structure.
             Context Identifier is sent in clear, readable by JA, and MUST be echoed back in the response from JCE. 
-            This makes it possible to implement JA's CoAP proxy in a stateless manner, in order to counter Denial of Service attacks. 
+            This makes it possible to implement JA's CoAP proxy in a stateless manner.
             It also allows JCE to look up the right security context for communication with a given JN.
-            TODO: Detail a stateful variant.
         </t>
         <section title="Implementation of origin_info" anchor="sec_implemrelayinfo">
             <t>
