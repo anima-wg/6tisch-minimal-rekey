@@ -439,7 +439,6 @@
         <!-- I-D others -->
         <?rfc include='reference.I-D.ietf-cose-msg'?>
         <?rfc include='reference.I-D.selander-ace-object-security'?>
-        <?rfc include='reference.I-D.selander-ace-cose-ecdhe'?>
         <!-- external -->
     </references>
     <references title="Informative References">
@@ -454,6 +453,7 @@
         <?rfc include='reference.I-D.ietf-6tisch-6top-protocol'?>
         <?rfc include='reference.I-D.ietf-6tisch-terminology'?>
         <!-- I-D others -->
+        <?rfc include='reference.I-D.selander-ace-cose-ecdhe'?>
         <!-- external -->
     </references>
     <references title="External Informative References">
