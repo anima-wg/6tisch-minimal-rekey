@@ -395,24 +395,21 @@
             Being a stateless relay, JA blindly forwards the join traffic into the network.
             While the exchange between JN and JA takes place over a shared cell, join traffic is forwarded using dedicated cells on the JA to JCE path.
             In case of distributed scheduling, the join traffic may therefore cause intermediate nodes to request additional bandwidth.
-            It is therefore recommended to implement rate limiting at JA where it is still feasible to distinguish join traffic from regular network traffic.
-            TODO: Explain why not feasible to distinguish join and regular traffic beyond JA.
+            Because the relay operation of JA is implemented at the application layer, JA is the only hop on the JA-6LBR path that can distinguish join traffic from regular IP traffic in the network. 
+            It is therefore permitted to implement rate limiting at JA.
         </t>
         <t>
             The shared nature of the "minimal" cell used for join traffic makes the network prone to DoS attacks by congesting the JA with bogus radio traffic.
             As such an attacker is limited by emitted radio power, redundancy in the number of deployed JAs alleviates the issue and also gives JN a possibility to use the best available link for join.
+            How a network node decides to become a JA is out of scope of this specification.
         </t>
         <t>
             Because the well-known beacon authentication key does not provide any security, it is feasible for an attacker to generate EBs that will get accepted at JN.
             At the time of the join, JN has no means of verifying the content in the EB and has to accept it at "face value".
-            As the join response message in such cases will either fail the security check or will never arrive, JN should implement a blacklist in order to filter out undesired beacons and try to join the next appearingly valid network.
-            Such beacons will prolong the join time of JN and so the time spent in "minimal" <xref target="I-D.ietf-6tisch-minimal"/> duty cycle mode.
-            The recommended practice is to use a private, per-installation beacon authentication key.
-        </t>
-        <t>
-            Compact representation of X.509 certificates specified in this document makes certificate expiration and revocation impossible, as the fields are elided for compactness.
-            Because JCE handles all join requests, revocation can be achieved by simple re-keying where the revoked device is left out of the group. 
-            Compact certificates also necessitate a common Certification Authority (CA) to all devices, as the issuer field is elided.
+            As the join response message in such cases will either fail the security check or will time out, JN may implement a blacklist in order to filter out undesired beacons and try to join the next appearingly valid network.
+            The blacklist alleviates the issue but is effectively limited by node's available memory.
+            Such bogus beacons will prolong the join time of JN and so the time spent in "minimal" <xref target="I-D.ietf-6tisch-minimal"/> duty cycle mode.
+            The permitted practice is to use a private, per-installation beacon authentication key.
         </t>
         <t>
            TODO: Expand on security considerations section. 
