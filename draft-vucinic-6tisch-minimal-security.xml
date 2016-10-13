@@ -480,10 +480,90 @@
             </front>
         </reference>
     </references>
-    <section title="Examples" anchor="sec_examples">
+    <section title="Example" anchor="sec_examples">
         <t>
-            TODO: Add some examples once protocol specification section is finalized.
-        </t>
+            <xref target="fig_example1"/> illustrates a join protocol exchange in case PSKs are used.
+            JN instantiates the OSCOAP context and derives the traffic keys and nonces from the PSK.
+            It uses the instantiated context to protect the CoAP request addressed with Proxy-Uri option and well-known host name that resolves to the JCE's address.
+            The example assumes a JA that is already aware of JCE's IPv6 address and does not need to resolve the "6tisch.jce" host name.
+            JA forwards the request to the JCE based on CoAP proxy processing rules.
+            Once JCE receives the request, it looks up the correct context based on the context identifier (cid) field.
+            Replay protection is ensured by OSCOAP and the tracking of sequence numbers at each side.
+            In the example bellow, the response contains sequence number 7 meaning that there have already been some attempts to join under a given context, not coming from the JN.
+            Once JA receives the response, it looks up and decodes the cid field in order to decide where to forward it.
+            JA constructs the CoAP response to JN by setting the CoAP token to the value decoded from cid and constructs the link-local IPv6 address of JN from the EUI64 address found in the cid.
+            Note that JA does not posses the key to decrypt the COSE object present in the payload so the join_response object is opaque to it.
+            The response is matched to the request and verified for replay protection at JN using OSCOAP processing rules. 
+<figure title="Example of a join protocol exchange. {} denotes encryption and authentication, [] denotes authentication." anchor="fig_example1">
+<artwork><![CDATA[
+  <--E2E OSCOAP-->
+Client  Proxy Server
+  JN     JA     JCE
+   |      |      |
+   +----->|      |            Code: [0.01] (GET)
+   | GET  |      |           Token: 0x8c
+   |      |      |       Proxy-Uri: coap://6tisch.jce/         
+   |      |      | Object-Security: [cid:origin_info, seq:1,
+   |      |      |                   {Uri-Path:"6j"},
+   |      |      |                   <Tag>]
+   |      |      |         Payload: -
+   |      |      |
+   |      +----->|            Code: [0.01] (GET)
+   |      | GET  |           Token: 0x7b
+   |      |      | Object-Security: [cid:origin_info, seq:1,
+   |      |      |                   {Uri-Path:"6j"},
+   |      |      |                   <Tag>]
+   |      |      |         Payload: -
+   |      |      |
+   |      |<-----+            Code: [2.05] (Content)
+   |      | 2.05 |           Token: 0x7b
+   |      |      | Object-Security: -
+   |      |      |         Payload: [cid: origin_info, seq:7,
+   |      |      |                   {join_response}, <Tag>]
+   |      |      |
+   |<-----+      |            Code: [2.05] (Content)
+   | 2.05 |      |           Token: 0x8c
+   |      |      | Object-Security: -
+   |      |      |         Payload: [cid: origin_info, seq:7,
+   |      |      |                   {join_response}, <Tag>]
+   |      |      |
+
+
+]]></artwork>
+</figure>
+        Where origin_info and join_response are as follows.
+
+<figure>
+<artwork><![CDATA[
+origin_info:
+[
+     h'00170d00060d9f0e', / JN's EUI64 /
+     49152, / JN's UDP source port /
+     0x8c   / JN's CoAP token / 
+]
+]]></artwork>
+</figure>
+
+Encodes to h'834800170d00060d9f0e19c000188c' with a size of 15 bytes.
+
+<figure>
+<artwork><![CDATA[
+join_response:
+[    
+    [   / COSE Key Set array with a single key /
+        {
+            1:4, / key type symmetric /
+            -1:h'e6bf4287c2d7618d6a9687445ffd33e6' / key value /
+        }
+    ],
+    h'af93' / assigned short address /
+]
+]]></artwork>
+</figure>
+
+Encodes to h'8281a201042050e6bf4287c2d7618d6a9687445ffd33e642af93' with a size of 26 bytes. 
+
+    </t>
     </section>
 </back>
 </rfc>
