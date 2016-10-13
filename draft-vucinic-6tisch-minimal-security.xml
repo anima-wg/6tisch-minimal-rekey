@@ -148,7 +148,7 @@
                 The JN hears an EB from the JA and synchronizes itself to the joining schedule using the cells contained in the EB.
                 At this point the JN MAY proceed to step 2, or continue to listen for additional EBs. 
                 If more than one EB is heard, the JN MAY use a metric based on DAG rank and received signal level of the EB, or other factors to decide which JA to use for the security handshake in step 3.
-                Details about how a JN chooses the JA are out of scope of this specification.
+                Details on how a JN chooses the JA are out of scope of this specification.
             </t>
         </section>
         <section title="Step 2 - Neighbor Discovery" anchor="sec_nd">
@@ -177,8 +177,7 @@
             </section>
             <section title="Asymmetric Key" anchor="sec_ecc">
                 <t>
-                    When using asymmetric keys, the Security Handshake step is required. Before conducting the Diffie-Hellman key exchange using EDHOC <xref target="I-D.selander-ace-cose-ecdhe"/> the JN and JCE need to receive and validate each other's public key certificate. 
-                    This process is described in <xref target="sec_asymmetric"/>.
+                    When using asymmetric keys, the Security Handshake step is required. Before conducting the Diffie-Hellman key exchange using EDHOC <xref target="I-D.selander-ace-cose-ecdhe"/> the JN and JCE need to receive and validate each other's public key certificate.
                 </t>
             </section>
         </section>
@@ -296,7 +295,7 @@
                         The request method is GET.
                     </t>
                     <t>
-                        The Proxy-URI shall be constructed from JCE's global IPv6 address.
+                        The Proxy-URI shall be constructed from JCE's well-known alias "6tisch.jce" as the host part.
                     </t>
                     <t>
                         The Uri-Path is "6j".
@@ -350,7 +349,7 @@
         <t>
             In order for the JN to be able to validate that the Enahanced Beacon frame is coming from a 6TiSCH network, EB frames are authenticated at the link layer using CCM* per <xref target="IEEE802154e"/>.
             The frame is protected with a 16-byte key, and a 13-byte nonce constructed from current Absolute Slot Number (ASN) and the JAs address, as shown in <xref target="fig_nonceconstruction"/>:
-            <figure title="CCM* nonce construction" anchor="fig_nonceconstruction">
+            <figure title="Link-layer CCM* nonce construction" anchor="fig_nonceconstruction">
 <artwork><![CDATA[
             +-------------------------------------------+
             |  Address (8B or 00-padded 2B) | ASN (5B)  |
@@ -359,8 +358,8 @@
             </figure>
         </t>
         <t>
-            The JN uses the initial key K1 until it is configured with a new link-layer key K2 as described above.
-            JA should accept DATA and ACKNOWLEDGMENT frames secured under K1 during the duration of the join process.
+            The JN uses the initial key K1 <xref target="I-D.ietf-6tisch-minimal"/> until it is configured with a new link-layer key K2 as described above.
+            JA should secure/unsecure DATA and ACKNOWLEDGMENT frames destined/originated at JN with K1 only during the duration of the join process.
             How JA learns whether the join process is ongoing is out of scope of this specification.
         </t>
         <t>
@@ -434,7 +433,6 @@
         <?rfc include='reference.RFC.2119'?>                         <!-- Key words for use in RFCs to Indicate Requirement Levels -->
         <?rfc include='reference.RFC.7252'?>                         <!-- CoAP RFC-->
         <?rfc include='reference.RFC.7049'?>                         <!-- CBOR -->
-        <?rfc include='reference.RFC.5869'?>                         <!-- HMAC -->
         <!-- I-D 6TiSCH -->
         <!-- I-D others -->
         <?rfc include='reference.I-D.ietf-cose-msg'?>
@@ -447,6 +445,7 @@
         <!-- RFC others -->
         <?rfc include='reference.RFC.6775'?>                        <!-- Neighbor Discovery for 6LoWPANs -->
         <?rfc include='reference.RFC.6347'?>                         <!-- DTLS RFC-->
+        <?rfc include='reference.RFC.5869'?>                         <!-- HMAC -->
         <!-- I-D 6TiSCH -->
         <?rfc include='reference.I-D.ietf-6tisch-minimal'?>
         <?rfc include='reference.I-D.ietf-6tisch-architecture'?>
