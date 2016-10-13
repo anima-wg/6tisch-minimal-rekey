@@ -205,6 +205,7 @@
             </t>
             <t>
                 The join response contains one or more (per-peer) link-layer key(s) K2 that the JN will use for subsequent communication.
+                It optionally also contains an IEEE 802.15.4 short-address <xref target="IEEE802154"/> assigned to JN by JCE.  
             </t>
         </section>
     </section>
@@ -315,12 +316,29 @@
                     </t>
 
                     <t>
-                        The payload is a COSE Key Set.
-                        Each key in the Key Set SHALL be a symmetric key (see <xref target="I-D.ietf-cose-msg"/>).
-                        A key that is present in the Key Set and does not have an identifier is assumed to be "K2" link-layer key from <xref target="I-D.ietf-6tisch-minimal"/>.
-                        Parameter "kid" of the COSE Key structure SHALL be used to denote pair-wise keys if present, where the value SHALL be set to the EUI64 address of the corresponding peer.
+                        The payload is a CBOR array containing, in order:
+                        <list style="symbols">
+                            <t> 
+                                COSE Key Set <xref target="I-D.ietf-cose-msg"/>. 
+                                Each key in the Key Set SHALL be a symmetric key.
+                                A key that is present in the Key Set and does not have an identifier is assumed to be "K2" link-layer key from <xref target="I-D.ietf-6tisch-minimal"/>.
+                                Parameter "kid" of the COSE Key structure SHALL be used to denote pair-wise keys if present, where the value SHALL be set to the address of the corresponding peer.
+                            </t>
+                            <t>
+                                Optional byte string representing IEEE 802.15.4 short address assigned to JN. 
+                                If the length of the byte string is different than 2 bytes, the implementation SHOULD ignore it.  
+                            </t>
+                        </list>
                     </t>
                 </list>
+<figure>
+<artwork><![CDATA[
+    payload = [
+        COSE_KeySet,
+        ? short_address : bstr,
+    ]
+]]></artwork>
+</figure>
             </t>
         </section>
     </section>
