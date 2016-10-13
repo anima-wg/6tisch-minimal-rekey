@@ -360,7 +360,8 @@
         </t>
         <t>
             The JN uses the initial key K1 until it is configured with a new link-layer key K2 as described above.
-            TODO: Clarify relation with minimal draft.
+            JA should accept DATA and ACKNOWLEDGMENT frames secured under K1 during the duration of the join process.
+            How JA learns whether the join process is ongoing is out of scope of this specification.
         </t>
         <t>
             As the EB itself does not contain security information, where the link key is known, an attacker may craft a frame that appears to be a valid EB, since the JN can neither know the ASN a priori or verify the address of the JA.
@@ -370,12 +371,7 @@
         <section title="Well-known beacon authentication key" anchor="sec_wellknown">
             <t>
                 For zero-touch operation, where any 6TiSCH device can attempt to join any 6TiSCH network out of the box, a well-known EB link-layer key MUST be used.
-            </t>
-            <t>
-            This key MUST be set to the value:
-            </t>
-            <t>
-                              0x2851f6d0c0f936a6bc1570856978b36
+                The value of this key is specified in <xref target="I-D.ietf-6tisch-minimal"/>.
             </t>
         </section>
         <section title="Private beacon authentication key" anchor="sec_privatekey">
