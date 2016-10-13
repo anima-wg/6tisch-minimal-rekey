@@ -196,8 +196,8 @@
                 The join response is sent from the JCE to the JN through JA that serves as a stateless relay.
                 Packet contaning the join response travels on the path from JCE to JA using pre-established routes in the network.
                 The JA delivers it to the JN using the slot information from the EB.
-                JA operates as the application layer proxy and does not keep any state to relay the packet.
-                It uses information sent in clear within the join response to decide where to forward the message.
+                JA operates as the application-layer proxy and does not keep any state to relay the message.
+                It uses information sent in clear within the join response to decide where to forward.
             </t>
             <t>
                 The join response is authenticated/encrypted using AES-CCM-16-64-128 algorithm from <xref target="I-D.ietf-cose-msg"/> with the shared secret from step 3. 
@@ -345,8 +345,7 @@
     <section title="Link-layer requirements" anchor="sec_llreq">
         <t>
             All frames in a 6TiSCH network MUST use link-layer frame security. 
-            The frame security options MUST include frame authentication, and MAY include frame encryption for frames that do not include a 6LoWPAN dispatch byte, i.e. link-layer content only frames.
-            TODO: Clarify the above sentence.
+            The frame security options MUST include frame authentication, and MAY include frame encryption.
         </t>
         <t>
             In order for the JN to be able to validate that the Enahanced Beacon frame is coming from a 6TiSCH network, EB frames are authenticated at the link layer using CCM* per <xref target="IEEE802154e"/>.
