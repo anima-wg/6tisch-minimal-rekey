@@ -386,15 +386,9 @@
             Certificates may be used to exchange public keys between the JN and JCE.  
             The key pair is generated using elliptic curve secp256r1, and the certificate containing the public key is signed using ECDSA.
             The certificate itself may be a compact representation of an X.509 certificate, or a full X.509 certificate. 
+            Compact representation of X.509 certificates is out of scope of this specification.
             The certificate is signed by a root CA whose certificate is installed on all nodes participating in a particular 6TiSCH network, allowing each node to validate the certificate of the JCE or JN as appropriate.
         </t>
-        <section title="Compact X.509" anchor="sec_compactx509">
-            <t>
-                In order to minimize traffic between the JCE and JN, a compact representation of the X.509 certificate MAY be used.
-                All fields other than the public key and signature are elided.
-                TODO: Rephrase compact certificates.
-            </t>
-        </section>
     </section>
     <section title="Security Considerations" anchor="sec_securityconsiderations">
         <t>
