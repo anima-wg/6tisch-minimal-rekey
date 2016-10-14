@@ -67,7 +67,7 @@
 <middle>
     <section title="Introduction"                                    anchor="sec_intro">
         <t>
-            When a previously unknown device seeks admission to a 6TiSCH <xref target="RFC7554"/> network (to "join"), it first needs to synhronize to the network.
+            When a previously unknown device seeks admission to a 6TiSCH <xref target="RFC7554"/> network (to "join"), it first needs to synchronize to the network.
             The device then configures its IPv6 address and authenticates itself, and also validates that it is joining the right network. 
             At this point it can expect to interact with the network to configure its link-layer keying material.
             Only then the node may establish an end-to-end secure session with an Internet host using DTLS <xref target="RFC6347"/> or OSCOAP <xref target="I-D.selander-ace-object-security"/>. 
@@ -107,7 +107,7 @@
                     This frame provides network synchronization information, and tells the device when it can send a frame to the node sending the beacons, which plays the role of Join Assistant (JA) for the JN, and when it can expect to receive a frame.
                 </t>
                 <t>
-                    The JN configures its link-local IPv6 address and advertizes it to JA. 
+                    The JN configures its link-local IPv6 address and advertises it to JA. 
                 </t>
                 <t>
                     The JN sends packets to the JA device that securely identifies the new device to the network. 
@@ -168,7 +168,7 @@
                 <t>
                     In case the EDHOC step is omitted, the key used for protection of the join request and join response in the next step is the PSK.
                     This means that the protocol trades off perfect forward secrecy for reduced traffic load between JN and JCE.
-                    A consequence is that if the long-term PSK is compromised, keying material transfered as part of the join response is compromised as well.
+                    A consequence is that if the long-term PSK is compromised, keying material transferred as part of the join response is compromised as well.
                     Physical compromise of the JN, however, would also imply the compromise of the same keying material, as it is likely to be found in node's memory.
                 </t>
                 <t>
@@ -193,7 +193,7 @@
         <section title="Step 5 - Join Response" anchor="sec_joinresponse">
             <t>
                 The join response is sent from the JCE to the JN through JA that serves as a stateless relay.
-                Packet contaning the join response travels on the path from JCE to JA using pre-established routes in the network.
+                Packet containing the join response travels on the path from JCE to JA using pre-established routes in the network.
                 The JA delivers it to the JN using the slot information from the EB.
                 JA operates as the application-layer proxy and does not keep any state to relay the message.
                 It uses information sent in clear within the join response to decide where to forward.
@@ -347,8 +347,8 @@
             The frame security options MUST include frame authentication, and MAY include frame encryption.
         </t>
         <t>
-            In order for the JN to be able to validate that the Enahanced Beacon frame is coming from a 6TiSCH network, EB frames are authenticated at the link layer using CCM* per <xref target="IEEE802154e"/>.
-            The frame is protected with a 16-byte key, and a 13-byte nonce constructed from current Absolute Slot Number (ASN) and the JAs address, as shown in <xref target="fig_nonceconstruction"/>:
+            In order for the JN to be able to validate that the Enhanced Beacon frame is coming from a 6TiSCH network, EB frames are authenticated at the link layer using CCM* per <xref target="IEEE802154e"/>.
+            Link-layer frames are protected with a 16-byte key, and a 13-byte nonce constructed from current Absolute Slot Number (ASN) and the source (the JA for EBs) address, as shown in <xref target="fig_nonceconstruction"/>:
             <figure title="Link-layer CCM* nonce construction" anchor="fig_nonceconstruction">
 <artwork><![CDATA[
             +-------------------------------------------+
@@ -359,7 +359,7 @@
         </t>
         <t>
             The JN uses the initial key K1 <xref target="I-D.ietf-6tisch-minimal"/> until it is configured with a new link-layer key K2 as described above.
-            JA should secure/unsecure DATA and ACKNOWLEDGMENT frames destined/originated at JN with K1 only during the duration of the join process.
+            JA should secure/verify DATA and ACKNOWLEDGMENT frames destined/originated at JN with K1 only during the duration of the join process.
             How JA learns whether the join process is ongoing is out of scope of this specification.
         </t>
         <t>
@@ -405,13 +405,10 @@
         <t>
             Because the well-known beacon authentication key does not provide any security, it is feasible for an attacker to generate EBs that will get accepted at JN.
             At the time of the join, JN has no means of verifying the content in the EB and has to accept it at "face value".
-            As the join response message in such cases will either fail the security check or will time out, JN may implement a blacklist in order to filter out undesired beacons and try to join the next appearingly valid network.
+            As the join response message in such cases will either fail the security check or will time out, JN may implement a blacklist in order to filter out undesired beacons and try to join the next seemingly valid network.
             The blacklist alleviates the issue but is effectively limited by node's available memory.
             Such bogus beacons will prolong the join time of JN and so the time spent in "minimal" <xref target="I-D.ietf-6tisch-minimal"/> duty cycle mode.
             The permitted practice is to use a private, per-installation beacon authentication key.
-        </t>
-        <t>
-           TODO: Expand on security considerations section. 
         </t>
     </section>
     <section title="IANA Considerations" anchor="sec_ianaconsiderations">
