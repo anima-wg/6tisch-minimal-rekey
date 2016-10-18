@@ -219,7 +219,8 @@
         </t>
         <section title="Proxy Operation of JA" anchor="sec_proxy">
         <t>
-            JN designates a JA as a proxy by including in the CoAP requests to JA the Proxy-URI option with string "6tisch.jce" as the host part.
+            JN designates a JA as a proxy by including in the CoAP requests to the JA the Proxy-Scheme option with value "coap" (CoAP-to-CoAP proxy).
+            JN MUST include the Uri-Host option with its value set to the well-known JCE's alias - "6tisch.jce".
             JN does not need to learn the actual IPv6 address of JCE at any time during the join protocol.
             JA resolves the address by performing a GET request at "/jce" resource of its parent in the DODAG.
         </t>
@@ -295,10 +296,13 @@
                         The request method is GET.
                     </t>
                     <t>
-                        The Proxy-URI shall be constructed from JCE's well-known alias "6tisch.jce" as the host part.
+                        The Proxy-Scheme option is set to "coap".
                     </t>
                     <t>
-                        The Uri-Path is "6j".
+                        The Uri-Host option is set to "6tisch.jce".
+                    </t>
+                    <t>
+                        The Uri-Path option is set to "j".
                     </t>
                     <t>
                         The object security option SHALL be set according to <xref target="I-D.selander-ace-object-security"/> and OSCOAP parameters set as described above.
@@ -480,9 +484,9 @@
         <t>
             <xref target="fig_example1"/> illustrates a join protocol exchange in case PSKs are used.
             JN instantiates the OSCOAP context and derives the traffic keys and nonces from the PSK.
-            It uses the instantiated context to protect the CoAP request addressed with Proxy-Uri option and well-known host name that resolves to the JCE's address.
-            The example assumes a JA that is already aware of JCE's IPv6 address and does not need to resolve the "6tisch.jce" host name.
-            JA forwards the request to the JCE based on CoAP proxy processing rules.
+            It uses the instantiated context to protect the CoAP request addressed with Proxy-Scheme option and well-known host name of JCE in the Uri-Host option.
+            The example assumes a JA that is already aware of JCE's IPv6 address and does not need to resolve the well-known "6tisch.jce" host name.
+            Triggered by the presence of Proxy-Scheme option, JA forwards the request to the JCE.
             Once JCE receives the request, it looks up the correct context based on the context identifier (cid) field.
             Replay protection is ensured by OSCOAP and the tracking of sequence numbers at each side.
             In the example bellow, the response contains sequence number 7 meaning that there have already been some attempts to join under a given context, not coming from the JN.
@@ -498,16 +502,18 @@ Client  Proxy Server
    |      |      |
    +----->|      |            Code: [0.01] (GET)
    | GET  |      |           Token: 0x8c
-   |      |      |       Proxy-Uri: coap://6tisch.jce/         
+   |      |      |    Proxy-Scheme: coap
+   |      |      |        Uri-Host: [6tisch.jce]
    |      |      | Object-Security: [cid:origin_info, seq:1,
-   |      |      |                   {Uri-Path:"6j"},
+   |      |      |                   {Uri-Path:"j"},
    |      |      |                   <Tag>]
    |      |      |         Payload: -
    |      |      |
    |      +----->|            Code: [0.01] (GET)
    |      | GET  |           Token: 0x7b
+   |      |      |        Uri-Host: [6tisch.jce]
    |      |      | Object-Security: [cid:origin_info, seq:1,
-   |      |      |                   {Uri-Path:"6j"},
+   |      |      |                   {Uri-Path:"j"},
    |      |      |                   <Tag>]
    |      |      |         Payload: -
    |      |      |
