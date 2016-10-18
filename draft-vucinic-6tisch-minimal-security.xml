@@ -488,13 +488,46 @@
             The example assumes a JA that is already aware of JCE's IPv6 address and does not need to resolve the well-known "6tisch.jce" host name.
             Triggered by the presence of Proxy-Scheme option, JA forwards the request to the JCE.
             Once JCE receives the request, it looks up the correct context based on the context identifier (cid) field.
+            It reconstructs OSCOAP's external Additional Authenticated Data (AAD) needed for verification based on:
+            <list style="symbols">
+                <t>
+                    Version field of the received CoAP header.
+                </t>
+                <t>
+                    Code field of the received CoAP header.
+                </t>
+                <t>
+                    Algorithm being the AES-CCM-16-64-128 from <xref target="I-D.ietf-cose-msg"/>.
+                </t>
+                <t>
+                    Request URI reconstructed following <xref target="I-D.selander-ace-object-security"/>.
+                </t>
+            </list>
             Replay protection is ensured by OSCOAP and the tracking of sequence numbers at each side.
             In the example bellow, the response contains sequence number 7 meaning that there have already been some attempts to join under a given context, not coming from the JN.
             Once JA receives the response, it looks up and decodes the cid field in order to decide where to forward it.
             JA constructs the CoAP response to JN by setting the CoAP token to the value decoded from cid and constructs the link-local IPv6 address of JN from the EUI64 address found in the cid.
             Note that JA does not posses the key to decrypt the COSE object present in the payload so the join_response object is opaque to it.
-            The response is matched to the request and verified for replay protection at JN using OSCOAP processing rules. 
-<figure title="Example of a join protocol exchange. {} denotes encryption and authentication, [] denotes authentication." anchor="fig_example1">
+            The response is matched to the request and verified for replay protection at JN using OSCOAP processing rules.
+            Namely, to verify the response JN reconstructs the AAD based on:
+            <list style="symbols">
+                <t>
+                    Version field of the received CoAP header.
+                </t>
+                <t>
+                    Code field of the received CoAP header.
+                </t>
+                <t>
+                    Algorithm being the AES-CCM-16-64-128 from <xref target="I-D.ietf-cose-msg"/>.
+                </t>
+                <t>
+                    Transaction identifier (Tid) of the corresponding CoAP request.
+                    Tid contains the context identifier (origin_info object), Sender ID (0x00 for JN), and Sender Sequence number (set to 1 in the example).
+                </t>
+            </list>
+            In addition to AAD, JN also uses the explicit, protected fields in the COSE message, present in the payload of the response.
+            For more details, see <xref target="I-D.selander-ace-object-security"/> and <xref target="I-D.ietf-cose-msg"/>.
+<figure title="Example of a join protocol exchange with a PSK. {} denotes encryption and authentication, [] denotes authentication." anchor="fig_example1">
 <artwork><![CDATA[
   <--E2E OSCOAP-->
 Client  Proxy Server
