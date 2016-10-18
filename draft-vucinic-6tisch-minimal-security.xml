@@ -280,6 +280,7 @@
                         Sender ID of JN MUST be set to 0x00, while the ID of JCE MUST be set to 0x01.
                     </t>
                 </list>
+                The hash algorithm that instantiates HKDF MUST be SHA-256 <xref target="RFC4231"/>.
                 The derivation in <xref target="I-D.selander-ace-object-security"/> results in traffic keys and static IVs for each side of the conversation.
                 Nonces are constructed by XOR'ing the static IV with current sequence number.
                 Note that the address of JCE does not take part in nonce construction and that Sender ID values of each side distinguish between a request and a response.
@@ -447,6 +448,7 @@
         <?rfc include='reference.RFC.6775'?>                        <!-- Neighbor Discovery for 6LoWPANs -->
         <?rfc include='reference.RFC.6347'?>                         <!-- DTLS RFC-->
         <?rfc include='reference.RFC.5869'?>                         <!-- HMAC -->
+        <?rfc include='reference.RFC.4231'?>                        <!-- SHA-256 test vectors -->
         <!-- I-D 6TiSCH -->
         <?rfc include='reference.I-D.ietf-6tisch-minimal'?>
         <?rfc include='reference.I-D.ietf-6tisch-architecture'?>
