@@ -441,6 +441,19 @@
             The permitted practice is to use a private, per-installation beacon authentication key.
         </t>
     </section>
+    <section title="Privacy Considerations" anchor="sec_privacy">
+        <t>
+            This specification relies on the uniqueness of EUI64 that is transferred in clear as part of the security context identifier.
+            Privacy implications of using such long-term identifier are discussed in <xref target="RFC7721"/> and comprise correlation of activities over time, location tracking, address scanning and device-specific vulnerability exploitation.
+            Since the join protocol is executed rarely compared to the network lifetime, long-term threats that arise from using EUI64 are minimal.
+            In addition, the join response message contains an optional short address which can be assigned by JCE to JN.
+            Short address is independent of the long-term identifier EUI64 and is encrypted in the response.
+            For that reason, it is not possible to correlate the short address with the EUI64 used during the join.
+            Use of short addresses once the join protocol completes mitigates the aforementioned privacy risks.
+            In addition, EDHOC may be used for identity protection during the join protocol by generating a random context identifier in place of the EUI64.
+            Details of that approach are left for further study.
+        </t>
+    </section>
     <section title="IANA Considerations" anchor="sec_ianaconsiderations">
         <t>
                There is no IANA action required for this document.
@@ -474,6 +487,7 @@
         <?rfc include='reference.RFC.6347'?>                         <!-- DTLS RFC-->
         <?rfc include='reference.RFC.5869'?>                         <!-- HMAC -->
         <?rfc include='reference.RFC.4231'?>                        <!-- SHA-256 test vectors -->
+        <?rfc include='reference.RFC.7721'?>                        <!-- Security and Privacy Considerations fo IPv6 Address Generation Mechanisms -->
         <!-- I-D 6TiSCH -->
         <?rfc include='reference.I-D.ietf-6tisch-minimal'?>
         <?rfc include='reference.I-D.ietf-6tisch-architecture'?>
