@@ -537,7 +537,7 @@ Client  Proxy Server
    |      |      |
    +----->|      |            Code: [0.01] (GET)
    | GET  |      |           Token: 0x8c
-   |      |      |    Proxy-Scheme: coap
+   |      |      |    Proxy-Scheme: [coap]
    |      |      |        Uri-Host: [6tisch.jce]
    |      |      | Object-Security: [cid:origin_info, seq:1,
    |      |      |                   {Uri-Path:"j"},
