@@ -103,7 +103,7 @@
             When a previously unknown device seeks admission to a 6TiSCH <xref target="RFC7554"/> network, the following exchange occurs:
             <list style="numbers">
                 <t>
-                    The JN listens for an Enhanced Beacon (EB) frame <xref target="IEEE802154e"/>. 
+                    The JN listens for an Enhanced Beacon (EB) frame <xref target="IEEE802154-2015"/>. 
                     This frame provides network synchronization information, and tells the device when it can send a frame to the node sending the beacons, which plays the role of Join Assistant (JA) for the JN, and when it can expect to receive a frame.
                 </t>
                 <t>
@@ -111,7 +111,7 @@
                 </t>
                 <t>
                     The JN sends packets to the JA device that securely identifies the new device to the network. 
-                    These packets are directed to the Join Coordination Entity or JCE, which may be the JA or another device.
+                    These packets are directed to the Join Coordination Entity (JCE), which may be the JA or another device.
                 </t>
                 <t>
                     The JN receives one or more packets from JCE (via the JA) that sets up one or more link-layer keys used to authenticate subsequent transmissions to peers.
@@ -204,7 +204,7 @@
             </t>
             <t>
                 The join response contains one or more (per-peer) link-layer key(s) K2 that the JN will use for subsequent communication.
-                It optionally also contains an IEEE 802.15.4 short-address <xref target="IEEE802154"/> assigned to JN by JCE.  
+                It optionally also contains an IEEE 802.15.4 short-address <xref target="IEEE802154-2015"/> assigned to JN by JCE.  
             </t>
         </section>
     </section>
@@ -352,7 +352,7 @@
             The frame security options MUST include frame authentication, and MAY include frame encryption.
         </t>
         <t>
-            In order for the JN to be able to validate that the Enhanced Beacon frame is coming from a 6TiSCH network, EB frames are authenticated at the link layer using CCM* per <xref target="IEEE802154e"/>.
+            In order for the JN to be able to validate that the Enhanced Beacon frame is coming from a 6TiSCH network, EB frames are authenticated at the link layer using CCM* per <xref target="IEEE802154-2015"/>.
             Link-layer frames are protected with a 16-byte key, and a 13-byte nonce constructed from current Absolute Slot Number (ASN) and the source (the JA for EBs) address, as shown in <xref target="fig_nonceconstruction"/>:
             <figure title="Link-layer CCM* nonce construction" anchor="fig_nonceconstruction">
 <artwork><![CDATA[
@@ -368,7 +368,7 @@
             How JA learns whether the join process is ongoing is out of scope of this specification.
         </t>
         <t>
-            As the EB itself does not contain security information, where the link key is known, an attacker may craft a frame that appears to be a valid EB, since the JN can neither know the ASN a priori or verify the address of the JA.
+            As the EB itself does not contain security information, where the link key is known, an attacker may craft a frame that appears to be a valid EB, since the JN can neither know the ASN a priori nor verify the address of the JA.
             This permits a Denial of Service (DoS) attack at the JN.  
             Beacon authentication keys are discussed in <xref target="sec_wellknown"/> and <xref target="sec_privatekey"/>.
         </t>
@@ -459,26 +459,15 @@
         <!-- external -->
     </references>
     <references title="External Informative References">
-        <reference anchor="IEEE802154">
+        <reference anchor="IEEE802154-2015">
             <front>
                 <title>
-                    IEEE std. 802.15.4, Part. 15.4: Wireless Medium Access Control (MAC) and Physical Layer (PHY) Specifications for Low-Rate Wireless Personal Area Networks
+                    IEEE Std 802.15.4-2015 Standard for Low-Rate Wireless Personal Area Networks (WPANs)
                 </title>
                 <author>
                     <organization>IEEE standard for Information Technology</organization>
                 </author>
-                <date/>
-            </front>
-        </reference>
-        <reference anchor="IEEE802154e">
-            <front>
-                <title>
-                    IEEE standard for Information Technology, IEEE std.802.15.4, Part. 15.4: Wireless Medium Access Control (MAC) and Physical Layer (PHY) Specifications for Low-Rate Wireless Personal Area Networks, June 2011 as amended by IEEE std. 802.15.4e, Part. 15.4: Low-Rate Wireless Personal Area Networks (LR-WPANs) Amendment 1: MAC sublayer
-                </title>
-                <author>
-                    <organization>IEEE standard for Information Technology</organization>
-                </author>
-                <date month="April" year="2012"/>
+                <date month="December" year="2015"/>
             </front>
         </reference>
     </references>
