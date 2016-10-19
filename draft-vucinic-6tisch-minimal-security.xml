@@ -343,6 +343,11 @@
 ]]></artwork>
 </figure>
             </t>
+            <t>
+                In case JCE determines that JN is not supposed to join the network (e.g. by failing to find an appropriate security context), it should respond with a 4.01 Unauthorized error.
+                Upon reception of a 4.01 Unauthorized, JN SHALL attempt to join the next advertised 6TiSCH network.
+                If all join attempts have failed at JN, JN should signal to the user by an out-of-band mechanism the presence of an error condition.
+            </t>
         </section>
     </section>
     <section title="Link-layer requirements" anchor="sec_llreq">
