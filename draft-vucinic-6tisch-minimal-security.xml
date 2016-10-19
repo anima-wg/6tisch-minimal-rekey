@@ -78,7 +78,19 @@
         </t>
         <t>
             It presumes a network as described by <xref target="I-D.ietf-6tisch-architecture"/>, <xref target="I-D.ietf-6tisch-6top-protocol"/>, and <xref target="I-D.ietf-6tisch-terminology"/>.
-            It assumes the joining device preconfigured with a pre-shared key (PSK) or a locally-valid certificate and expects as the outcome of the join process one or more link-layer key(s).
+            It assumes the joining device pre-configured with either a:
+            <list style="symbols">
+            <t> 
+                pre-shared key (PSK), 
+            </t>
+            <t>
+                raw public key (RPK), 
+            </t>
+            <t>
+                or a locally-valid certificate and a trust anchor.
+            </t>
+            </list>
+            As the outcome of the join process the joining device expects one or more link-layer key(s) and optionally a temporary network identifier.
         </t>
     </section>
     <section title="Terminology" anchor="sec_terminology">
@@ -177,7 +189,9 @@
             </section>
             <section title="Asymmetric Keys" anchor="sec_ecc">
                 <t>
-                    When using asymmetric keys, the Security Handshake step is required. Before conducting the Diffie-Hellman key exchange using EDHOC <xref target="I-D.selander-ace-cose-ecdhe"/> the JN and JCE need to receive and validate each other's public key certificate.
+                    When using asymmetric keys, the Security Handshake step is required.
+                    Before conducting the Diffie-Hellman key exchange using EDHOC <xref target="I-D.selander-ace-cose-ecdhe"/> the JN and JCE need to receive and validate each other's public key certificate.
+                    When RPKs are pre-configured at JN and JCE, they can directly proceed to the handshake.
                 </t>
             </section>
         </section>
@@ -391,7 +405,7 @@
     </section>
     <section title="Asymmetric Keys" anchor="sec_asymmetric">
         <t>
-            Certificates may be used to exchange public keys between the JN and JCE.  
+            Certificates or pre-configured RPKs may be used to exchange public keys between the JN and JCE.
             The key pair is generated using elliptic curve secp256r1, and the certificate containing the public key is signed using ECDSA.
             The certificate itself may be a compact representation of an X.509 certificate, or a full X.509 certificate. 
             Compact representation of X.509 certificates is out of scope of this specification.
