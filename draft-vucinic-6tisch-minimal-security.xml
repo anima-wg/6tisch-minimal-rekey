@@ -97,7 +97,7 @@
         <t>
             The reader is expected to be familiar with the terms and concepts defined in <xref target="I-D.ietf-6tisch-terminology"/>, <xref target="RFC7252"/>, and <xref target="I-D.selander-ace-object-security"/>.
 
-            The entities participating in the protocol that is specified in this document are defined bellow.
+            The entities participating in the protocol that is specified in this document are defined below.
         </t>
         <t>
             JN: Joining node - the device attempting to join a particular 6TiSCH network.
@@ -534,7 +534,7 @@
                 </t>
             </list>
             Replay protection is ensured by OSCOAP and the tracking of sequence numbers at each side.
-            In the example bellow, the response contains sequence number 7 meaning that there have already been some attempts to join under a given context, not coming from the JN.
+            In the example below, the response contains sequence number 7 meaning that there have already been some attempts to join under a given context, not coming from the JN.
             Once JA receives the response, it looks up and decodes the cid field in order to decide where to forward it.
             JA constructs the CoAP response to JN by setting the CoAP token to the value decoded from cid and constructs the link-local IPv6 address of JN from the EUI64 address found in the cid.
             Note that JA does not posses the key to decrypt the COSE object present in the payload so the join_response object is opaque to it.
