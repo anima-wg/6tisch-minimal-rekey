@@ -70,7 +70,7 @@
             When a previously unknown device seeks admission to a 6TiSCH <xref target="RFC7554"/> network (to "join"), it first needs to synchronize to the network.
             The device then configures its IPv6 address and authenticates itself, and also validates that it is joining the right network. 
             At this point it can expect to interact with the network to configure its link-layer keying material.
-            Only then the node may establish an end-to-end secure session with an Internet host using DTLS <xref target="RFC6347"/> or OSCOAP <xref target="I-D.selander-ace-object-security"/>. 
+            Only then the node may establish an end-to-end secure session with an Internet host using DTLS <xref target="RFC6347"/> or OSCOAP <xref target="I-D.ietf-core-object-security"/>. 
             Once the application requirements are known, the device interacts with its peers to request additional resources as needed, or to be reconfigured as the network changes <xref target="I-D.ietf-6tisch-6top-protocol"/>.
         </t>
         <t>
@@ -95,7 +95,7 @@
     </section>
     <section title="Terminology" anchor="sec_terminology">
         <t>
-            The reader is expected to be familiar with the terms and concepts defined in <xref target="I-D.ietf-6tisch-terminology"/>, <xref target="RFC7252"/>, and <xref target="I-D.selander-ace-object-security"/>.
+            The reader is expected to be familiar with the terms and concepts defined in <xref target="I-D.ietf-6tisch-terminology"/>, <xref target="RFC7252"/>, and <xref target="I-D.ietf-core-object-security"/>.
 
             The entities participating in the protocol that is specified in this document are defined below.
         </t>
@@ -229,7 +229,7 @@
             Since JA is likely a constrained device, it does not need to implement a cache but rather process forwarding-related CoAP options and make requests on behalf of JN that is not yet part of the network.
         </t>
         <t>
-            JN and JCE MUST protect their exchange end-to-end (i.e. through the proxy) using Object Security of CoAP (OSCOAP) <xref target="I-D.selander-ace-object-security"/>.
+            JN and JCE MUST protect their exchange end-to-end (i.e. through the proxy) using Object Security of CoAP (OSCOAP) <xref target="I-D.ietf-core-object-security"/>.
         </t>
         <section title="Proxy Operation of JA" anchor="sec_proxy">
         <t>
@@ -278,7 +278,7 @@
         </section>
         <section title="OSCOAP Security Context Instantiation" anchor="sec_oscoapinst">
             <t>
-                The OSCOAP security context MUST be derived at JN and JCE as per Section 3.2 of <xref target="I-D.selander-ace-object-security"/> using HKDF <xref target="RFC5869"/> as the key derivation function.
+                The OSCOAP security context MUST be derived at JN and JCE as per Section 3.2 of <xref target="I-D.ietf-core-object-security"/> using HKDF <xref target="RFC5869"/> as the key derivation function.
                 <list style="symbols">
                     <t>
                         Context Identifier (Cid) MUST be the origin_info object wrapped as a byte string (bstr).
@@ -295,7 +295,7 @@
                     </t>
                 </list>
                 The hash algorithm that instantiates HKDF MUST be SHA-256 <xref target="RFC4231"/>.
-                The derivation in <xref target="I-D.selander-ace-object-security"/> results in traffic keys and static IVs for each side of the conversation.
+                The derivation in <xref target="I-D.ietf-core-object-security"/> results in traffic keys and static IVs for each side of the conversation.
                 Nonces are constructed by XOR'ing the static IV with current sequence number.
                 The context derivation process occurs exactly once.
                 Implementations MUST ensure that multiple CoAP requests to different JCEs result in the use of the same OSCOAP context so that sequence numbers are properly incremented for each request.
@@ -319,7 +319,7 @@
                         The Uri-Path option is set to "j".
                     </t>
                     <t>
-                        The object security option SHALL be set according to <xref target="I-D.selander-ace-object-security"/> and OSCOAP parameters set as described above.
+                        The object security option SHALL be set according to <xref target="I-D.ietf-core-object-security"/> and OSCOAP parameters set as described above.
                     </t>
                 </list>
             </t>
@@ -476,7 +476,7 @@
         <!-- I-D 6TiSCH -->
         <!-- I-D others -->
         <?rfc include='reference.I-D.ietf-cose-msg'?>
-        <?rfc include='reference.I-D.selander-ace-object-security'?>
+        <?rfc include='reference.I-D.ietf-core-object-security'?>
         <!-- external -->
     </references>
     <references title="Informative References">
@@ -530,7 +530,7 @@
                     Algorithm being the AES-CCM-16-64-128 from <xref target="I-D.ietf-cose-msg"/>.
                 </t>
                 <t>
-                    Request URI reconstructed following <xref target="I-D.selander-ace-object-security"/>.
+                    Request URI reconstructed following <xref target="I-D.ietf-core-object-security"/>.
                 </t>
             </list>
             Replay protection is ensured by OSCOAP and the tracking of sequence numbers at each side.
@@ -556,7 +556,7 @@
                 </t>
             </list>
             In addition to AAD, JN also uses the explicit, protected fields in the COSE message, present in the payload of the response.
-            For more details, see <xref target="I-D.selander-ace-object-security"/> and <xref target="I-D.ietf-cose-msg"/>.
+            For more details, see <xref target="I-D.ietf-core-object-security"/> and <xref target="I-D.ietf-cose-msg"/>.
 <figure title="Example of a join protocol exchange with a PSK. {} denotes encryption and authentication, [] denotes authentication." anchor="fig_example1">
 <artwork><![CDATA[
   <--E2E OSCOAP-->
