@@ -451,8 +451,7 @@
             Short address is independent of the long-term identifier EUI64 and is encrypted in the response.
             For that reason, it is not possible to correlate the short address with the EUI64 used during the join.
             Use of short addresses once the join protocol completes mitigates the aforementioned privacy risks.
-            In addition, EDHOC may be used for identity protection during the join protocol by generating a random context identifier in place of the EUI64.
-            Details of that approach are left for further study.
+            In addition, EDHOC may be used for identity protection during the join protocol by generating a random context identifier in place of the EUI64 <xref target="I-D.selander-ace-cose-ecdhe"/>.
         </t>
     </section>
     <section title="IANA Considerations" anchor="sec_ianaconsiderations">
