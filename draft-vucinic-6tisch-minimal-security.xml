@@ -170,18 +170,19 @@
         </section>
         <section title="Step 3 - Security Handshake" anchor="sec_handshake">
             <t>
-                The optional security handshake between JN and JCE uses Ephemeral Diffie-Hellman over COSE (EDHOC) <xref target="I-D.selander-ace-cose-ecdhe"/> to establish the shared secret used to encrypt the join request and join response.
+                The security handshake between JN and JCE uses Ephemeral Diffie-Hellman over COSE (EDHOC) <xref target="I-D.selander-ace-cose-ecdhe"/> to establish the shared secret used to encrypt the join request and join response.
+            </t>
+            <t>
+                The security handshake step is optional in case PSKs are used, while it is required for RPKs and certificates.
+                In case the handshake step is omitted, the shared secret used for protection of the join request and join response in the next step is the PSK.
+                This means that the protocol trades off perfect forward secrecy for reduced traffic load between JN and JCE.
+                A consequence is that if the long-term PSK is compromised, keying material transferred as part of the join response is compromised as well.
+                Physical compromise of the JN, however, would also imply the compromise of the same keying material, as it is likely to be found in node's memory.
             </t>
             <section title="Pre-Shared Key" anchor="sec_psk">
                 <t>
-                    When using a pre-shared symmetric key, the Diffie-Hellman key exchange and the use of EDHOC is optional. 
+                    The Diffie-Hellman key exchange and the use of EDHOC is optional, when using a pre-shared symmetric key.
                     This cuts down on traffic between JCE and JN, but requires pre-configuration of the shared key on both devices.
-                </t>
-                <t>
-                    In case the EDHOC step is omitted, the key used for protection of the join request and join response in the next step is the PSK.
-                    This means that the protocol trades off perfect forward secrecy for reduced traffic load between JN and JCE.
-                    A consequence is that if the long-term PSK is compromised, keying material transferred as part of the join response is compromised as well.
-                    Physical compromise of the JN, however, would also imply the compromise of the same keying material, as it is likely to be found in node's memory.
                 </t>
                 <t>
                     It is REQUIRED to use unique PSKs for each JN.
@@ -189,7 +190,7 @@
             </section>
             <section title="Asymmetric Keys" anchor="sec_ecc">
                 <t>
-                    When using asymmetric keys, the Security Handshake step is required.
+                    The Security Handshake step is required, when using asymmetric keys.
                     Before conducting the Diffie-Hellman key exchange using EDHOC <xref target="I-D.selander-ace-cose-ecdhe"/> the JN and JCE need to receive and validate each other's public key certificate.
                     When RPKs are pre-configured at JN and JCE, they can directly proceed to the handshake.
                 </t>
