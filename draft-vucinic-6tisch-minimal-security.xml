@@ -457,6 +457,9 @@
     </section>
     <section title="Acknowledgments" anchor="sec_ack">
         <t>
+            The work on this document has been partially supported by the European Union’s H2020 Programme for research, technological development and demonstration under grant agreement No 644852, project ARMOUR.
+        </t>
+        <t>
             The authors are grateful to Thomas Watteyne and Goeran Selander for reviewing the draft. 
             The authors would also like to thank Francesca Palombini and Ludwig Seitz for participating in the discussions that have helped shape the document.
         </t>
