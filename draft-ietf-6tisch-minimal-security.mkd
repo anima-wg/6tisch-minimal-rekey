@@ -151,8 +151,9 @@ how far it is from the DAG root, or how to route to the JCE.  Only
 after establishing one or more link-layer keys does it need to know
 about the particulars of a 6TiSCH network.
 
-The handshake is shown as a transaction diagram in Figure 1:
+The handshake is shown as a transaction diagram in {{sequence-diagram}}:
 
+~~~~~~~~~~~
       +-----+               +----------+              +-----------+
       | JCE |               |    JA    |              |     JN    |
       |     |               |          |              |           |
@@ -168,8 +169,9 @@ The handshake is shown as a transaction diagram in Figure 1:
          |                        |                            |
          |----Join response (5a)--|--------Join response (5)-->|
          |                        |                            |
-
-               Figure 1: Message sequence for join protocol.
+~~~~~~~~~~~
+{: #sequence-diagram title="Message sequence for join protocol."}
+{: artwork-align="center"}
 
 The details of each step are described in the following sections.
 
@@ -257,7 +259,7 @@ assigned to JN by JCE.
 
 # Protocol Specification
 
-The join protocol in Figure 1 is implemented over Constrained
+The join protocol in {{sequence-diagram}} is implemented over Constrained
 Application Protocol (CoAP) {{RFC7252}}.  JN plays the role of a CoAP
 client, JCE the role of a CoAP server, while JA implements CoAP
 forward proxy functionality {{RFC7252}}.  Since JA is likely a
@@ -306,11 +308,13 @@ containing:
 * source_port: JN's UDP source port
 * token: JN's CoAP token
 
+~~~~~~~~~~~
         origin_info = [
            EUI64 : bstr,
            source_port : uint,
            token : uint
         ]
+~~~~~~~~~~~
 
 ##  OSCOAP Security Context Instantiation
 
@@ -370,10 +374,12 @@ CoAP response:
          assigned to JN.  If the length of the byte string is different
          than 2 bytes, the implementation SHOULD ignore it.
 
+~~~~~~~~~~~
             payload = [
                 COSE_KeySet,
                 ? short_address : bstr,
             ]
+~~~~~~~~~~~
 
 In case JCE determines that JN is not supposed to join the network
 (e.g. by failing to find an appropriate security context), it should
@@ -394,13 +400,15 @@ frame is coming from a 6TiSCH network, EB frames are authenticated at
 the link layer using CCM* per {{IEEE802154-2015}}.  Link-layer frames
 are protected with a 16-byte key, and a 13-byte nonce constructed
 from current Absolute Slot Number (ASN) and the source (the JA for
-EBs) address, as shown in Figure 2:
+EBs) address, as shown in {{ccm-nonce}}:
 
+~~~~~~~~~~~
                +-------------------------------------------+
                |  Address (8B or 00-padded 2B) | ASN (5B)  |
                +-------------------------------------------+
-
-               Figure 2: Link-layer CCM* nonce construction
+~~~~~~~~~~~
+{: #ccm-nonce title="Link-layer CCM* nonce construction" }
+{: artwork-align="center"}
 
 The JN uses the initial key K1 {{I-D.ietf-6tisch-minimal}} until it is
 configured with a new link-layer key K2 as described above.  JA
@@ -527,7 +535,7 @@ have helped shape the document.
 
 # Example
 
-Figure 3 illustrates a join protocol exchange in case PSKs are used.
+{{example-psk}} illustrates a join protocol exchange in case PSKs are used.
 JN instantiates the OSCOAP context and derives the traffic keys and
 nonces from the PSK.  It uses the instantiated context to protect the
 CoAP request addressed with Proxy-Scheme option and well-known host
@@ -571,7 +579,8 @@ In addition to AAD, JN also uses the explicit, protected fields in
 the COSE message, present in the payload of the response.  For more
 details, see {{I-D.ietf-core-object-security}} and {{I-D.ietf-cose-msg}}.
 
-      <--E2E OSCOAP-->
+~~~~~~~~~~~
+        <--E2E OSCOAP-->
       Client  Proxy Server
        JN     JA     JCE
         |      |      |
@@ -604,21 +613,24 @@ details, see {{I-D.ietf-core-object-security}} and {{I-D.ietf-cose-msg}}.
         |      |      |         Payload: [cid: origin_info, seq:7,
         |      |      |                   {join_response}, <Tag>]
         |      |      |
-
-    Figure 3: Example of a join protocol exchange with a PSK. {} denotes
-         encryption and authentication, [] denotes authentication.
+~~~~~~~~~~~
+{: #example-psk title="Example of a join protocol exchange with a PSK. {\} denotes encryption and authentication, [] denotes authentication." }
+{: artwork-align="center"}
 
 Where origin_info and join_response are as follows.
 
+~~~~~~~~~~~
     origin_info:
     [
         h'00170d00060d9f0e', / JN's EUI64 /
         49152, / JN's UDP source port /
         0x8c   / JN's CoAP token /
     ]
+~~~~~~~~~~~
 
 Encodes to h'834800170d00060d9f0e19c000188c' with a size of 15 bytes.
 
+~~~~~~~~~~~
     join_response:
     [
        [   / COSE Key Set array with a single key /
@@ -629,6 +641,7 @@ Encodes to h'834800170d00060d9f0e19c000188c' with a size of 15 bytes.
        ],
        h'af93' / assigned short address /
    ]
+~~~~~~~~~~~
 
 Encodes to h'8281a201042050e6bf4287c2d7618d6a9687445ffd33e642af93'
 with a size of 26 bytes.
