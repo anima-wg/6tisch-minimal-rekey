@@ -22,7 +22,7 @@ pi:    # can use array (if all yes) or hash here
 
 author:
       -
-        ins: M Vucinic
+        ins: M. Vucinic
         name: Malisa Vucinic
         org: Inria
         email: malisa.vucinic@inria.fr
@@ -31,7 +31,7 @@ author:
         code: 75012
         country: France
       -
-        ins: J Simon
+        ins: J. Simon
         name: Jonathan Simon
         org: Linear Technology
         email: jsimon@linear.com
@@ -40,7 +40,7 @@ author:
         code: 94587
         country: USA
       -
-        ins: K Pister
+        ins: K. Pister
         name: Kris Pister
         org: University of California Berkeley
         email: pister@eecs.berkeley.edu
