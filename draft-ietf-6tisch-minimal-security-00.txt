@@ -2,13 +2,13 @@
 
 
 
-6tisch Working Group                                         . M Vucinic
+6TiSCH Working Group                                          M. Vucinic
 Internet-Draft                                                     Inria
-Intended status: Standards Track                               . J Simon
-Expires: August 5, 2017                                Linear Technology
-                                                              . K Pister
+Intended status: Standards Track                                J. Simon
+Expires: August 6, 2017                                Linear Technology
+                                                               K. Pister
                                        University of California Berkeley
-                                                       February 01, 2017
+                                                       February 02, 2017
 
 
                  Minimal Security Framework for 6TiSCH
@@ -39,7 +39,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on August 5, 2017.
+   This Internet-Draft will expire on August 6, 2017.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-M Vucinic, et al.        Expires August 5, 2017                 [Page 1]
+Vucinic, et al.          Expires August 6, 2017                 [Page 1]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
@@ -68,33 +68,33 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
    2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
-   3.  Join Overview . . . . . . . . . . . . . . . . . . . . . . . .   3
-     3.1.  Step 1 - Enhanced Beacon  . . . . . . . . . . . . . . . .   4
+   3.  Join Overview . . . . . . . . . . . . . . . . . . . . . . . .   4
+     3.1.  Step 1 - Enhanced Beacon  . . . . . . . . . . . . . . . .   5
      3.2.  Step 2 - Neighbor Discovery . . . . . . . . . . . . . . .   5
      3.3.  Step 3 - Security Handshake . . . . . . . . . . . . . . .   5
-       3.3.1.  Pre-Shared Key  . . . . . . . . . . . . . . . . . . .   5
-       3.3.2.  Asymmetric Keys . . . . . . . . . . . . . . . . . . .   5
+       3.3.1.  Pre-Shared Key  . . . . . . . . . . . . . . . . . . .   6
+       3.3.2.  Asymmetric Keys . . . . . . . . . . . . . . . . . . .   6
      3.4.  Step 4 - Join Request . . . . . . . . . . . . . . . . . .   6
      3.5.  Step 5 - Join Response  . . . . . . . . . . . . . . . . .   6
-   4.  Protocol Specification  . . . . . . . . . . . . . . . . . . .   6
+   4.  Protocol Specification  . . . . . . . . . . . . . . . . . . .   7
      4.1.  Proxy Operation of JA . . . . . . . . . . . . . . . . . .   7
-       4.1.1.  Implementation of origin_info . . . . . . . . . . . .   7
+       4.1.1.  Implementation of origin_info . . . . . . . . . . . .   8
      4.2.  OSCOAP Security Context Instantiation . . . . . . . . . .   8
-     4.3.  Implementation of Join Request  . . . . . . . . . . . . .   8
+     4.3.  Implementation of Join Request  . . . . . . . . . . . . .   9
      4.4.  Implementation of Join Response . . . . . . . . . . . . .   9
-   5.  Link-layer requirements . . . . . . . . . . . . . . . . . . .   9
+   5.  Link-layer requirements . . . . . . . . . . . . . . . . . . .  10
      5.1.  Well-known beacon authentication key  . . . . . . . . . .  10
      5.2.  Private beacon authentication key . . . . . . . . . . . .  10
-   6.  Asymmetric Keys . . . . . . . . . . . . . . . . . . . . . . .  10
+   6.  Asymmetric Keys . . . . . . . . . . . . . . . . . . . . . . .  11
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
-   8.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  11
+   8.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  12
    9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
    10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  12
-   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
-     11.1.  Normative References . . . . . . . . . . . . . . . . . .  12
-     11.2.  Informative References . . . . . . . . . . . . . . . . .  14
-   Appendix A.  Example  . . . . . . . . . . . . . . . . . . . . . .  15
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
+   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
+     11.1.  Normative References . . . . . . . . . . . . . . . . . .  13
+     11.2.  Informative References . . . . . . . . . . . . . . . . .  13
+   Appendix A.  Example  . . . . . . . . . . . . . . . . . . . . . .  14
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Introduction
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-M Vucinic, et al.        Expires August 5, 2017                 [Page 2]
+Vucinic, et al.          Expires August 6, 2017                 [Page 2]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
@@ -137,6 +137,12 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 2.  Terminology
 
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].  These
+   words may also appear in this document in lowercase, absent their
+   normative meanings.
+
    The reader is expected to be familiar with the terms and concepts
    defined in [I-D.ietf-6tisch-terminology], [RFC7252], and
    [I-D.ietf-core-object-security].  The entities participating in the
@@ -152,6 +158,18 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
       generates Enhanced Beacons (EBs) and facilitates end-to-end
       communications between the JN and JCE.
 
+
+
+
+
+
+
+
+Vucinic, et al.          Expires August 6, 2017                 [Page 3]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
 3.  Join Overview
 
    This section describes the steps taken by a joining node (JN) in a
@@ -161,15 +179,6 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    1.  The JN listens for an Enhanced Beacon (EB) frame
        [IEEE802154-2015].  This frame provides network synchronization
        information, and tells the device when it can send a frame to the
-
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                 [Page 3]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
-
        node sending the beacons, which plays the role of Join Assistant
        (JA) for the JN, and when it can expect to receive a frame.
 
@@ -193,23 +202,47 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
    The handshake is shown as a transaction diagram in Figure 1:
 
-     +-----+               +----------+              +-----------+
-     | JCE |               |    JA    |              |     JN    |
-     |     |               |          |              |           |
-     +-----+               +----------+              +-----------+
-        |                        |                            |
-        |                        |-----------ENH BEACON (1)-->|
-        |                        |                            |
-        |                        |<--Neighbor Discovery (2)-->|
-        |                        |                            |
-        |<--Sec. Handshake (3a)--|---Security Handshake (3)-->|
-        |                        |                            |
-        |<----Join request (4a)--|---------Join request (4)---|
-        |                        |                            |
-        |----Join response (5a)--|--------Join response (5)-->|
-        |                        |                            |
 
-              Figure 1: Message sequence for join protocol.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Vucinic, et al.          Expires August 6, 2017                 [Page 4]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
+       +-----+               +----------+              +-----------+
+       | JCE |               |    JA    |              |     JN    |
+       |     |               |          |              |           |
+       +-----+               +----------+              +-----------+
+          |                        |                            |
+          |                        |-----------ENH BEACON (1)-->|
+          |                        |                            |
+          |                        |<--Neighbor Discovery (2)-->|
+          |                        |                            |
+          |<--Sec. Handshake (3a)--|---Security Handshake (3)-->|
+          |                        |                            |
+          |<----Join request (4a)--|---------Join request (4)---|
+          |                        |                            |
+          |----Join response (5a)--|--------Join response (5)-->|
+          |                        |                            |
+
+               Figure 1: Message sequence for join protocol.
 
    The details of each step are described in the following sections.
 
@@ -218,14 +251,6 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    The JN hears an EB from the JA and synchronizes itself to the joining
    schedule using the cells contained in the EB.  At this point the JN
    MAY proceed to step 2, or continue to listen for additional EBs.  If
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                 [Page 4]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
-
    more than one EB is heard, the JN MAY use a metric based on DAG rank
    and received signal level of the EB, or other factors to decide which
    JA to use for the security handshake in step 3.  Details on how a JN
@@ -249,6 +274,14 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    and join response in the next step is the PSK.  This means that the
    protocol trades off perfect forward secrecy for reduced traffic load
    between JN and JCE.  A consequence is that if the long-term PSK is
+
+
+
+Vucinic, et al.          Expires August 6, 2017                 [Page 5]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    compromised, keying material transferred as part of the join response
    is compromised as well.  Physical compromise of the JN, however,
    would also imply the compromise of the same keying material, as it is
@@ -270,17 +303,6 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    [I-D.selander-ace-cose-ecdhe] the JN and JCE need to receive and
    validate each other's public key certificate.  When RPKs are pre-
    configured at JN and JCE, they can directly proceed to the handshake.
-
-
-
-
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                 [Page 5]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
 
 3.4.  Step 4 - Join Request
 
@@ -309,6 +331,13 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    JN's EUI64 and a monotonically increasing counter matching that of
    the join request.
 
+
+
+Vucinic, et al.          Expires August 6, 2017                 [Page 6]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    The join response contains one or more (per-peer) link-layer key(s)
    K2 that the JN will use for subsequent communication.  It optionally
    also contains an IEEE 802.15.4 short-address [IEEE802154-2015]
@@ -327,16 +356,6 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    JN and JCE MUST protect their exchange end-to-end (i.e. through the
    proxy) using Object Security of CoAP (OSCOAP)
    [I-D.ietf-core-object-security].
-
-
-
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                 [Page 6]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
 
 4.1.  Proxy Operation of JA
 
@@ -366,6 +385,15 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    JCE to look up the right security context for communication with a
    given JN.
 
+
+
+
+
+Vucinic, et al.          Expires August 6, 2017                 [Page 7]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
 4.1.1.  Implementation of origin_info
 
    The origin_info is implemented as a CBOR [RFC7049] array object
@@ -377,22 +405,11 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
    o  token: JN's CoAP token
 
-
-
-     origin_info = [
-        EUI64 : bstr,
-        source_port : uint,
-        token : uint
-     ]
-
-
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                 [Page 7]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
+   origin_info = [
+       EUI64 : bstr,
+       source_port : uint,
+       token : uint
+   ]
 
 4.2.  OSCOAP Security Context Instantiation
 
@@ -425,6 +442,14 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    where there are multiple 6TiSCH networks present and the JN tries to
    join one network at a time.
 
+
+
+
+Vucinic, et al.          Expires August 6, 2017                 [Page 8]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
 4.3.  Implementation of Join Request
 
    Join Request message SHALL be mapped to a CoAP request:
@@ -440,15 +465,6 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    o  The object security option SHALL be set according to
       [I-D.ietf-core-object-security] and OSCOAP parameters set as
       described above.
-
-
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                 [Page 8]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
 
 4.4.  Implementation of Join Response
 
@@ -471,18 +487,25 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
          assigned to JN.  If the length of the byte string is different
          than 2 bytes, the implementation SHOULD ignore it.
 
-
-
-    payload = [
-        COSE_KeySet,
-        ? short_address : bstr,
-    ]
+   payload = [
+       COSE_KeySet,
+       ? short_address : bstr,
+   ]
 
    In case JCE determines that JN is not supposed to join the network
    (e.g. by failing to find an appropriate security context), it should
    respond with a 4.01 Unauthorized error.  Upon reception of a 4.01
    Unauthorized, JN SHALL attempt to join the next advertised 6TiSCH
    network.  If all join attempts have failed at JN, JN SHOULD signal to
+
+
+
+
+Vucinic, et al.          Expires August 6, 2017                 [Page 9]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    the user by an out-of-band mechanism the presence of an error
    condition.
 
@@ -499,18 +522,11 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    from current Absolute Slot Number (ASN) and the source (the JA for
    EBs) address, as shown in Figure 2:
 
+               +-------------------------------------------+
+               |  Address (8B or 00-padded 2B) | ASN (5B)  |
+               +-------------------------------------------+
 
-
-M Vucinic, et al.        Expires August 5, 2017                 [Page 9]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
-
-              +-------------------------------------------+
-              |  Address (8B or 00-padded 2B) | ASN (5B)  |
-              +-------------------------------------------+
-
-              Figure 2: Link-layer CCM* nonce construction
+               Figure 2: Link-layer CCM* nonce construction
 
    The JN uses the initial key K1 [I-D.ietf-6tisch-minimal] until it is
    configured with a new link-layer key K2 as described above.  JA
@@ -538,6 +554,14 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    Some pre-configuration MAY be done when the device is manufactured or
    designated for a specific network (i.e. the network is one-touch) or
    a network operator may not wish to allow arbitrary devices to try to
+
+
+
+Vucinic, et al.          Expires August 6, 2017                [Page 10]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    join.  A private (per-vendor, or per-installation) EB link-layer key
    MAY be used in place of a well-known key to create a private network.
 
@@ -553,14 +577,6 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    certificate is installed on all nodes participating in a particular
    6TiSCH network, allowing each node to validate the certificate of the
    JCE or JN as appropriate.
-
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                [Page 10]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
 
 7.  Security Considerations
 
@@ -594,6 +610,14 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
    Because the well-known beacon authentication key does not provide any
    security, it is feasible for an attacker to generate EBs that will
+
+
+
+Vucinic, et al.          Expires August 6, 2017                [Page 11]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    get accepted at JN.  At the time of the join, JN has no means of
    verifying the content in the EB and has to accept it at "face value".
    As the join response message in such cases will either fail the
@@ -610,14 +634,6 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    This specification relies on the uniqueness of EUI64 that is
    transferred in clear as part of the security context identifier.
    Privacy implications of using such long-term identifier are discussed
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                [Page 11]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
-
    in [RFC7721] and comprise correlation of activities over time,
    location tracking, address scanning and device-specific vulnerability
    exploitation.  Since the join protocol is executed rarely compared to
@@ -649,146 +665,43 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    Palombini and Ludwig Seitz for participating in the discussions that
    have helped shape the document.
 
-11.  References
-
-11.1.  Normative References
-
-   [I-D.ietf-6tisch-6top-protocol]
-              Wang, Q. and X. Vilajosana, "6top Protocol (6P)", draft-
-              ietf-6tisch-6top-protocol-03 (work in progress), October
-              2016.
-
-   [I-D.ietf-6tisch-minimal]
-              Vilajosana, X., Pister, K., and T. Watteyne, "Minimal
-              6TiSCH Configuration", draft-ietf-6tisch-minimal-19 (work
-              in progress), January 2017.
 
 
 
 
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                [Page 12]
+Vucinic, et al.          Expires August 6, 2017                [Page 12]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
-   [I-D.ietf-6tisch-terminology]
-              Palattella, M., Thubert, P., Watteyne, T., and Q. Wang,
-              "Terminology in IPv6 over the TSCH mode of IEEE
-              802.15.4e", draft-ietf-6tisch-terminology-08 (work in
-              progress), December 2016.
+11.  References
 
-   [I-D.ietf-core-object-security]
-              Selander, G., Mattsson, J., Palombini, F., and L. Seitz,
-              "Object Security of CoAP (OSCOAP)", draft-ietf-core-
-              object-security-01 (work in progress), December 2016.
-
-   [I-D.ietf-cose-msg]
-              Schaad, J., "CBOR Object Signing and Encryption (COSE)",
-              draft-ietf-cose-msg-24 (work in progress), November 2016.
-
-   [I-D.selander-ace-cose-ecdhe]
-              Selander, G., Mattsson, J., and F. Palombini, "Ephemeral
-              Diffie-Hellman Over COSE (EDHOC)", draft-selander-ace-
-              cose-ecdhe-04 (work in progress), October 2016.
-
-   [iec62591]
-              IEC, ., "62591:2016 Industrial networks - Wireless
-              communication network and communication profiles -
-              WirelessHART", 2016, <https://webstore.iec.ch/
-              publication/24433>.
-
-   [ieee802-1AR]
-              IEEE Standard, ., "IEEE 802.1AR Secure Device Identifier",
-              2009, <http://standards.ieee.org/findstds/
-              standard/802.1AR-2009.html>.
-
-   [IEEE802154-2015]
-              IEEE Standard, ., "802.15.4-2015 - IEEE Standard for Low-
-              Rate Wireless Personal Area Networks (WPANs)", 2015,
-              <http://standards.ieee.org/findstds/
-              standard/802.15.4-2015.html>.
-
-   [ieee802159]
-              IEEE Standard, ., "802.15.9-2016 - IEEE Approved Draft
-              Recommended Practice for Transport of Key Management
-              Protocol (KMP) Datagrams", 2016,
-              <http://standards.ieee.org/findstds/
-              standard/802.15.9-2016.html>.
+11.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
 
-
-
-M Vucinic, et al.        Expires August 5, 2017                [Page 13]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
-
-   [RFC6775]  Shelby, Z., Ed., Chakrabarti, S., Nordmark, E., and C.
-              Bormann, "Neighbor Discovery Optimization for IPv6 over
-              Low-Power Wireless Personal Area Networks (6LoWPANs)",
-              RFC 6775, DOI 10.17487/RFC6775, November 2012,
-              <http://www.rfc-editor.org/info/rfc6775>.
-
-   [RFC7049]  Bormann, C. and P. Hoffman, "Concise Binary Object
-              Representation (CBOR)", RFC 7049, DOI 10.17487/RFC7049,
-              October 2013, <http://www.rfc-editor.org/info/rfc7049>.
-
-   [RFC7217]  Gont, F., "A Method for Generating Semantically Opaque
-              Interface Identifiers with IPv6 Stateless Address
-              Autoconfiguration (SLAAC)", RFC 7217,
-              DOI 10.17487/RFC7217, April 2014,
-              <http://www.rfc-editor.org/info/rfc7217>.
-
-   [RFC7228]  Bormann, C., Ersue, M., and A. Keranen, "Terminology for
-              Constrained-Node Networks", RFC 7228,
-              DOI 10.17487/RFC7228, May 2014,
-              <http://www.rfc-editor.org/info/rfc7228>.
-
    [RFC7252]  Shelby, Z., Hartke, K., and C. Bormann, "The Constrained
               Application Protocol (CoAP)", RFC 7252,
               DOI 10.17487/RFC7252, June 2014,
               <http://www.rfc-editor.org/info/rfc7252>.
 
+   [RFC7049]  Bormann, C. and P. Hoffman, "Concise Binary Object
+              Representation (CBOR)", RFC 7049, DOI 10.17487/RFC7049,
+              October 2013, <http://www.rfc-editor.org/info/rfc7049>.
+
+   [I-D.ietf-cose-msg]
+              Schaad, J., "CBOR Object Signing and Encryption (COSE)",
+              draft-ietf-cose-msg-24 (work in progress), November 2016.
+
+   [I-D.ietf-core-object-security]
+              Selander, G., Mattsson, J., Palombini, F., and L. Seitz,
+              "Object Security of CoAP (OSCOAP)", draft-ietf-core-
+              object-security-01 (work in progress), December 2016.
+
 11.2.  Informative References
-
-   [duckling]
-              Stajano, F. and R. Anderson, "The resurrecting duckling:
-              security issues for ad-hoc wireless networks", 1999,
-              <https://www.cl.cam.ac.uk/~fms27/papers/1999-StajanoAnd-
-              duckling.pdf>.
-
-   [pledge]   Dictionary.com, ., "Dictionary.com Unabridged", 2015,
-              <http://dictionary.reference.com/browse/pledge>.
-
-   [RFC4231]  Nystrom, M., "Identifiers and Test Vectors for HMAC-SHA-
-              224, HMAC-SHA-256, HMAC-SHA-384, and HMAC-SHA-512",
-              RFC 4231, DOI 10.17487/RFC4231, December 2005,
-              <http://www.rfc-editor.org/info/rfc4231>.
-
-   [RFC5869]  Krawczyk, H. and P. Eronen, "HMAC-based Extract-and-Expand
-              Key Derivation Function (HKDF)", RFC 5869,
-              DOI 10.17487/RFC5869, May 2010,
-              <http://www.rfc-editor.org/info/rfc5869>.
-
-
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                [Page 14]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
-
-   [RFC6347]  Rescorla, E. and N. Modadugu, "Datagram Transport Layer
-              Security Version 1.2", RFC 6347, DOI 10.17487/RFC6347,
-              January 2012, <http://www.rfc-editor.org/info/rfc6347>.
 
    [RFC7554]  Watteyne, T., Ed., Palattella, M., and L. Grieco, "Using
               IEEE 802.15.4e Time-Slotted Channel Hopping (TSCH) in the
@@ -796,10 +709,67 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
               DOI 10.17487/RFC7554, May 2015,
               <http://www.rfc-editor.org/info/rfc7554>.
 
+   [RFC6775]  Shelby, Z., Ed., Chakrabarti, S., Nordmark, E., and C.
+              Bormann, "Neighbor Discovery Optimization for IPv6 over
+              Low-Power Wireless Personal Area Networks (6LoWPANs)",
+              RFC 6775, DOI 10.17487/RFC6775, November 2012,
+              <http://www.rfc-editor.org/info/rfc6775>.
+
+   [RFC6347]  Rescorla, E. and N. Modadugu, "Datagram Transport Layer
+              Security Version 1.2", RFC 6347, DOI 10.17487/RFC6347,
+              January 2012, <http://www.rfc-editor.org/info/rfc6347>.
+
+
+
+
+
+
+
+Vucinic, et al.          Expires August 6, 2017                [Page 13]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
+   [RFC5869]  Krawczyk, H. and P. Eronen, "HMAC-based Extract-and-Expand
+              Key Derivation Function (HKDF)", RFC 5869,
+              DOI 10.17487/RFC5869, May 2010,
+              <http://www.rfc-editor.org/info/rfc5869>.
+
+   [RFC4231]  Nystrom, M., "Identifiers and Test Vectors for HMAC-SHA-
+              224, HMAC-SHA-256, HMAC-SHA-384, and HMAC-SHA-512",
+              RFC 4231, DOI 10.17487/RFC4231, December 2005,
+              <http://www.rfc-editor.org/info/rfc4231>.
+
    [RFC7721]  Cooper, A., Gont, F., and D. Thaler, "Security and Privacy
               Considerations for IPv6 Address Generation Mechanisms",
               RFC 7721, DOI 10.17487/RFC7721, March 2016,
               <http://www.rfc-editor.org/info/rfc7721>.
+
+   [I-D.ietf-6tisch-minimal]
+              Vilajosana, X., Pister, K., and T. Watteyne, "Minimal
+              6TiSCH Configuration", draft-ietf-6tisch-minimal-19 (work
+              in progress), January 2017.
+
+   [I-D.ietf-6tisch-6top-protocol]
+              Wang, Q. and X. Vilajosana, "6top Protocol (6P)", draft-
+              ietf-6tisch-6top-protocol-03 (work in progress), October
+              2016.
+
+   [I-D.ietf-6tisch-terminology]
+              Palattella, M., Thubert, P., Watteyne, T., and Q. Wang,
+              "Terminology in IPv6 over the TSCH mode of IEEE
+              802.15.4e", draft-ietf-6tisch-terminology-08 (work in
+              progress), December 2016.
+
+   [I-D.selander-ace-cose-ecdhe]
+              Selander, G., Mattsson, J., and F. Palombini, "Ephemeral
+              Diffie-Hellman Over COSE (EDHOC)", draft-selander-ace-
+              cose-ecdhe-04 (work in progress), October 2016.
+
+   [IEEE802154-2015]
+              IEEE standard for Information Technology, ., "IEEE Std
+              802.15.4-2015 Standard for Low-Rate Wireless Personal Area
+              Networks (WPANs)", 2015.
 
 Appendix A.  Example
 
@@ -808,6 +778,14 @@ Appendix A.  Example
    nonces from the PSK.  It uses the instantiated context to protect the
    CoAP request addressed with Proxy-Scheme option and well-known host
    name of JCE in the Uri-Host option.  The example assumes a JA that is
+
+
+
+Vucinic, et al.          Expires August 6, 2017                [Page 14]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    already aware of JCE's IPv6 address and does not need to resolve the
    well-known "6tisch.jce" host name.  Triggered by the presence of
    Proxy-Scheme option, JA forwards the request to the JCE.  Once JCE
@@ -834,14 +812,6 @@ Appendix A.  Example
    constructs the link-local IPv6 address of JN from the EUI64 address
    found in the cid.  Note that JA does not posses the key to decrypt
    the COSE object present in the payload so the join_response object is
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                [Page 15]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
-
    opaque to it.  The response is matched to the request and verified
    for replay protection at JN using OSCOAP processing rules.  Namely,
    to verify the response JN reconstructs the AAD based on:
@@ -867,73 +837,47 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-M Vucinic, et al.        Expires August 5, 2017                [Page 16]
+Vucinic, et al.          Expires August 6, 2017                [Page 15]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
-     <--E2E OSCOAP-->
-     Client  Proxy Server
-      JN     JA     JCE
-       |      |      |
-       +----->|      |            Code: [0.01] (GET)
-       | GET  |      |           Token: 0x8c
-       |      |      |    Proxy-Scheme: [coap]
-       |      |      |        Uri-Host: [6tisch.jce]
-       |      |      | Object-Security: [cid:origin_info, seq:1,
-       |      |      |                   {Uri-Path:"j"},
-       |      |      |                   <Tag>]
-       |      |      |         Payload: -
-       |      |      |
-       |      +----->|            Code: [0.01] (GET)
-       |      | GET  |           Token: 0x7b
-       |      |      |        Uri-Host: [6tisch.jce]
-       |      |      | Object-Security: [cid:origin_info, seq:1,
-       |      |      |                   {Uri-Path:"j"},
-       |      |      |                   <Tag>]
-       |      |      |         Payload: -
-       |      |      |
-       |      |<-----+            Code: [2.05] (Content)
-       |      | 2.05 |           Token: 0x7b
-       |      |      | Object-Security: -
-       |      |      |         Payload: [cid: origin_info, seq:7,
-       |      |      |                   {join_response}, <Tag>]
-       |      |      |
-       |<-----+      |            Code: [2.05] (Content)
-       | 2.05 |      |           Token: 0x8c
-       |      |      | Object-Security: -
-       |      |      |         Payload: [cid: origin_info, seq:7,
-       |      |      |                   {join_response}, <Tag>]
-       |      |      |
+        <--E2E OSCOAP-->
+        Client  Proxy Server
+        JN     JA     JCE
+        |      |      |
+        +----->|      |            Code: [0.01] (GET)
+        | GET  |      |           Token: 0x8c
+        |      |      |    Proxy-Scheme: [coap]
+        |      |      |        Uri-Host: [6tisch.jce]
+        |      |      | Object-Security: [cid:origin_info, seq:1,
+        |      |      |                   {Uri-Path:"j"},
+        |      |      |                   <Tag>]
+        |      |      |         Payload: -
+        |      |      |
+        |      +----->|            Code: [0.01] (GET)
+        |      | GET  |           Token: 0x7b
+        |      |      |        Uri-Host: [6tisch.jce]
+        |      |      | Object-Security: [cid:origin_info, seq:1,
+        |      |      |                   {Uri-Path:"j"},
+        |      |      |                   <Tag>]
+        |      |      |         Payload: -
+        |      |      |
+        |      |<-----+            Code: [2.05] (Content)
+        |      | 2.05 |           Token: 0x7b
+        |      |      | Object-Security: -
+        |      |      |         Payload: [cid: origin_info, seq:7,
+        |      |      |                   {join_response}, <Tag>]
+        |      |      |
+        |<-----+      |            Code: [2.05] (Content)
+        | 2.05 |      |           Token: 0x8c
+        |      |      | Object-Security: -
+        |      |      |         Payload: [cid: origin_info, seq:7,
+        |      |      |                   {join_response}, <Tag>]
+        |      |      |
 
    Figure 3: Example of a join protocol exchange with a PSK. {} denotes
-        encryption and authentication, [] denotes authentication.
+         encryption and authentication, [] denotes authentication.
 
    Where origin_info and join_response are as follows.
 
@@ -949,20 +893,21 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
 
-M Vucinic, et al.        Expires August 5, 2017                [Page 17]
+Vucinic, et al.          Expires August 6, 2017                [Page 16]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
    join_response:
    [
-      [   / COSE Key Set array with a single key /
-          {
-              1:4, / key type symmetric /
-              -1:h'e6bf4287c2d7618d6a9687445ffd33e6' / key value /
-          }
-      ],
-      h'af93' / assigned short address /    ]
+       [   / COSE Key Set array with a single key /
+           {
+               1:4, / key type symmetric /
+               -1:h'e6bf4287c2d7618d6a9687445ffd33e6' / key value /
+           }
+       ],
+       h'af93' / assigned short address /
+   ]
 
    Encodes to h'8281a201042050e6bf4287c2d7618d6a9687445ffd33e642af93'
    with a size of 26 bytes.
@@ -1004,5 +949,4 @@ Authors' Addresses
 
 
 
-
-M Vucinic, et al.        Expires August 5, 2017                [Page 18]
+Vucinic, et al.          Expires August 6, 2017                [Page 17]
