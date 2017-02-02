@@ -24,7 +24,7 @@
 <?rfc softrefs="yes"?>
 <?rfc symrefs="yes"?>
 
-<rfc ipr="trust200902" docName="draft-ietf-6tisch-minimal-security-00" category="std">
+<rfc ipr="trust200902" docName="draft-ietf-6tisch-minimal-security-01" category="std">
 
   <front>
     <title>Minimal Security Framework for 6TiSCH</title>
@@ -745,10 +745,10 @@ with a size of 26 bytes.</t>
   </back>
 
 <!-- ##markdown-source:
-H4sIAOYxk1gAA+VdW3PbRpZ+71/RpTxYyhA0SUuyrZrJDi0psXyRtKY8ma2s
+H4sIADUzk1gAA+VdW3PbRpZ+71/RpTxYyhA0SUuyrZrJDi0psXyRtKY8ma2s
 KwUCTRIRCHDQoGQm8f72PbduNEDK9k7mYaqWDzFFNPpyzulzvnPpThRFqs7q
 3Jzot1mRLeNcT0yyrrJ6o7+v4qW5L6tbPSsrfXyTTU5fqm90PJ1W5u5EH9eZ
-TRbRkl+LrLym0jIp4MUTnVbxrI4yU8+iB9pGg4GCHm0dF+nPcV4W8FZdrY1S
+TRbRkl+LrLym0jIp4MUTnVbxrI4yU8+iB9pGg6GCHm0dF+nPcV4W8FZdrY1S
 2aqir7YeDQbPByMVVyY+0RdFbarC1Op+fiIz0j/CDLNirn+oyvVK3d43raIz
 nIFK4voExkiVSsoUWp7otY1im2SZWmUn+qe6THralrO6MjML3zZL/PJBqXhd
 L8rqRGn6RPKv1llhgVx9/bd1AgtK/O+87Ldxntl462FZzXFmVRb7n8wyzvIT
@@ -961,7 +961,7 @@ Ds/vPaZ2h8+HRyP/pHuQltugIMA/j7un9+Bxp9D5vEhcMnLx6NmTw2fdSQyf
 J/DH8Nmz5JGjs8X/0wPwY3jEhdqdtbXI4Fb3E02ndUCADxT4Pot5zhj0sf+/
 1fymdPAZnhzisgmmblYmOCDwuNUuGp4sHpnj6exw9OxpMkqfHg+fpcfx8+Nn
 Tw8Pj2az9MkTc/xIemIc3nTwib596AlL4tnzJ9jUx1zb0cwvkHP0bBiPBsPB
-4WhwNPjSjA5HNJjqEHl07In8v2TLCamVawAA
+4WhwNPjSjA5HNJjqEHl07In8vyEiawaVawAA
 
 -->
 
