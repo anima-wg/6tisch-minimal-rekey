@@ -7,7 +7,7 @@ docname: draft-ietf-6tisch-minimal-security-00
 
 ipr: trust200902
 area: Internet
-wg: 6tisch Working Group
+wg: 6TiSCH Working Group
 kw: Internet-Draft
 cat: std
 
@@ -64,10 +64,9 @@ informative:
   I-D.ietf-6tisch-terminology:
   I-D.selander-ace-cose-ecdhe:
   IEEE802154-2015:
-    target: "http://standards.ieee.org/findstds/standard/802.15.4-2015.html"
-    title: "802.15.4-2015 - IEEE Standard for Low-Rate Wireless Personal Area Networks (WPANs)"
+    title: "IEEE Std 802.15.4-2015 Standard for Low-Rate Wireless Personal Area Networks (WPANs)"
     author:
-      ins: "IEEE Standard"
+      ins: "IEEE standard for Information Technology"
     date: 2015
 
 
@@ -112,6 +111,10 @@ As the outcome of the join process, the joining device expects one or
 more link-layer key(s) and optionally a temporary network identifier.
 
 # Terminology          {#Terminology}
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", 
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this 
+document are to be interpreted as described in {{RFC2119}}. These words
+may also appear in this document in lowercase, absent their normative meanings.
 
 The reader is expected to be familiar with the terms and concepts
 defined in {{I-D.ietf-6tisch-terminology}}, {{RFC7252}}, and
@@ -151,26 +154,26 @@ how far it is from the DAG root, or how to route to the JCE.  Only
 after establishing one or more link-layer keys does it need to know
 about the particulars of a 6TiSCH network.
 
-The handshake is shown as a transaction diagram in {{sequence-diagram}}:
+The handshake is shown as a transaction diagram in {{fig_sequence-diagram}}:
 
 ~~~~~~~~~~~
-      +-----+               +----------+              +-----------+
-      | JCE |               |    JA    |              |     JN    |
-      |     |               |          |              |           |
-      +-----+               +----------+              +-----------+
-         |                        |                            |
-         |                        |-----------ENH BEACON (1)-->|
-         |                        |                            |
-         |                        |<--Neighbor Discovery (2)-->|
-         |                        |                            |
-         |<--Sec. Handshake (3a)--|---Security Handshake (3)-->|
-         |                        |                            |
-         |<----Join request (4a)--|---------Join request (4)---|
-         |                        |                            |
-         |----Join response (5a)--|--------Join response (5)-->|
-         |                        |                            |
++-----+               +----------+              +-----------+
+| JCE |               |    JA    |              |     JN    |
+|     |               |          |              |           |
++-----+               +----------+              +-----------+
+   |                        |                            |
+   |                        |-----------ENH BEACON (1)-->|
+   |                        |                            |
+   |                        |<--Neighbor Discovery (2)-->|
+   |                        |                            |
+   |<--Sec. Handshake (3a)--|---Security Handshake (3)-->|
+   |                        |                            |
+   |<----Join request (4a)--|---------Join request (4)---|
+   |                        |                            |
+   |----Join response (5a)--|--------Join response (5)-->|
+   |                        |                            |
 ~~~~~~~~~~~
-{: #sequence-diagram title="Message sequence for join protocol."}
+{: #fig_sequence-diagram title="Message sequence for join protocol."}
 {: artwork-align="center"}
 
 The details of each step are described in the following sections.
@@ -259,7 +262,7 @@ assigned to JN by JCE.
 
 # Protocol Specification
 
-The join protocol in {{sequence-diagram}} is implemented over Constrained
+The join protocol in {{fig_sequence-diagram}} is implemented over Constrained
 Application Protocol (CoAP) {{RFC7252}}.  JN plays the role of a CoAP
 client, JCE the role of a CoAP server, while JA implements CoAP
 forward proxy functionality {{RFC7252}}.  Since JA is likely a
@@ -309,11 +312,11 @@ containing:
 * token: JN's CoAP token
 
 ~~~~~~~~~~~
-        origin_info = [
-           EUI64 : bstr,
-           source_port : uint,
-           token : uint
-        ]
+origin_info = [
+    EUI64 : bstr,
+    source_port : uint,
+    token : uint
+]
 ~~~~~~~~~~~
 
 ##  OSCOAP Security Context Instantiation
@@ -365,20 +368,20 @@ CoAP response:
 * The payload is a CBOR array containing, in order:
     *  COSE Key Set [I-D.ietf-cose-msg].  Each key in the Key Set
        SHALL be a symmetric key.  A key that is present in the Key Set
-         and does not have an identifier is assumed to be "K2" link-
-         layer key from [I-D.ietf-6tisch-minimal].  Parameter "kid" of
-         the COSE Key structure SHALL be used to denote pair-wise keys
-         if present, where the value SHALL be set to the address of the
-         corresponding peer.
+       and does not have an identifier is assumed to be "K2" link-
+       layer key from [I-D.ietf-6tisch-minimal].  Parameter "kid" of
+       the COSE Key structure SHALL be used to denote pair-wise keys
+       if present, where the value SHALL be set to the address of the
+       corresponding peer.
     *  Optional byte string representing IEEE 802.15.4 short address
-         assigned to JN.  If the length of the byte string is different
-         than 2 bytes, the implementation SHOULD ignore it.
+       assigned to JN.  If the length of the byte string is different
+       than 2 bytes, the implementation SHOULD ignore it.
 
 ~~~~~~~~~~~
-            payload = [
-                COSE_KeySet,
-                ? short_address : bstr,
-            ]
+payload = [
+    COSE_KeySet,
+    ? short_address : bstr,
+]
 ~~~~~~~~~~~
 
 In case JCE determines that JN is not supposed to join the network
@@ -400,14 +403,14 @@ frame is coming from a 6TiSCH network, EB frames are authenticated at
 the link layer using CCM* per {{IEEE802154-2015}}.  Link-layer frames
 are protected with a 16-byte key, and a 13-byte nonce constructed
 from current Absolute Slot Number (ASN) and the source (the JA for
-EBs) address, as shown in {{ccm-nonce}}:
+EBs) address, as shown in {{fig_ccm-nonce}}:
 
 ~~~~~~~~~~~
-               +-------------------------------------------+
-               |  Address (8B or 00-padded 2B) | ASN (5B)  |
-               +-------------------------------------------+
++-------------------------------------------+
+|  Address (8B or 00-padded 2B) | ASN (5B)  |
++-------------------------------------------+
 ~~~~~~~~~~~
-{: #ccm-nonce title="Link-layer CCM* nonce construction" }
+{: #fig_ccm-nonce title="Link-layer CCM* nonce construction" }
 {: artwork-align="center"}
 
 The JN uses the initial key K1 {{I-D.ietf-6tisch-minimal}} until it is
@@ -535,7 +538,7 @@ have helped shape the document.
 
 # Example
 
-{{example-psk}} illustrates a join protocol exchange in case PSKs are used.
+{{fig_example-psk}} illustrates a join protocol exchange in case PSKs are used.
 JN instantiates the OSCOAP context and derives the traffic keys and
 nonces from the PSK.  It uses the instantiated context to protect the
 CoAP request addressed with Proxy-Scheme option and well-known host
@@ -580,67 +583,67 @@ the COSE message, present in the payload of the response.  For more
 details, see {{I-D.ietf-core-object-security}} and {{I-D.ietf-cose-msg}}.
 
 ~~~~~~~~~~~
-        <--E2E OSCOAP-->
-      Client  Proxy Server
-       JN     JA     JCE
-        |      |      |
-        +----->|      |            Code: [0.01] (GET)
-        | GET  |      |           Token: 0x8c
-        |      |      |    Proxy-Scheme: [coap]
-        |      |      |        Uri-Host: [6tisch.jce]
-        |      |      | Object-Security: [cid:origin_info, seq:1,
-        |      |      |                   {Uri-Path:"j"},
-        |      |      |                   <Tag>]
-        |      |      |         Payload: -
-        |      |      |
-        |      +----->|            Code: [0.01] (GET)
-        |      | GET  |           Token: 0x7b
-        |      |      |        Uri-Host: [6tisch.jce]
-        |      |      | Object-Security: [cid:origin_info, seq:1,
-        |      |      |                   {Uri-Path:"j"},
-        |      |      |                   <Tag>]
-        |      |      |         Payload: -
-        |      |      |
-        |      |<-----+            Code: [2.05] (Content)
-        |      | 2.05 |           Token: 0x7b
-        |      |      | Object-Security: -
-        |      |      |         Payload: [cid: origin_info, seq:7,
-        |      |      |                   {join_response}, <Tag>]
-        |      |      |
-        |<-----+      |            Code: [2.05] (Content)
-        | 2.05 |      |           Token: 0x8c
-        |      |      | Object-Security: -
-        |      |      |         Payload: [cid: origin_info, seq:7,
-        |      |      |                   {join_response}, <Tag>]
-        |      |      |
+<--E2E OSCOAP-->
+Client  Proxy Server
+JN     JA     JCE
+|      |      |
++----->|      |            Code: [0.01] (GET)
+| GET  |      |           Token: 0x8c
+|      |      |    Proxy-Scheme: [coap]
+|      |      |        Uri-Host: [6tisch.jce]
+|      |      | Object-Security: [cid:origin_info, seq:1,
+|      |      |                   {Uri-Path:"j"},
+|      |      |                   <Tag>]
+|      |      |         Payload: -
+|      |      |
+|      +----->|            Code: [0.01] (GET)
+|      | GET  |           Token: 0x7b
+|      |      |        Uri-Host: [6tisch.jce]
+|      |      | Object-Security: [cid:origin_info, seq:1,
+|      |      |                   {Uri-Path:"j"},
+|      |      |                   <Tag>]
+|      |      |         Payload: -
+|      |      |
+|      |<-----+            Code: [2.05] (Content)
+|      | 2.05 |           Token: 0x7b
+|      |      | Object-Security: -
+|      |      |         Payload: [cid: origin_info, seq:7,
+|      |      |                   {join_response}, <Tag>]
+|      |      |
+|<-----+      |            Code: [2.05] (Content)
+| 2.05 |      |           Token: 0x8c
+|      |      | Object-Security: -
+|      |      |         Payload: [cid: origin_info, seq:7,
+|      |      |                   {join_response}, <Tag>]
+|      |      |
 ~~~~~~~~~~~
-{: #example-psk title="Example of a join protocol exchange with a PSK. {\} denotes encryption and authentication, [] denotes authentication." }
+{: #fig_example-psk title="Example of a join protocol exchange with a PSK. {\} denotes encryption and authentication, [] denotes authentication." }
 {: artwork-align="center"}
 
 Where origin_info and join_response are as follows.
 
 ~~~~~~~~~~~
-    origin_info:
-    [
-        h'00170d00060d9f0e', / JN's EUI64 /
-        49152, / JN's UDP source port /
-        0x8c   / JN's CoAP token /
-    ]
+origin_info:
+[
+    h'00170d00060d9f0e', / JN's EUI64 /
+    49152, / JN's UDP source port /
+    0x8c   / JN's CoAP token /
+]
 ~~~~~~~~~~~
 
 Encodes to h'834800170d00060d9f0e19c000188c' with a size of 15 bytes.
 
 ~~~~~~~~~~~
-    join_response:
-    [
-       [   / COSE Key Set array with a single key /
-           {
-               1:4, / key type symmetric /
-               -1:h'e6bf4287c2d7618d6a9687445ffd33e6' / key value /
-           }
-       ],
-       h'af93' / assigned short address /
-   ]
+join_response:
+[
+    [   / COSE Key Set array with a single key /
+        {
+            1:4, / key type symmetric /
+            -1:h'e6bf4287c2d7618d6a9687445ffd33e6' / key value /
+        }
+    ],
+    h'af93' / assigned short address /
+]
 ~~~~~~~~~~~
 
 Encodes to h'8281a201042050e6bf4287c2d7618d6a9687445ffd33e642af93'
