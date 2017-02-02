@@ -12,13 +12,7 @@ kw: Internet-Draft
 cat: std
 
 coding: us-ascii
-pi:    # can use array (if all yes) or hash here
-#  - toc
-#  - sortrefs
-#  - symrefs
-  toc: yes
-  sortrefs:   # defaults to yes
-  symrefs: yes
+pi: [toc, softrefs, symrefs]
 
 author:
       -
@@ -50,61 +44,32 @@ author:
         country: USA
 
 normative:
+
   RFC2119:
-  RFC7228:
-  RFC7049:
   RFC7252:
-  iec62591:
-    target: "https://webstore.iec.ch/publication/24433"
-    title: "62591:2016 Industrial networks - Wireless communication network and communication profiles - WirelessHART"
-    author:
-      ins: "IEC"
-    date: 2016
-  ieee802-1AR:
-    target: "http://standards.ieee.org/findstds/standard/802.1AR-2009.html"
-    title: "IEEE 802.1AR Secure Device Identifier"
-    author:
-      ins: "IEEE Standard"
-    date: 2009
-  ieee802159:
-    target: "http://standards.ieee.org/findstds/standard/802.15.9-2016.html"
-    title: "802.15.9-2016 - IEEE Approved Draft Recommended Practice for Transport of Key Management Protocol (KMP) Datagrams"
-    author:
-      ins: "IEEE Standard"
-    date: 2016
+  RFC7049:
+  I-D.ietf-cose-msg:
+  I-D.ietf-core-object-security:
+
+informative:
+
+  RFC7554:
+  RFC6775:
+  RFC6347:
+  RFC5869:
+  RFC4231:
+  RFC7721:
+  I-D.ietf-6tisch-minimal:
+  I-D.ietf-6tisch-6top-protocol:
+  I-D.ietf-6tisch-terminology:
+  I-D.selander-ace-cose-ecdhe:
   IEEE802154-2015:
     target: "http://standards.ieee.org/findstds/standard/802.15.4-2015.html"
     title: "802.15.4-2015 - IEEE Standard for Low-Rate Wireless Personal Area Networks (WPANs)"
     author:
       ins: "IEEE Standard"
     date: 2015
-  RFC7217:
-  RFC6775:
 
-informative:
-  RFC7554:
-  RFC6347:
-  RFC5869:
-  RFC4231:
-  RFC7721:
-  pledge:
-    title: "Dictionary.com Unabridged"
-    target: "http://dictionary.reference.com/browse/pledge"
-    author:
-      -
-        name: Dictionary.com
-    date: 2015
-  duckling:
-    title: "The resurrecting duckling: security issues for ad-hoc wireless networks"
-    target: "https://www.cl.cam.ac.uk/~fms27/papers/1999-StajanoAnd-duckling.pdf"
-    author:
-      -
-        ins: F. Stajano
-        name: Frank Stajano
-      -
-        ins: R. Anderson
-        name: Ross Anderson
-    date: 1999
 
 --- abstract
 
@@ -126,17 +91,17 @@ authenticates itself, and also validates that it is joining the right
 network.  At this point it can expect to interact with the network to
 configure its link-layer keying material.  Only then may the node
 establish an end-to-end secure session with an Internet host using
-DTLS {{RFC6347}} or OSCOAP {{!I-D.ietf-core-object-security}}.  Once the
+DTLS {{RFC6347}} or OSCOAP {{I-D.ietf-core-object-security}}.  Once the
 application requirements are known, the device interacts with its
 peers to request additional resources as needed, or to be
-reconfigured as the network changes {{!I-D.ietf-6tisch-6top-protocol}}.
+reconfigured as the network changes {{I-D.ietf-6tisch-6top-protocol}}.
 
 This document describes the mechanisms comprising a minimal feature
 set for a device to join a 6TiSCH network, up to the point where it
 can establish a secure session with an Internet host.
 
 It presumes a network as described by {{RFC7554}},
-{{!I-D.ietf-6tisch-6top-protocol}}, and {{!I-D.ietf-6tisch-terminology}}.
+{{I-D.ietf-6tisch-6top-protocol}}, and {{I-D.ietf-6tisch-terminology}}.
 It assumes the joining device pre-configured with either a:
 
 * pre-shared key (PSK),
@@ -149,8 +114,8 @@ more link-layer key(s) and optionally a temporary network identifier.
 # Terminology          {#Terminology}
 
 The reader is expected to be familiar with the terms and concepts
-defined in {{!I-D.ietf-6tisch-terminology}}, {{RFC7252}}, and
-{{!I-D.ietf-core-object-security}}.  The entities participating in the
+defined in {{I-D.ietf-6tisch-terminology}}, {{RFC7252}}, and
+{{I-D.ietf-core-object-security}}.  The entities participating in the
 protocol that is specified in this document are:
 
 * JN: Joining node - the device attempting to join a particular 6TiSCH network.
@@ -365,7 +330,7 @@ as the key derivation function.
       set to 0x01.
 
 The hash algorithm that instantiates HKDF MUST be SHA-256 [RFC4231].
-The derivation in {{!I-D.ietf-core-object-security}} results in traffic
+The derivation in {{I-D.ietf-core-object-security}} results in traffic
 keys and static IVs for each side of the conversation.  Nonces are
 constructed by XOR'ing the static IV with current sequence number.
 The context derivation process occurs exactly once.  Implementations
@@ -384,7 +349,7 @@ Join Request message SHALL be mapped to a CoAP request:
 * The Uri-Host option is set to "6tisch.jce".
 * The Uri-Path option is set to "j".
 * The object security option SHALL be set according to
-  {{!I-D.ietf-core-object-security}} and OSCOAP parameters set as
+  {{I-D.ietf-core-object-security}} and OSCOAP parameters set as
   described above.
 
 ## Implementation of Join Response
@@ -456,7 +421,7 @@ and Section 5.2.
 For zero-touch operation, where any 6TiSCH device can attempt to join
 any 6TiSCH network out of the box, a well-known EB link-layer key
 MUST be used.  The value of this key is specified in
-{{!I-D.ietf-6tisch-minimal}}
+{{I-D.ietf-6tisch-minimal}}
 
 ## Private beacon authentication key
 
@@ -540,7 +505,7 @@ of short addresses once the join protocol completes mitigates the
 aforementioned privacy risks.  In addition, EDHOC may be used for
 identity protection during the join protocol by generating a random
 context identifier in place of the EUI64
-{{!I-D.selander-ace-cose-ecdhe}}.
+{{I-D.selander-ace-cose-ecdhe}}.
 
 # IANA Considerations
 
@@ -576,9 +541,9 @@ Additional Authenticated Data (AAD) needed for verification based on:
 
 * Version field of the received CoAP header.
 * Code field of the received CoAP header.
-* Algorithm being the AES-CCM-16-64-128 from {{!I-D.ietf-cose-msg}}
+* Algorithm being the AES-CCM-16-64-128 from {{I-D.ietf-cose-msg}}
 * Request URI reconstructed following
-      {{!I-D.ietf-core-object-security}}.
+      {{I-D.ietf-core-object-security}}.
 
 Replay protection is ensured by OSCOAP and the tracking of sequence
 numbers at each side.  In the example below, the response contains
