@@ -59,9 +59,11 @@ informative:
   RFC4231:
   RFC7721:
   I-D.ietf-6tisch-minimal:
+  I-D.ietf-6tisch-dtsecurity-secure-join:
   I-D.ietf-6tisch-6top-protocol:
   I-D.ietf-6tisch-terminology:
   I-D.selander-ace-cose-ecdhe:
+  I-D.ietf-anima-bootstrapping-keyinfra:
   IEEE8021542015:
     title: "IEEE Std 802.15.4-2015 Standard for Low-Rate Wireless Personal Area Networks (WPANs)"
     author:
@@ -72,10 +74,10 @@ informative:
 --- abstract
 
 This draft describes the minimal mechanisms required to support secure
-initial configuration in a device being added to a 6TiSCH network.
+initial configuration of a pledge, a device being added to a 6TiSCH network.
 The goal of this configuration is to set link-layer keys, and to establish a
-secure session between each joining node and the JCE who may use that to
-further configure the joining device.
+secure session between each pledge and the join registrar who may use that to
+further configure the pledge.
 Additional security behaviors and mechanisms may be added on top of this minimal framework.
 
 --- middle
@@ -84,32 +86,33 @@ Additional security behaviors and mechanisms may be added on top of this minimal
 
 When a previously unknown device seeks admission to a 6TiSCH
 {{RFC7554}} network (to "join"), it first needs to synchronize to the
-network.  The device then configures its IPv6 address and
+network.  The device or pledge then configures its IPv6 address and
 authenticates itself, and also validates that it is joining the right
 network.  At this point it can expect to interact with the network to
 configure its link-layer keying material.  Only then may the node
 establish an end-to-end secure session with an Internet host using
 DTLS {{RFC6347}} or OSCOAP {{I-D.ietf-core-object-security}}.  Once the
-application requirements are known, the device interacts with its
+application requirements are known, the node interacts with its
 peers to request additional resources as needed, or to be
 reconfigured as the network changes {{I-D.ietf-6tisch-6top-protocol}}.
 
 This document describes the mechanisms comprising a minimal feature
-set for a device to join a 6TiSCH network, up to the point where it
+set for a pledge to join a 6TiSCH network, up to the point where it
 can establish a secure session with an Internet host.
 
 It presumes a network as described by {{RFC7554}},
 {{I-D.ietf-6tisch-6top-protocol}}, and {{I-D.ietf-6tisch-terminology}}.
-It assumes the joining device pre-configured with either a:
+It assumes the pledge pre-configured with either a:
 
 * pre-shared key (PSK),
 * raw public key (RPK),
 * or a locally-valid certificate and a trust anchor.
 
-As the outcome of the join process, the joining device expects one or
+As the outcome of the join process, the pledge expects one or
 more link-layer key(s) and optionally a temporary network identifier.
 
 # Terminology          {#Terminology}
+
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
 document are to be interpreted as described in {{RFC2119}}. These words
@@ -117,18 +120,17 @@ may also appear in this document in lowercase, absent their normative meanings.
 
 The reader is expected to be familiar with the terms and concepts defined in
 {{I-D.ietf-6tisch-terminology}}, {{RFC7252}},
-{{I-D.ietf-core-object-security}}, and
-{{!I-D.ietf-anima-bootstrapping-keyinfra}}.  The following terms are
-imported: drop ship, imprint, enrollment, pledge, join proxy, ownership
-voucher, join registrar/coordinator.
+{{I-D.ietf-core-object-security}}, and {{I-D.ietf-anima-bootstrapping-keyinfra}}.
+The following terms are imported: pledge, join proxy, join registrar/coordinator, 
+drop ship, imprint, enrollment, ownership voucher.
 
-pledge
+Pledge:
 :  the prospective device, which has the identity provided to
    at the factory.  Neither the device nor the network knows if the
    device yet knows if this device belongs with this network.
 
-Joined Node
-: the prospective device, after having completing the join process, often just called a Node.
+Joined Node:
+: the prospective device, after having completed the join process, often just called a Node.
 
 Join Proxy (JP):
 :  a stateless relay that provides connectivity between the pledge
@@ -136,7 +138,6 @@ Join Proxy (JP):
 
 Join Registrar/Coordinator (JRC):
 :  central entity responsible for authentication and authorization of joining nodes.
-
 
 # Join Overview
 
@@ -147,17 +148,17 @@ a 6TiSCH {{RFC7554}} network, the following exchange occurs:
 1.  The pledge listens for an Enhanced Beacon (EB) frame
        {{IEEE8021542015}}.  This frame provides network synchronization
        information, and tells the device when it can send a frame to the
-       node sending the beacons, which plays the role of Join Assistant
-       (JA) for the JN, and when it can expect to receive a frame.
+       node sending the beacons, which plays the role of Join Proxy
+       (JP) for the pledge, and when it can expect to receive a frame.
 2.  The pledge configures its link-local IPv6 address and advertizes it to Join Proxy (JP).
-3.  The JP sends packets to the pledge in order to securely identify itself to the network.
+3.  The pledge sends packets to JP in order to securely identify itself to the network.
     These packets are directed to the Join Registrar/Coordinator  (JRC),
-    which may be co-located on the  JP or another device.
+    which may be co-located on the JP or another device.
 4.  The pledge receives one or more packets from JRC (via the JP) that sets
     up one or more link-layer keys used to authenticate subsequent
     transmissions to peers.
 
-From the joining node's perspective, minimal joining is a local phenomenon –
+From the pledge's perspective, minimal joining is a local phenomenon –
 the pledge only interacts with the JP, and it need not know how far it is
 from the DAG root, or how to route to the JRC.
 Only after establishing one or more link-layer keys does it need to know
@@ -200,7 +201,7 @@ Details on how a pledge chooses the JP are out of scope of this specification.
 
 ## Step 2 - Neighbor Discovery
 
-At this point, JN forms its link-local IPv6 address based on EUI64
+At this point, pledge forms its link-local IPv6 address based on EUI64
 and MAY further follow the Neighbor Discovery (ND) process described
 in Section 5 of [RFC6775].
 
@@ -213,9 +214,9 @@ join response.
 
 The security handshake step is OPTIONAL in case PSKs are used, while it is
 REQUIRED for RPKs and certificates. When using certificates, the process
-outlined in {{!I-D.ietf-6tisch-dtsecurity-secure-join}} would be followed, and
+outlined in {{I-D.ietf-6tisch-dtsecurity-secure-join}} would be followed, and
 once complete, the process would continue here with a locally relevant
-security, and an established shared secret.
+security credential, or an established shared secret.
 
 In case the handshake step is omitted, the shared secret used for protection
 of the join request and join response in the next step is the PSK.
@@ -241,12 +242,12 @@ database of PSKs.
 
 The Security Handshake step is required, when using asymmetric keys.
 Before conducting the Diffie-Hellman key exchange using EDHOC {{I-D.selander-ace-cose-ecdhe}}
- the pledge and JRC need to receive and validate each other's public key certificate.
+the pledge and JRC need to receive and validate each other's public key certificate.
 When RPKs are pre-configured at pledge and JRC, they can directly proceed to the handshake.
 
 ## Step 4 - Join Request
 
-The join request is sent from the pledge to the JP using the Aloha slot as
+The join request is sent from the pledge to the JP using the shared slot as
 described in the EB, and forwarded to the JRC. Which slot the JP uses to
 transmit to the JRC is out of scope: some networks may wish to dedicate
 specific slots for this join traffic.
@@ -275,9 +276,9 @@ The nonce is derived from the shared secret, pledge's EUI64 and a
 monotonically increasing counter matching that of the join request.
 
 The join response contains one or more (per-peer) link-layer key(s) K2 that
-the JN will use for subsequent communication. Each K2 that is provided by the
-JRC is associated with an 802.15.4 keyid. (In other link-layer technologies,
-a different identifier may be substituted)
+the pledge will use for subsequent communication. Each K2 that is provided by the
+JRC is associated with an 802.15.4 keyid. In other link-layer technologies,
+a different identifier may be substituted.
 It optionally also contains an IEEE 802.15.4 short-address
 {{IEEE8021542015}} assigned to pledge by JRC.
 
@@ -312,10 +313,10 @@ to forward the response towards the originator of the request.  This
 state information comprises CoAP token, but the implementations also
 need to keep track of the IPv6 address of the host, as well as the
 corresponding UDP source port number.  In the setting where the proxy
-is a constrained device, as in the case of JA, this makes it prone to
+is a constrained device, as in the case of JP, this makes it prone to
 Denial of Service (DoS) attacks, due to the limited memory.
 
-In order to facilitate a stateless implementation of Join proxying, the
+In order to facilitate a stateless implementation of join proxying, the
 pledge shall encode in the CoAP message the information necessary for the JP
 to send the response back - "origin_info".
 For this purpose, the pledge uses the "Context Identifier (Cid)" parameter of
@@ -424,12 +425,9 @@ All frames in a 6TiSCH network MUST use link-layer frame security.
 The frame security options MUST include frame authentication, and MAY
 include frame encryption.
 
-In order for the pledge to be able to validate that the Enhanced Beacon frame
-is coming from a 6TiSCH network, EB frames are authenticated at the link
-layer using CCM* per {{IEEE8021542015}}
 Link-layer frames are protected with a 16-byte key, and a 13-byte nonce
 constructed
-from current Absolute Slot Number (ASN) and the source (the JA for
+from current Absolute Slot Number (ASN) and the source (the JP for
 EBs) address, as shown in {{fig_ccm-nonce}}:
 
 ~~~~~~~~~~~
@@ -441,8 +439,9 @@ EBs) address, as shown in {{fig_ccm-nonce}}:
 {: artwork-align="center"}
 
 The pledge does not initially do any authentication of the EB frames, as it
-does not know the K1 key.  When sending packets, the pledge sends unencrypted
-and unauthenticated packets (exempt mode in 802.15.4).  How JP learns whether
+does not know the K1 key.  When sending frames, the pledge sends unencrypted
+and unauthenticated frames (exempt mode in 802.15.4).  JP accepts these frames
+for the duration of the join process. How JP learns whether
 the join process is ongoing is out of scope of this specification.
 
 As the EB itself cannot be authenticated by pledge, an attacker may craft a
@@ -465,7 +464,7 @@ Compact representation of X.509 certificates is out of scope of this
 specification.  The certificate is signed by a root CA whose
 certificate is installed on all nodes participating in a particular
 6TiSCH network, allowing each node to validate the certificate of the
-JCE or JN as appropriate.
+JRC or pledge as appropriate.
 
 # Security Considerations
 
@@ -558,13 +557,13 @@ have helped shape the document.
 # Example
 
 {{fig_example-psk}} illustrates a join protocol exchange in case PSKs are used.
-JN instantiates the OSCOAP context and derives the traffic keys and
+Pledge instantiates the OSCOAP context and derives the traffic keys and
 nonces from the PSK.  It uses the instantiated context to protect the
 CoAP request addressed with Proxy-Scheme option and well-known host
-name of JCE in the Uri-Host option.  The example assumes a JA that is
-already aware of JCE's IPv6 address and does not need to resolve the
-well-known "6tisch.jce" host name.  Triggered by the presence of
-Proxy-Scheme option, JA forwards the request to the JCE.  Once JCE
+name of JRC in the Uri-Host option.  The example assumes a JP that is
+already aware of JRC's IPv6 address and does not need to resolve the
+well-known "6tisch.arpa" host name.  Triggered by the presence of
+Proxy-Scheme option, JP forwards the request to the JRC.  Once JRC
 receives the request, it looks up the correct context based on the
 context identifier (cid) field.  It reconstructs OSCOAP's external
 Additional Authenticated Data (AAD) needed for verification based on:
@@ -578,63 +577,63 @@ Additional Authenticated Data (AAD) needed for verification based on:
 Replay protection is ensured by OSCOAP and the tracking of sequence
 numbers at each side.  In the example below, the response contains
 sequence number 7 meaning that there have already been some attempts
-to join under a given context, not coming from the JN.  Once JA
+to join under a given context, not coming from the pledge.  Once JP
 receives the response, it looks up and decodes the cid field in order
-to decide where to forward it.  JA constructs the CoAP response to JN
+to decide where to forward it.  JP constructs the CoAP response to pledge
 by setting the CoAP token to the value decoded from cid and
-constructs the link-local IPv6 address of JN from the EUI64 address
-found in the cid.  Note that JA does not posses the key to decrypt
+constructs the link-local IPv6 address of pledge from the EUI64 address
+found in the cid.  Note that JP does not posses the key to decrypt
 the COSE object present in the payload so the join_response object is
 opaque to it.  The response is matched to the request and verified
-for replay protection at JN using OSCOAP processing rules.  Namely,
-to verify the response JN reconstructs the AAD based on:
+for replay protection at pledge using OSCOAP processing rules.  Namely,
+to verify the response pledge reconstructs the AAD based on:
 
 * Version field of the received CoAP header.
 * Code field of the received CoAP header.
 * Algorithm being the AES-CCM-16-64-128 from {{I-D.ietf-cose-msg}}.
 * Transaction identifier (Tid) of the corresponding CoAP request.
       Tid contains the context identifier (origin_info object), Sender
-      ID (0x00 for JN), and Sender Sequence number (set to 1 in the
+      ID (0x00 for pledge), and Sender Sequence number (set to 1 in the
       example).
 
-In addition to AAD, JN also uses the explicit, protected fields in
+In addition to AAD, pledge also uses the explicit, protected fields in
 the COSE message, present in the payload of the response.  For more
 details, see {{I-D.ietf-core-object-security}} and {{I-D.ietf-cose-msg}}.
 
 ~~~~~~~~~~~
 <--E2E OSCOAP-->
 Client  Proxy Server
-JN     JA     JCE
-|      |      |
-+----->|      |            Code: [0.01] (GET)
-| GET  |      |           Token: 0x8c
-|      |      |    Proxy-Scheme: [coap]
-|      |      |        Uri-Host: [6tisch.jce]
-|      |      | Object-Security: [cid:origin_info, seq:1,
-|      |      |                   {Uri-Path:"j"},
-|      |      |                   <Tag>]
-|      |      |         Payload: -
-|      |      |
-|      +----->|            Code: [0.01] (GET)
-|      | GET  |           Token: 0x7b
-|      |      |        Uri-Host: [6tisch.jce]
-|      |      | Object-Security: [cid:origin_info, seq:1,
-|      |      |                   {Uri-Path:"j"},
-|      |      |                   <Tag>]
-|      |      |         Payload: -
-|      |      |
-|      |<-----+            Code: [2.05] (Content)
-|      | 2.05 |           Token: 0x7b
-|      |      | Object-Security: -
-|      |      |         Payload: [cid: origin_info, seq:7,
-|      |      |                   {join_response}, <Tag>]
-|      |      |
-|<-----+      |            Code: [2.05] (Content)
-| 2.05 |      |           Token: 0x8c
-|      |      | Object-Security: -
-|      |      |         Payload: [cid: origin_info, seq:7,
-|      |      |                   {join_response}, <Tag>]
-|      |      |
+Pledge   JP    JRC
+  |      |      |
+  +----->|      |            Code: [0.01] (GET)
+  | GET  |      |           Token: 0x8c
+  |      |      |    Proxy-Scheme: [coap]
+  |      |      |        Uri-Host: [6tisch.arpa]
+  |      |      | Object-Security: [cid:origin_info, seq:1,
+  |      |      |                   {Uri-Path:"j"},
+  |      |      |                   <Tag>]
+  |      |      |         Payload: -
+  |      |      |
+  |      +----->|            Code: [0.01] (GET)
+  |      | GET  |           Token: 0x7b
+  |      |      |        Uri-Host: [6tisch.arpa]
+  |      |      | Object-Security: [cid:origin_info, seq:1,
+  |      |      |                   {Uri-Path:"j"},
+  |      |      |                   <Tag>]
+  |      |      |         Payload: -
+  |      |      |
+  |      |<-----+            Code: [2.05] (Content)
+  |      | 2.05 |           Token: 0x7b
+  |      |      | Object-Security: -
+  |      |      |         Payload: [cid: origin_info, seq:7,
+  |      |      |                   {join_response}, <Tag>]
+  |      |      |
+  |<-----+      |            Code: [2.05] (Content)
+  | 2.05 |      |           Token: 0x8c
+  |      |      | Object-Security: -
+  |      |      |         Payload: [cid: origin_info, seq:7,
+  |      |      |                   {join_response}, <Tag>]
+  |      |      |
 ~~~~~~~~~~~
 {: #fig_example-psk title="Example of a join protocol exchange with a PSK. {\} denotes encryption and authentication, [] denotes authentication." }
 {: artwork-align="center"}
@@ -644,9 +643,9 @@ Where origin_info and join_response are as follows.
 ~~~~~~~~~~~
 origin_info:
 [
-    h'00170d00060d9f0e', / JN's EUI64 /
-    49152, / JN's UDP source port /
-    0x8c   / JN's CoAP token /
+    h'00170d00060d9f0e', / Pledge's EUI64 /
+    49152, / Pledge's UDP source port /
+    0x8c   / Pledge's CoAP token /
 ]
 ~~~~~~~~~~~
 
