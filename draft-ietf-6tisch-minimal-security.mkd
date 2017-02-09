@@ -143,6 +143,26 @@ Join Proxy (JP):
 Join Registrar/Coordinator (JRC):
 :  central entity responsible for authentication and authorization of joining nodes.
 
+# One-Touch Assumptions
+
+In a one-touch scenario, devices would be provided with some mechanism by which
+a secure association may be made in a controlled environment.  There are many
+ways in which this might be done, and detailing any of them is out of scope
+for this document.  But, some notion of how this might be done is important
+so that the underlying assumptions can be reasoned about.
+
+Some examples of how to do this could include:
+* JTAG interface
+* serial (craft) console interface
+* pushes of physical buttons simulatenous to network attachment
+* insecured devices operated in a Faraday cage
+
+There are likely many other ways as well.  What is assumed is that there can
+be a secure, private conversation between the Join Coordination Entity, and
+the Pledge, and that the two devices can exchange some trusted bytes of
+information.
+
+
 # Join Overview
 
 This section describes the steps taken by a pledge in a 6TiSCH network.
