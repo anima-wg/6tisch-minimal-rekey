@@ -127,17 +127,14 @@ pledge
    at the factory.  Neither the device nor the network knows if the
    device yet knows if this device belongs with this network.
 
-joined node
-: the prospective device, after having completing the join process.
+Joined Node
+: the prospective device, after having completing the join process, often just called a Node.
 
 Join Proxy (JP):
-:  A signed token from the manufacturer authorized signing
-   authority indicating that the bootstrapping event has been
-   successfully logged.  This has been referred to as an
-   "authorization token" indicating that it authorizes bootstrapping
-   to proceed.
+:  a stateless relay that provides connectivity between the pledge
+   and the join registrar/coordinator.  
 
-join registrar/coordinator:
+Join Registrar/Coordinator (JRC):
 :  central entity responsible for authentication and authorization of joining nodes.
 
 
