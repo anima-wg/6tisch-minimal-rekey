@@ -72,16 +72,11 @@ Table of Contents
      3.1.  Step 1 - Enhanced Beacon  . . . . . . . . . . . . . . . .   5
      3.2.  Step 2 - Neighbor Discovery . . . . . . . . . . . . . . .   5
      3.3.  Step 3 - Security Handshake . . . . . . . . . . . . . . .   5
-       3.3.1.  Pre-Shared Symmetric Key  . . . . . . . . . . . . . .   6
-       3.3.2.  Asymmetric Keys . . . . . . . . . . . . . . . . . . .   6
      3.4.  Step 4 - Join Request . . . . . . . . . . . . . . . . . .   6
      3.5.  Step 5 - Join Response  . . . . . . . . . . . . . . . . .   7
    4.  Protocol Specification  . . . . . . . . . . . . . . . . . . .   7
      4.1.  Transaction Diagrams  . . . . . . . . . . . . . . . . . .   7
-       4.1.1.  Case of Pre-Shared Symmetric Key  . . . . . . . . . .   7
-       4.1.2.  Case of Asymmetric Keys . . . . . . . . . . . . . . .   8
      4.2.  Proxy Operation of Join Proxy (JP)  . . . . . . . . . . .   8
-       4.2.1.  Implementation of origin_info . . . . . . . . . . . .   9
      4.3.  OSCOAP Security Context Instantiation . . . . . . . . . .   9
      4.4.  Implementation of join_request  . . . . . . . . . . . . .  10
      4.5.  Implementation of join_response . . . . . . . . . . . . .  11
@@ -106,6 +101,11 @@ Table of Contents
    network.  At this point it can expect to interact with the network to
    configure its link-layer keying material.  Only then may the node
    establish an end-to-end secure session with an Internet host using
+   DTLS [RFC6347] or OSCOAP [I-D.ietf-core-object-security].  Once the
+   application requirements are known, the node interacts with its peers
+   to request additional resources as needed, or to be reconfigured as
+   the network changes [I-D.ietf-6tisch-6top-protocol].
+
 
 
 
@@ -113,11 +113,6 @@ Vucinic, et al.          Expires August 14, 2017                [Page 2]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
-
-   DTLS [RFC6347] or OSCOAP [I-D.ietf-core-object-security].  Once the
-   application requirements are known, the node interacts with its peers
-   to request additional resources as needed, or to be reconfigured as
-   the network changes [I-D.ietf-6tisch-6top-protocol].
 
    This document describes the mechanisms comprising a minimal feature
    set for a pledge to join a 6TiSCH network, up to the point where it
@@ -161,6 +156,11 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    Join Proxy (JP):  a stateless relay that provides connectivity
       between the pledge and the join registrar/coordinator.
 
+   Join Registrar/Coordinator (JRC):  central entity responsible for
+      authentication and authorization of joining nodes.
+
+
+
 
 
 
@@ -169,9 +169,6 @@ Vucinic, et al.          Expires August 14, 2017                [Page 3]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
-
-   Join Registrar/Coordinator (JRC):  central entity responsible for
-      authentication and authorization of joining nodes.
 
 3.  Join Overview
 
@@ -204,6 +201,9 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    the particulars of a 6TiSCH network.
 
    The handshake is shown as a transaction diagram in Figure 1:
+
+
+
 
 
 
@@ -383,8 +383,8 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
    Figure 2 shows the exchanges that take place in case pre-shared
    symmetric key is used.  Messages join_request and join_response are
-   specified in Section 4.4 and Section 4.5.
-
+   specified in Section 4.4 and Section 4.5.  These messages are
+   protected by OSCOAP, using PSK as the shared secret.
 
 
 
@@ -407,7 +407,7 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
                     |                                 |
 
 
-           Figure 2: Sequence diagram in case of symmetric keys.
+         Figure 2: Transaction diagram in case of symmetric keys.
 
 4.1.2.  Case of Asymmetric Keys
 
@@ -434,7 +434,7 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
                     |                                 |
 
 
-          Figure 3: Sequence diagram in case of asymmetric keys.
+         Figure 3: Transaction diagram in case of asymmetric keys.
 
 4.2.  Proxy Operation of Join Proxy (JP)
 
@@ -757,23 +757,23 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 11.1.  Normative References
 
+   [I-D.ietf-core-object-security]
+              Selander, G., Mattsson, J., Palombini, F., and L. Seitz,
+              "Object Security of CoAP (OSCOAP)", draft-ietf-core-
+              object-security-01 (work in progress), December 2016.
+
+   [I-D.ietf-cose-msg]
+              Schaad, J., "CBOR Object Signing and Encryption (COSE)",
+              draft-ietf-cose-msg-24 (work in progress), November 2016.
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
 
-   [RFC7252]  Shelby, Z., Hartke, K., and C. Bormann, "The Constrained
-              Application Protocol (CoAP)", RFC 7252,
-              DOI 10.17487/RFC7252, June 2014,
-              <http://www.rfc-editor.org/info/rfc7252>.
-
    [RFC7049]  Bormann, C. and P. Hoffman, "Concise Binary Object
               Representation (CBOR)", RFC 7049, DOI 10.17487/RFC7049,
               October 2013, <http://www.rfc-editor.org/info/rfc7049>.
-
-   [I-D.ietf-cose-msg]
-              Schaad, J., "CBOR Object Signing and Encryption (COSE)",
-              draft-ietf-cose-msg-24 (work in progress), November 2016.
 
 
 
@@ -786,54 +786,54 @@ Vucinic, et al.          Expires August 14, 2017               [Page 14]
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
-   [I-D.ietf-core-object-security]
-              Selander, G., Mattsson, J., Palombini, F., and L. Seitz,
-              "Object Security of CoAP (OSCOAP)", draft-ietf-core-
-              object-security-01 (work in progress), December 2016.
+   [RFC7252]  Shelby, Z., Hartke, K., and C. Bormann, "The Constrained
+              Application Protocol (CoAP)", RFC 7252,
+              DOI 10.17487/RFC7252, June 2014,
+              <http://www.rfc-editor.org/info/rfc7252>.
 
 11.2.  Informative References
 
-   [RFC7554]  Watteyne, T., Ed., Palattella, M., and L. Grieco, "Using
-              IEEE 802.15.4e Time-Slotted Channel Hopping (TSCH) in the
-              Internet of Things (IoT): Problem Statement", RFC 7554,
-              DOI 10.17487/RFC7554, May 2015,
-              <http://www.rfc-editor.org/info/rfc7554>.
-
-   [RFC6775]  Shelby, Z., Ed., Chakrabarti, S., Nordmark, E., and C.
-              Bormann, "Neighbor Discovery Optimization for IPv6 over
-              Low-Power Wireless Personal Area Networks (6LoWPANs)",
-              RFC 6775, DOI 10.17487/RFC6775, November 2012,
-              <http://www.rfc-editor.org/info/rfc6775>.
-
-   [RFC6347]  Rescorla, E. and N. Modadugu, "Datagram Transport Layer
-              Security Version 1.2", RFC 6347, DOI 10.17487/RFC6347,
-              January 2012, <http://www.rfc-editor.org/info/rfc6347>.
-
-   [RFC5869]  Krawczyk, H. and P. Eronen, "HMAC-based Extract-and-Expand
-              Key Derivation Function (HKDF)", RFC 5869,
-              DOI 10.17487/RFC5869, May 2010,
-              <http://www.rfc-editor.org/info/rfc5869>.
-
-   [RFC4231]  Nystrom, M., "Identifiers and Test Vectors for HMAC-SHA-
-              224, HMAC-SHA-256, HMAC-SHA-384, and HMAC-SHA-512",
-              RFC 4231, DOI 10.17487/RFC4231, December 2005,
-              <http://www.rfc-editor.org/info/rfc4231>.
-
-   [RFC7721]  Cooper, A., Gont, F., and D. Thaler, "Security and Privacy
-              Considerations for IPv6 Address Generation Mechanisms",
-              RFC 7721, DOI 10.17487/RFC7721, March 2016,
-              <http://www.rfc-editor.org/info/rfc7721>.
-
-   [I-D.ietf-6tisch-minimal]
-              Vilajosana, X., Pister, K., and T. Watteyne, "Minimal
-              6TiSCH Configuration", draft-ietf-6tisch-minimal-19 (work
-              in progress), January 2017.
+   [I-D.ietf-6tisch-6top-protocol]
+              Wang, Q. and X. Vilajosana, "6top Protocol (6P)", draft-
+              ietf-6tisch-6top-protocol-03 (work in progress), October
+              2016.
 
    [I-D.ietf-6tisch-dtsecurity-secure-join]
               Richardson, M., "6tisch Secure Join protocol", draft-ietf-
               6tisch-dtsecurity-secure-join-00 (work in progress),
               December 2016.
 
+   [I-D.ietf-6tisch-minimal]
+              Vilajosana, X., Pister, K., and T. Watteyne, "Minimal
+              6TiSCH Configuration", draft-ietf-6tisch-minimal-19 (work
+              in progress), January 2017.
+
+   [I-D.ietf-6tisch-terminology]
+              Palattella, M., Thubert, P., Watteyne, T., and Q. Wang,
+              "Terminology in IPv6 over the TSCH mode of IEEE
+              802.15.4e", draft-ietf-6tisch-terminology-08 (work in
+              progress), December 2016.
+
+   [I-D.ietf-anima-bootstrapping-keyinfra]
+              Pritikin, M., Richardson, M., Behringer, M., Bjarnason,
+              S., and K. Watsen, "Bootstrapping Remote Secure Key
+              Infrastructures (BRSKI)", draft-ietf-anima-bootstrapping-
+              keyinfra-04 (work in progress), October 2016.
+
+   [I-D.selander-ace-cose-ecdhe]
+              Selander, G., Mattsson, J., and F. Palombini, "Ephemeral
+              Diffie-Hellman Over COSE (EDHOC)", draft-selander-ace-
+              cose-ecdhe-04 (work in progress), October 2016.
+
+   [IEEE8021542015]
+              IEEE standard for Information Technology, ., "IEEE Std
+              802.15.4-2015 Standard for Low-Rate Wireless Personal Area
+              Networks (WPANs)", 2015.
+
+   [RFC4231]  Nystrom, M., "Identifiers and Test Vectors for HMAC-SHA-
+              224, HMAC-SHA-256, HMAC-SHA-384, and HMAC-SHA-512",
+              RFC 4231, DOI 10.17487/RFC4231, December 2005,
+              <http://www.rfc-editor.org/info/rfc4231>.
 
 
 
@@ -842,32 +842,31 @@ Vucinic, et al.          Expires August 14, 2017               [Page 15]
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
-   [I-D.ietf-6tisch-6top-protocol]
-              Wang, Q. and X. Vilajosana, "6top Protocol (6P)", draft-
-              ietf-6tisch-6top-protocol-03 (work in progress), October
-              2016.
+   [RFC5869]  Krawczyk, H. and P. Eronen, "HMAC-based Extract-and-Expand
+              Key Derivation Function (HKDF)", RFC 5869,
+              DOI 10.17487/RFC5869, May 2010,
+              <http://www.rfc-editor.org/info/rfc5869>.
 
-   [I-D.ietf-6tisch-terminology]
-              Palattella, M., Thubert, P., Watteyne, T., and Q. Wang,
-              "Terminology in IPv6 over the TSCH mode of IEEE
-              802.15.4e", draft-ietf-6tisch-terminology-08 (work in
-              progress), December 2016.
+   [RFC6347]  Rescorla, E. and N. Modadugu, "Datagram Transport Layer
+              Security Version 1.2", RFC 6347, DOI 10.17487/RFC6347,
+              January 2012, <http://www.rfc-editor.org/info/rfc6347>.
 
-   [I-D.selander-ace-cose-ecdhe]
-              Selander, G., Mattsson, J., and F. Palombini, "Ephemeral
-              Diffie-Hellman Over COSE (EDHOC)", draft-selander-ace-
-              cose-ecdhe-04 (work in progress), October 2016.
+   [RFC6775]  Shelby, Z., Ed., Chakrabarti, S., Nordmark, E., and C.
+              Bormann, "Neighbor Discovery Optimization for IPv6 over
+              Low-Power Wireless Personal Area Networks (6LoWPANs)",
+              RFC 6775, DOI 10.17487/RFC6775, November 2012,
+              <http://www.rfc-editor.org/info/rfc6775>.
 
-   [I-D.ietf-anima-bootstrapping-keyinfra]
-              Pritikin, M., Richardson, M., Behringer, M., Bjarnason,
-              S., and K. Watsen, "Bootstrapping Remote Secure Key
-              Infrastructures (BRSKI)", draft-ietf-anima-bootstrapping-
-              keyinfra-04 (work in progress), October 2016.
+   [RFC7554]  Watteyne, T., Ed., Palattella, M., and L. Grieco, "Using
+              IEEE 802.15.4e Time-Slotted Channel Hopping (TSCH) in the
+              Internet of Things (IoT): Problem Statement", RFC 7554,
+              DOI 10.17487/RFC7554, May 2015,
+              <http://www.rfc-editor.org/info/rfc7554>.
 
-   [IEEE8021542015]
-              IEEE standard for Information Technology, ., "IEEE Std
-              802.15.4-2015 Standard for Low-Rate Wireless Personal Area
-              Networks (WPANs)", 2015.
+   [RFC7721]  Cooper, A., Gont, F., and D. Thaler, "Security and Privacy
+              Considerations for IPv6 Address Generation Mechanisms",
+              RFC 7721, DOI 10.17487/RFC7721, March 2016,
+              <http://www.rfc-editor.org/info/rfc7721>.
 
 Appendix A.  Example
 
@@ -889,6 +888,7 @@ Appendix A.  Example
    o  Code field of the received CoAP header.
 
    o  Algorithm being the AES-CCM-16-64-128 from [I-D.ietf-cose-msg]
+
 
 
 

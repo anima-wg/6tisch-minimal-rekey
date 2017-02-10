@@ -12,7 +12,11 @@ kw: Internet-Draft
 cat: std
 
 coding: us-ascii
-pi: [toc, softrefs, symrefs]
+pi:
+  toc: yes
+  sortrefs: yes
+  symrefs: yes
+  tocdepth: 2
 
 author:
       -
