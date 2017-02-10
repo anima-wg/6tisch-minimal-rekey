@@ -1,7 +1,7 @@
 ---
 title: Minimal Security Framework for 6TiSCH
 # abbrev: 6tisch-minimal-security
-docname: draft-ietf-6tisch-minimal-security-01
+docname: draft-ietf-6tisch-minimal-security-02
 
 # stand_alone: true
 
