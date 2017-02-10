@@ -5,10 +5,10 @@
 6TiSCH Working Group                                          M. Vucinic
 Internet-Draft                                                     Inria
 Intended status: Standards Track                                J. Simon
-Expires: August 13, 2017                               Linear Technology
+Expires: August 14, 2017                               Linear Technology
                                                                K. Pister
                                        University of California Berkeley
-                                                       February 09, 2017
+                                                       February 10, 2017
 
 
                  Minimal Security Framework for 6TiSCH
@@ -39,7 +39,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on August 13, 2017.
+   This Internet-Draft will expire on August 14, 2017.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Vucinic, et al.          Expires August 13, 2017                [Page 1]
+Vucinic, et al.          Expires August 14, 2017                [Page 1]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
@@ -72,27 +72,30 @@ Table of Contents
      3.1.  Step 1 - Enhanced Beacon  . . . . . . . . . . . . . . . .   5
      3.2.  Step 2 - Neighbor Discovery . . . . . . . . . . . . . . .   5
      3.3.  Step 3 - Security Handshake . . . . . . . . . . . . . . .   5
-       3.3.1.  Pre-Shared Key  . . . . . . . . . . . . . . . . . . .   6
+       3.3.1.  Pre-Shared Symmetric Key  . . . . . . . . . . . . . .   6
        3.3.2.  Asymmetric Keys . . . . . . . . . . . . . . . . . . .   6
      3.4.  Step 4 - Join Request . . . . . . . . . . . . . . . . . .   6
      3.5.  Step 5 - Join Response  . . . . . . . . . . . . . . . . .   7
    4.  Protocol Specification  . . . . . . . . . . . . . . . . . . .   7
-     4.1.  Proxy Operation of Join Proxy (JP)  . . . . . . . . . . .   7
-       4.1.1.  Implementation of origin_info . . . . . . . . . . . .   8
-     4.2.  OSCOAP Security Context Instantiation . . . . . . . . . .   8
-     4.3.  Implementation of Join Request  . . . . . . . . . . . . .   9
-     4.4.  Implementation of Join Response . . . . . . . . . . . . .   9
-   5.  Link-layer requirements . . . . . . . . . . . . . . . . . . .  10
-   6.  Asymmetric Keys . . . . . . . . . . . . . . . . . . . . . . .  11
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
-   8.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  12
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
-   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  13
-   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     11.1.  Normative References . . . . . . . . . . . . . . . . . .  13
-     11.2.  Informative References . . . . . . . . . . . . . . . . .  13
-   Appendix A.  Example  . . . . . . . . . . . . . . . . . . . . . .  15
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
+     4.1.  Transaction Diagrams  . . . . . . . . . . . . . . . . . .   7
+       4.1.1.  Case of Pre-Shared Symmetric Key  . . . . . . . . . .   7
+       4.1.2.  Case of Asymmetric Keys . . . . . . . . . . . . . . .   8
+     4.2.  Proxy Operation of Join Proxy (JP)  . . . . . . . . . . .   8
+       4.2.1.  Implementation of origin_info . . . . . . . . . . . .   9
+     4.3.  OSCOAP Security Context Instantiation . . . . . . . . . .   9
+     4.4.  Implementation of join_request  . . . . . . . . . . . . .  10
+     4.5.  Implementation of join_response . . . . . . . . . . . . .  11
+   5.  Link-layer requirements . . . . . . . . . . . . . . . . . . .  11
+   6.  Asymmetric Keys . . . . . . . . . . . . . . . . . . . . . . .  12
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
+   8.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  13
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
+   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  14
+   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
+     11.1.  Normative References . . . . . . . . . . . . . . . . . .  14
+     11.2.  Informative References . . . . . . . . . . . . . . . . .  15
+   Appendix A.  Example  . . . . . . . . . . . . . . . . . . . . . .  16
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  19
 
 1.  Introduction
 
@@ -103,17 +106,16 @@ Table of Contents
    network.  At this point it can expect to interact with the network to
    configure its link-layer keying material.  Only then may the node
    establish an end-to-end secure session with an Internet host using
-   DTLS [RFC6347] or OSCOAP [I-D.ietf-core-object-security].  Once the
-   application requirements are known, the node interacts with its peers
 
 
 
-
-Vucinic, et al.          Expires August 13, 2017                [Page 2]
+Vucinic, et al.          Expires August 14, 2017                [Page 2]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
+   DTLS [RFC6347] or OSCOAP [I-D.ietf-core-object-security].  Once the
+   application requirements are known, the node interacts with its peers
    to request additional resources as needed, or to be reconfigured as
    the network changes [I-D.ietf-6tisch-6top-protocol].
 
@@ -159,16 +161,17 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    Join Proxy (JP):  a stateless relay that provides connectivity
       between the pledge and the join registrar/coordinator.
 
-   Join Registrar/Coordinator (JRC):  central entity responsible for
-      authentication and authorization of joining nodes.
 
 
 
 
-Vucinic, et al.          Expires August 13, 2017                [Page 3]
+Vucinic, et al.          Expires August 14, 2017                [Page 3]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
+
+   Join Registrar/Coordinator (JRC):  central entity responsible for
+      authentication and authorization of joining nodes.
 
 3.  Join Overview
 
@@ -218,32 +221,29 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
 
-
-
-
-Vucinic, et al.          Expires August 13, 2017                [Page 4]
+Vucinic, et al.          Expires August 14, 2017                [Page 4]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
-          +-----+               +----------+              +-----------+
-          | JRC |               |    JP    |              |  pledge   |
-          |     |               |          |              |           |
-          +-----+               +----------+              +-----------+
-             |                        |                            |
-             |                        |-----------ENH BEACON (1)-->|
-             |                        |                            |
-             |                        |<--Neighbor Discovery (2)-->|
-             |                        |                            |
-             |<--Sec. Handshake (3a)--|---Security Handshake (3)-->|
-             |                        |                            |
-             |<----Join request (4a)--|---------Join request (4)---|
-             |                        |                            |
-             |----Join response (5a)--|--------Join response (5)-->|
-             |                        |                            |
+     +--------+                 +-------+                   +--------+
+     | pledge |                 |  JP   |                   |  JRC   |
+     |        |                 |       |                   |        |
+     +--------+                 +-------+                   +--------+
+         |                          |                            |
+         |<----ENH BEACON (1)-------|                            |
+         |                          |                            |
+         |<-Neighbor Discovery (2)->|                            |
+         |                          |                            |
+         |<---Sec. Handshake (3)----|--Security Handshake (3a)-->|
+         |                          |                            |
+         |-----Join request (4)-----|--------Join request (4a)-->|
+         |                          |                            |
+         |<---Join response (5)-----|-------Join response (5a)---|
+         |                          |                            |
 
 
-               Figure 1: Message sequence for join protocol.
+                 Figure 1: Overview of the join protocol.
 
    The details of each step are described in the following sections.
 
@@ -277,7 +277,7 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
 
-Vucinic, et al.          Expires August 13, 2017                [Page 5]
+Vucinic, et al.          Expires August 14, 2017                [Page 5]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
@@ -296,7 +296,7 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    the compromise of the same keying material, as it is likely to be
    found in node's memory.
 
-3.3.1.  Pre-Shared Key
+3.3.1.  Pre-Shared Symmetric Key
 
    The Diffie-Hellman key exchange and the use of EDHOC is optional,
    when using a pre-shared symmetric key.  This cuts down on traffic
@@ -333,7 +333,7 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
 
-Vucinic, et al.          Expires August 13, 2017                [Page 6]
+Vucinic, et al.          Expires August 14, 2017                [Page 6]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
@@ -377,23 +377,82 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    the proxy) using Object Security of CoAP (OSCOAP)
    [I-D.ietf-core-object-security].
 
-4.1.  Proxy Operation of Join Proxy (JP)
+4.1.  Transaction Diagrams
+
+4.1.1.  Case of Pre-Shared Symmetric Key
+
+   Figure 2 shows the exchanges that take place in case pre-shared
+   symmetric key is used.  Messages join_request and join_response are
+   specified in Section 4.4 and Section 4.5.
+
+
+
+
+
+Vucinic, et al.          Expires August 14, 2017                [Page 7]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
+                +--------+                       +--------+
+                | pledge |                       |  JRC   |
+                |        |                       |        |
+                +--------+                       +--------+
+                    |                                 |
+                    |           join_request          |
+                    +-------------------------------->|
+                    |                                 |
+                    |          join_response          |
+                    |<--------------------------------+
+                    |                                 |
+
+
+           Figure 2: Sequence diagram in case of symmetric keys.
+
+4.1.2.  Case of Asymmetric Keys
+
+   Figure 3 details the exchanges between the pledge and JRC that take
+   place during the execution of the join protocol in case asymmetric
+   keys are used.  Format of EDHOC messages is specified in
+   [I-D.selander-ace-cose-ecdhe].
+
+                +--------+                       +--------+
+                | pledge |                       |  JRC   |
+                |        |                       |        |
+                +--------+                       +--------+
+                    |        EDHOC_message_1          |
+                    +-------------------------------->|
+                    |                                 |
+                    |        EDHOC_message_2          |
+                    |<--------------------------------+
+                    |                                 |
+                    |  EDHOC_message_3 + join_request |
+                    +-------------------------------->|
+                    |                                 |
+                    |          join_response          |
+                    |<--------------------------------+
+                    |                                 |
+
+
+          Figure 3: Sequence diagram in case of asymmetric keys.
+
+4.2.  Proxy Operation of Join Proxy (JP)
 
    The pledge designates a JP as a proxy by including in the CoAP
    requests to the JP the Proxy-Scheme option with value "coap" (CoAP-
    to-CoAP proxy).  The pledge MUST include the Uri-Host option with its
    value set to the well-known JRC's alias - "6tisch.arpa".  The pledge
-   does not need to learn the actual IPv6 address of JRC at any time
-   during the join protocol.  The JP knows the address of the JRC, via a
-   provisioning process that occured when the JP, acting as a pledge,
 
 
 
-Vucinic, et al.          Expires August 13, 2017                [Page 7]
+Vucinic, et al.          Expires August 14, 2017                [Page 8]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
+   does not need to learn the actual IPv6 address of JRC at any time
+   during the join protocol.  The JP knows the address of the JRC, via a
+   provisioning process that occured when the JP, acting as a pledge,
    joined.  The initial bootstrap of the DODAG root would require
    explicit provisioning of the JRC address.
 
@@ -415,7 +474,7 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    stateless manner.  It also allows JRC to look up the right security
    context for communication with a given pledge.
 
-4.1.1.  Implementation of origin_info
+4.2.1.  Implementation of origin_info
 
    The origin_info is implemented as a CBOR [RFC7049] array object
    containing:
@@ -434,22 +493,21 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
        token : uint
    ]
 
-4.2.  OSCOAP Security Context Instantiation
+4.3.  OSCOAP Security Context Instantiation
 
    The OSCOAP security context MUST be derived at pledge and JRC as per
    Section 3.2 of [I-D.ietf-core-object-security] using HKDF [RFC5869]
    as the key derivation function.
 
-   o  Context Identifier (Cid) MUST be the origin_info object wrapped as
-      a byte string (bstr).  This context information is included in the
 
 
-
-Vucinic, et al.          Expires August 13, 2017                [Page 8]
+Vucinic, et al.          Expires August 14, 2017                [Page 9]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
+   o  Context Identifier (Cid) MUST be the origin_info object wrapped as
+      a byte string (bstr).  This context information is included in the
       derivation of the shared secret, so while visible, it is
       protected.
 
@@ -476,9 +534,9 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    in a scenario where there are multiple 6TiSCH networks present and
    the pledge tries to join one network at a time.
 
-4.3.  Implementation of Join Request
+4.4.  Implementation of join_request
 
-   Join Request message SHALL be mapped to a CoAP request:
+   Message join_request SHALL be mapped to a CoAP request:
 
    o  The request method is GET.
 
@@ -492,19 +550,24 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
       [I-D.ietf-core-object-security] and OSCOAP parameters set as
       described above.
 
-4.4.  Implementation of Join Response
-
-   If OSCOAP processing is a success, Join Response message SHALL be a
-   CoAP response:
-
-   o  The response Code is 2.05 (Content).
 
 
 
-Vucinic, et al.          Expires August 13, 2017                [Page 9]
+
+
+
+
+Vucinic, et al.          Expires August 14, 2017               [Page 10]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
+
+4.5.  Implementation of join_response
+
+   If OSCOAP processing is a success, messsage join_response SHALL be
+   mapped to a CoAP response:
+
+   o  The response Code is 2.05 (Content).
 
    o  The payload is a CBOR array containing, in order:
 
@@ -542,26 +605,29 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
    Link-layer frames are protected with a 16-byte key, and a 13-byte
    nonce constructed from current Absolute Slot Number (ASN) and the
-   source (the JP for EBs) address, as shown in Figure 2:
+   source (the JP for EBs) address, as shown in Figure 4:
+
+
+
+
+
+
+
+Vucinic, et al.          Expires August 14, 2017               [Page 11]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
 
                +-------------------------------------------+
                |  Address (8B or 00-padded 2B) | ASN (5B)  |
                +-------------------------------------------+
 
-               Figure 2: Link-layer CCM* nonce construction
+               Figure 4: Link-layer CCM* nonce construction
 
    The pledge does not initially do any authentication of the EB frames,
    as it does not know the K1 key.  When sending frames, the pledge
    sends unencrypted and unauthenticated frames (exempt mode in
    802.15.4).  JP accepts these frames for the duration of the join
-
-
-
-Vucinic, et al.          Expires August 13, 2017               [Page 10]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
-
    process.  How JP learns whether the join process is ongoing is out of
    scope of this specification.
 
@@ -599,6 +665,15 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    middle attack is possible.  The well known problem with Bluetooth
    headsets with a "0000" pin applies here.  The design differentiates
    between nonces constructed for requests and nonces constructed for
+
+
+
+
+Vucinic, et al.          Expires August 14, 2017               [Page 12]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    responses by different sender identifiers (0x00 for pledge and 0x01
    for JRC).
 
@@ -610,14 +685,6 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    bandwidth.  (EDNOTE: this is a problem that needs to be solved)
    Because the relay operation of JP is implemented at the application
    layer, JP is the only hop on the JP-6LBR path that can distinguish
-
-
-
-Vucinic, et al.          Expires August 13, 2017               [Page 11]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
-
    join traffic from regular IP traffic in the network.  It is therefore
    recommended to implement stateless rate limiting at JP: a simple
    bandwidth (in bytes or packets/second) cap would be appropriate.
@@ -655,24 +722,20 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
    address which can be assigned by JRC to the pledge.  The short
    address is independent of the long-term identifier EUI64 and is
    encrypted in the response.  For that reason, it is not possible to
+
+
+
+Vucinic, et al.          Expires August 14, 2017               [Page 13]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    correlate the short address with the EUI64 used during the join.  Use
    of short addresses once the join protocol completes mitigates the
    aforementioned privacy risks.  In addition, EDHOC may be used for
    identity protection during the join protocol by generating a random
    context identifier in place of the EUI64
    [I-D.selander-ace-cose-ecdhe].
-
-
-
-
-
-
-
-
-Vucinic, et al.          Expires August 13, 2017               [Page 12]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
 
 9.  IANA Considerations
 
@@ -712,23 +775,23 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
               Schaad, J., "CBOR Object Signing and Encryption (COSE)",
               draft-ietf-cose-msg-24 (work in progress), November 2016.
 
+
+
+
+
+
+
+Vucinic, et al.          Expires August 14, 2017               [Page 14]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    [I-D.ietf-core-object-security]
               Selander, G., Mattsson, J., Palombini, F., and L. Seitz,
               "Object Security of CoAP (OSCOAP)", draft-ietf-core-
               object-security-01 (work in progress), December 2016.
 
 11.2.  Informative References
-
-
-
-
-
-
-
-Vucinic, et al.          Expires August 13, 2017               [Page 13]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
 
    [RFC7554]  Watteyne, T., Ed., Palattella, M., and L. Grieco, "Using
               IEEE 802.15.4e Time-Slotted Channel Hopping (TSCH) in the
@@ -771,20 +834,18 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
               6tisch-dtsecurity-secure-join-00 (work in progress),
               December 2016.
 
+
+
+
+Vucinic, et al.          Expires August 14, 2017               [Page 15]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    [I-D.ietf-6tisch-6top-protocol]
               Wang, Q. and X. Vilajosana, "6top Protocol (6P)", draft-
               ietf-6tisch-6top-protocol-03 (work in progress), October
               2016.
-
-
-
-
-
-
-Vucinic, et al.          Expires August 13, 2017               [Page 14]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
 
    [I-D.ietf-6tisch-terminology]
               Palattella, M., Thubert, P., Watteyne, T., and Q. Wang,
@@ -810,7 +871,7 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 Appendix A.  Example
 
-   Figure 3 illustrates a join protocol exchange in case PSKs are used.
+   Figure 5 illustrates a join protocol exchange in case PSKs are used.
    Pledge instantiates the OSCOAP context and derives the traffic keys
    and nonces from the PSK.  It uses the instantiated context to protect
    the CoAP request addressed with Proxy-Scheme option and well-known
@@ -829,19 +890,19 @@ Appendix A.  Example
 
    o  Algorithm being the AES-CCM-16-64-128 from [I-D.ietf-cose-msg]
 
+
+
+
+Vucinic, et al.          Expires August 14, 2017               [Page 16]
+
+Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
+
+
    o  Request URI reconstructed following
       [I-D.ietf-core-object-security].
 
    Replay protection is ensured by OSCOAP and the tracking of sequence
    numbers at each side.  In the example below, the response contains
-
-
-
-Vucinic, et al.          Expires August 13, 2017               [Page 15]
-
-Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
-
-
    sequence number 7 meaning that there have already been some attempts
    to join under a given context, not coming from the pledge.  Once JP
    receives the response, it looks up and decodes the cid field in order
@@ -888,12 +949,7 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
 
-
-
-
-
-
-Vucinic, et al.          Expires August 13, 2017               [Page 16]
+Vucinic, et al.          Expires August 14, 2017               [Page 17]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
@@ -932,7 +988,7 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
          |      |      |                   {join_response}, <Tag>]
          |      |      |
 
-   Figure 3: Example of a join protocol exchange with a PSK. {} denotes
+   Figure 5: Example of a join protocol exchange with a PSK. {} denotes
          encryption and authentication, [] denotes authentication.
 
    Where origin_info and join_response are as follows.
@@ -949,7 +1005,7 @@ Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
 
 
-Vucinic, et al.          Expires August 13, 2017               [Page 17]
+Vucinic, et al.          Expires August 14, 2017               [Page 18]
 
 Internet-Draft    Minimal Security Framework for 6TiSCH    February 2017
 
@@ -1005,4 +1061,4 @@ Authors' Addresses
 
 
 
-Vucinic, et al.          Expires August 13, 2017               [Page 18]
+Vucinic, et al.          Expires August 14, 2017               [Page 19]

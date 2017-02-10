@@ -296,6 +296,62 @@ Pledge and JRC MUST protect their exchange end-to-end (i.e. through the
 proxy) using Object Security of CoAP (OSCOAP)
 {{I-D.ietf-core-object-security}}.
 
+## Transaction Diagrams
+
+### Case of Pre-Shared Symmetric Key
+
+{{fig_exchange-symmetric}} shows the exchanges that take place in case pre-shared
+symmetric key is used. Messages join_request and join_response are specified in
+{{join_request}} and {{join_response}}. These messages are protected by OSCOAP,
+using PSK as the shared secret.
+
+
+~~~~~~~~~~~
++--------+                       +--------+
+| pledge |                       |  JRC   |
+|        |                       |        |
++--------+                       +--------+
+    |                                 |
+    |           join_request          |
+    +-------------------------------->|
+    |                                 |
+    |          join_response          |
+    |<--------------------------------+
+    |                                 |   
+
+~~~~~~~~~~~
+{: #fig_exchange-symmetric title="Transaction diagram in case of symmetric keys."}
+{: artwork-align="center"}
+
+
+### Case of Asymmetric Keys
+
+{{fig_exchange-asymmetric}} details the exchanges between the pledge and JRC that
+take place during the execution of the join protocol in case asymmetric keys
+are used. Format of EDHOC messages is specified in {{I-D.selander-ace-cose-ecdhe}}.
+
+~~~~~~~~~~~
++--------+                       +--------+
+| pledge |                       |  JRC   |
+|        |                       |        |
++--------+                       +--------+
+    |        EDHOC_message_1          |
+    +-------------------------------->|
+    |                                 |
+    |        EDHOC_message_2          |
+    |<--------------------------------+
+    |                                 |
+    |  EDHOC_message_3 + join_request |
+    +-------------------------------->|
+    |                                 |
+    |          join_response          |
+    |<--------------------------------+
+    |                                 |   
+
+~~~~~~~~~~~
+{: #fig_exchange-asymmetric title="Transaction diagram in case of asymmetric keys."}
+{: artwork-align="center"}
+
 ## Proxy Operation of Join Proxy (JP)
 
 The pledge designates a JP as a proxy by including in the CoAP requests to
@@ -372,9 +428,9 @@ properly incremented for each request.
 This may happen in a scenario where there are multiple 6TiSCH networks
 present and the pledge tries to join one network at a time.
 
-## Implementation of Join Request
+## Implementation of join_request {#join_request}
 
-Join Request message SHALL be mapped to a CoAP request:
+Message join_request SHALL be mapped to a CoAP request:
 
 * The request method is GET.
 * The Proxy-Scheme option is set to "coap".
@@ -384,10 +440,10 @@ Join Request message SHALL be mapped to a CoAP request:
   {{I-D.ietf-core-object-security}} and OSCOAP parameters set as
   described above.
 
-## Implementation of Join Response
+## Implementation of join_response {#join_response}
 
-If OSCOAP processing is a success, Join Response message SHALL be a
-CoAP response:
+If OSCOAP processing is a success, messsage join_response SHALL be mapped to
+a CoAP response:
 
 * The response Code is 2.05 (Content).
 * The payload is a CBOR array containing, in order:
