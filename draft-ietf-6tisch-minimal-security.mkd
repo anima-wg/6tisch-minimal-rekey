@@ -167,24 +167,24 @@ about the particulars of a 6TiSCH network.
 The handshake is shown as a transaction diagram in {{fig_sequence-diagram}}:
 
 ~~~~~~~~~~~
-      +-----+               +----------+              +-----------+
-      | JRC |               |    JP    |              |  pledge   |
-      |     |               |          |              |           |
-      +-----+               +----------+              +-----------+
-         |                        |                            |
-         |                        |-----------ENH BEACON (1)-->|
-         |                        |                            |
-         |                        |<--Neighbor Discovery (2)-->|
-         |                        |                            |
-         |<--Sec. Handshake (3a)--|---Security Handshake (3)-->|
-         |                        |                            |
-         |<----Join request (4a)--|---------Join request (4)---|
-         |                        |                            |
-         |----Join response (5a)--|--------Join response (5)-->|
-         |                        |                            |
++--------+                 +-------+                   +--------+
+| pledge |                 |  JP   |                   |  JRC   |
+|        |                 |       |                   |        |
++--------+                 +-------+                   +--------+
+    |                          |                            | 
+    |<----ENH BEACON (1)-------|                            |
+    |                          |                            |
+    |<-Neighbor Discovery (2)->|                            |  
+    |                          |                            |
+    |<---Sec. Handshake (3)----|--Security Handshake (3a)-->|
+    |                          |                            |
+    |-----Join request (4)-----|--------Join request (4a)-->|
+    |                          |                            |
+    |<---Join response (5)-----|-------Join response (5a)---|
+    |                          |                            |
 
 ~~~~~~~~~~~
-{: #fig_sequence-diagram title="Message sequence for join protocol."}
+{: #fig_sequence-diagram title="Overview of the join protocol."}
 {: artwork-align="center"}
 
 The details of each step are described in the following sections.
@@ -227,7 +227,7 @@ is compromised as well.
 Physical compromise of the pledge, however, would also imply the compromise
 of the same keying material, as it is likely to be found in node's memory.
 
-### Pre-Shared Key
+### Pre-Shared Symmetric Key
 
 The Diffie-Hellman key exchange and the use of EDHOC is optional,
 when using a pre-shared symmetric key.
