@@ -86,7 +86,7 @@ Additional security behaviors and mechanisms may be added on top of this minimal
 
 --- middle
 
-# Introduction        {#problems}
+# Introduction        {#introduction}
 
 When a previously unknown device seeks admission to a 6TiSCH
 {{RFC7554}} network (to "join"), it first needs to synchronize to the
@@ -115,7 +115,7 @@ It assumes the pledge pre-configured with either a:
 As the outcome of the join process, the pledge expects one or
 more link-layer key(s) and optionally a temporary network identifier.
 
-# Terminology          {#Terminology}
+# Terminology          {#terminology}
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
