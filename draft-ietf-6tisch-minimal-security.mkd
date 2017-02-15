@@ -68,6 +68,7 @@ informative:
   I-D.ietf-6tisch-terminology:
   I-D.selander-ace-cose-ecdhe:
   I-D.ietf-anima-bootstrapping-keyinfra:
+  I-D.richardson-6tisch-join-enhanced-beacon:
   IEEE8021542015:
     title: "IEEE Std 802.15.4-2015 Standard for Low-Rate Wireless Personal Area Networks (WPANs)"
     author:
@@ -143,6 +144,26 @@ Join Proxy (JP):
 Join Registrar/Coordinator (JRC):
 :  central entity responsible for authentication and authorization of joining nodes.
 
+# One-Touch Assumptions
+
+In a one-touch scenario, devices would be provided with some mechanism by which
+a secure association may be made in a controlled environment.  There are many
+ways in which this might be done, and detailing any of them is out of scope
+for this document.  But, some notion of how this might be done is important
+so that the underlying assumptions can be reasoned about.
+
+Some examples of how to do this could include:
+* JTAG interface
+* serial (craft) console interface
+* pushes of physical buttons simulatenous to network attachment
+* insecured devices operated in a Faraday cage
+
+There are likely many other ways as well.  What is assumed is that there can
+be a secure, private conversation between the Join Coordination Entity, and
+the Pledge, and that the two devices can exchange some trusted bytes of
+information.
+
+
 # Join Overview
 
 This section describes the steps taken by a pledge in a 6TiSCH network.
@@ -195,13 +216,37 @@ The details of each step are described in the following sections.
 
 ## Step 1 - Enhanced Beacon
 
-The pledge hears an EB from the JP and synchronizes itself to the joining
+
+### (1) Layer-2 Enhanced Beacon
+
+A new pledge must listen for a beacon for a period of at least 2s (HELP) on
+each of the 16 possible channels.  The pledge SHOULD collect all beacons from
+heard on all channels before selecting.
+
+Once the pledge hears an EB from a JP, it synchronizes itself to the joining
 schedule using the cells contained in the EB.
-At this point the pledge MAY proceed to step 2, or continue to listen for additional EBs.
-If more than one EB is heard, the pledge MAY use a metric based on DAG rank
-and received signal level of the EB, or other factors to decide which JP to
-use for the security handshake in step 3.
-Details on how a pledge chooses the JP are out of scope of this specification.
+
+If the pledge is unable to record all of the beacons that it
+hears due to limitations on volatile storage, then it should at least
+attempt to record the detail as to how to find that beacon again (channel,
+time sequence).
+
+This search process entails having the pledge keep the receiver portion of it's
+radio active for the entire period of time.
+
+The selection of which beacon to start with is outside the scope of this
+document.  Implementers SHOULD make use of information such as: whether the
+L2 address of the Beacon has been tried before, any Network Identifier
+{{I-D.richardson-6tisch-join-enhanced-beacon}} seen, and the strength of the
+signal.  The pledge can be configured with the Network Identifier to seek
+when it is configured with the PSK.
+
+Once a candidate network has been selected, the pledge can transition into a
+low-power duty cycle, waking only when the provided schedule indicates ALOHA
+slots which the pledge may use for the join process.
+
+At this point the pledge MAY proceed to step 2, or continue to listen for
+additional EBs.
 
 ## Step 2 - Neighbor Discovery
 
