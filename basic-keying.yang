@@ -1,0 +1,103 @@
+module ietf-6tisch-symmetric-keying {
+  yang-version 1.1;
+
+  namespace
+    "urn:ietf:params:xml:ns:yang:6tisch-keys";
+  prefix "6keys";
+
+  import ietf-yang-types { prefix yang; }
+  import ietf-inet-types { prefix inet; }
+
+  organization
+   "IETF 6tisch Working Group";
+
+  contact
+   "WG Web:   <http://tools.ietf.org/wg/6tisch/>
+    WG List:  <mailto:6tisch@ietf.org>
+    Author:   Michael Richardson
+              <mailto:mcr+ietf@sandelman.ca>";
+
+  description
+   "This module defines the format for a set of network-wide 802.15.4 keys used
+    in 6tisch networks.  There are 128 sets of key pairs, with one keypair (K1)
+    used to authenticate (and sometimes encrypt) multicast traffic, and another
+    keypair (K2) used to encrypt unicast traffic.  The 128 key pairs are numbered
+    by the (lower) odd keyindex, which otherwise is a 0-255 value.  Keyindex 0
+    is not valid.  This module is a partial expression of the tables in
+    https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf";
+
+  revision "YYYY-MM-DD" {
+    description
+     "Initial version";
+    reference
+     "RFC XXXX: 6tisch minimal security";
+  }
+
+  // top-level container
+  container 6tischkeys {
+    config false;
+    description
+      "A voucher that can be used to assign one or more
+       devices to an owner.";
+
+    // not sure this should even be included, only care about secKeyIdMode=1
+    // and it's not enumerated string exactly, but rather an integer according to IEEE.
+    // I think the integer goes across the wire too.
+    leaf secKeyIdMode {
+      type uint8 {
+        enum mode0perpair {
+          description
+            "Indicates that the keys are per-pair, and depend upon source and destination l2 addresses";
+        }
+        enum mode1keyid {
+          description
+            "Indicates that the keys are based upon an explicit keyid, and are global to the network";
+        }
+        enum mode2src {
+          description
+            "Indicates that the keys are based upon the L2 source address, and are per-sender";
+        }
+        enum mode3src {
+          description
+            "Indicates that the keys are based upon the L2 destination address, and are per-destination";
+        }
+      }
+      mandatory true;
+      description
+        "The keyidmode determines how layer2 keys are used";
+    }
+
+    // really, choice secKeyIdMode, case mode1keyid
+    leaf secKeyIndex {
+      type uint8;
+      description
+        "The keyIndex for this keySet. A number between 1 and 255.";
+
+      reference
+        "IEEE802.15.4";
+    }
+
+    container secKeyDescriptor {
+      description
+        "This container describes the details of a specific cipher key";
+      leaf secKeyUsageList {
+        description "A container of type secKeyUsageDescriptor";
+      }
+      left secKey {
+        type binary;
+        description "The actual encryption key"
+      }
+      left secKeyFrameCounter {
+        // actually 40 bits (2 bytes) in size
+        type uint64;
+        description "The ASN to use when next sending"
+      }
+      left secFrameCounterPerKey {
+        description "A count of how many frames sent with this key"
+      }
+      left secKeyDeviceFrameCounterList {
+        description "A container of type: secKeyDeviceFrameCounter, I think only relevant for secKeyIdMode=2/3"
+      }
+    }
+  }
+}
