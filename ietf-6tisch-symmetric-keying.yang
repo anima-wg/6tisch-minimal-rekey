@@ -3,10 +3,10 @@ module ietf-6tisch-symmetric-keying {
 
   namespace
     "urn:ietf:params:xml:ns:yang:6tisch-keys";
-  prefix "6keys";
+  prefix "ietf6keys";
 
-  import ietf-yang-types { prefix yang; }
-  import ietf-inet-types { prefix inet; }
+  //import ietf-yang-types { prefix yang; }
+  //import ietf-inet-types { prefix inet; }
 
   organization
    "IETF 6tisch Working Group";
@@ -26,7 +26,7 @@ module ietf-6tisch-symmetric-keying {
     is not valid.  This module is a partial expression of the tables in
     https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf";
 
-  revision "YYYY-MM-DD" {
+  revision "2017-03-01" {
     description
      "Initial version";
     reference
@@ -34,7 +34,7 @@ module ietf-6tisch-symmetric-keying {
   }
 
   // top-level container
-  container 6tischkeys {
+  container ietf6tischkeys {
     config false;
     description
       "A voucher that can be used to assign one or more
@@ -44,7 +44,7 @@ module ietf-6tisch-symmetric-keying {
     // and it's not enumerated string exactly, but rather an integer according to IEEE.
     // I think the integer goes across the wire too.
     leaf secKeyIdMode {
-      type uint8 {
+      type enumeration {
         enum mode0perpair {
           description
             "Indicates that the keys are per-pair, and depend upon source and destination l2 addresses";
@@ -81,22 +81,25 @@ module ietf-6tisch-symmetric-keying {
       description
         "This container describes the details of a specific cipher key";
       leaf secKeyUsageList {
+        type uint8;
         description "A container of type secKeyUsageDescriptor";
       }
-      left secKey {
+      leaf secKey {
         type binary;
-        description "The actual encryption key"
+        description "The actual encryption key";
       }
-      left secKeyFrameCounter {
+      leaf secKeyFrameCounter {
         // actually 40 bits (2 bytes) in size
         type uint64;
-        description "The ASN to use when next sending"
+        description "The ASN to use when next sending";
       }
-      left secFrameCounterPerKey {
-        description "A count of how many frames sent with this key"
+      leaf secFrameCounterPerKey {
+        type uint8;
+        description "A count of how many frames sent with this key";
       }
-      left secKeyDeviceFrameCounterList {
-        description "A container of type: secKeyDeviceFrameCounter, I think only relevant for secKeyIdMode=2/3"
+      leaf secKeyDeviceFrameCounterList {
+        type uint8;
+        description "A container of type: secKeyDeviceFrameCounter, I think only relevant for secKeyIdMode=2/3";
       }
     }
   }
