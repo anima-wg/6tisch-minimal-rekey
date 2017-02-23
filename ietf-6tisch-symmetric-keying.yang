@@ -40,41 +40,7 @@ module ietf-6tisch-symmetric-keying {
       "A voucher that can be used to assign one or more
        devices to an owner.";
 
-    // not sure this should even be included, only care about secKeyIdMode=1
-    // and it's not enumerated string exactly, but rather an integer according to IEEE.
-    // I think the integer goes across the wire too.
-    leaf secKeyIdMode {
-      type enumeration {
-        enum mode0perpair {
-          description
-            "Indicates that the keys are per-pair, and depend upon source and destination l2 addresses. secKeyIndex does not apply.";
-        }
-        enum mode1keyid {
-          description
-            "Indicates that the keys are based upon an explicit keyid, and are global to the network";
-        }
-        enum mode2src {
-          description
-            "Indicates that the key source is identified by 4-octet KeySource field containing
-            the 16-bit pan id and 16-bit short address of the owner of the key.  The keys are not
-            per-sender, but rather per key owner. The key owners is not necessary the same entity that
-            is sending the frame, and source address of the frame can be different than what is
-            in the KeySource field.";
-        }
-        enum mode3src {
-          description
-            "Indicates that the key source is identified by 8-octet KeySource field containing
-            the extended address of the originator of the group key.  The keys are not
-            per-sender, but rather per key owner. The key owners is not necessary the same entity that
-            is sending the frame, and source address of the frame can be different than what is
-            in the KeySource field.";
-        }
-      }
-      mandatory true;
-      description
-        "The keyidmode determines how layer2 keys are used";
-    }
-
+    // secKeyIdMode is always 1, do not describe it here.
     leaf secKeyIndex {
       type uint8;
       description
