@@ -47,7 +47,7 @@ module ietf-6tisch-symmetric-keying {
       type enumeration {
         enum mode0perpair {
           description
-            "Indicates that the keys are per-pair, and depend upon source and destination l2 addresses";
+            "Indicates that the keys are per-pair, and depend upon source and destination l2 addresses. secKeyIndex does not apply.";
         }
         enum mode1keyid {
           description
@@ -55,11 +55,19 @@ module ietf-6tisch-symmetric-keying {
         }
         enum mode2src {
           description
-            "Indicates that the keys are based upon the L2 source address, and are per-sender";
+            "Indicates that the key source is identified by 4-octet KeySource field containing
+            the 16-bit pan id and 16-bit short address of the owner of the key.  The keys are not
+            per-sender, but rather per key owner. The key owners is not necessary the same entity that
+            is sending the frame, and source address of the frame can be different than what is
+            in the KeySource field.";
         }
         enum mode3src {
           description
-            "Indicates that the keys are based upon the L2 destination address, and are per-destination";
+            "Indicates that the key source is identified by 8-octet KeySource field containing
+            the extended address of the originator of the group key.  The keys are not
+            per-sender, but rather per key owner. The key owners is not necessary the same entity that
+            is sending the frame, and source address of the frame can be different than what is
+            in the KeySource field.";
         }
       }
       mandatory true;
@@ -67,7 +75,6 @@ module ietf-6tisch-symmetric-keying {
         "The keyidmode determines how layer2 keys are used";
     }
 
-    // really, choice secKeyIdMode, case mode1keyid
     leaf secKeyIndex {
       type uint8;
       description
@@ -80,26 +87,9 @@ module ietf-6tisch-symmetric-keying {
     container secKeyDescriptor {
       description
         "This container describes the details of a specific cipher key";
-      leaf secKeyUsageList {
-        type uint8;
-        description "A container of type secKeyUsageDescriptor";
-      }
       leaf secKey {
         type binary;
         description "The actual encryption key";
-      }
-      leaf secKeyFrameCounter {
-        // actually 40 bits (2 bytes) in size
-        type uint64;
-        description "The ASN to use when next sending";
-      }
-      leaf secFrameCounterPerKey {
-        type uint8;
-        description "A count of how many frames sent with this key";
-      }
-      leaf secKeyDeviceFrameCounterList {
-        type uint8;
-        description "A container of type: secKeyDeviceFrameCounter, I think only relevant for secKeyIdMode=2/3";
       }
     }
   }
