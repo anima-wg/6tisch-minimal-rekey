@@ -1,4 +1,4 @@
-DRAFT:=draft-ietf-6tisch-minimal-rekey
+DRAFT:=draft-richardson-6tisch-minimal-rekey
 VERSION:=$(shell ./getver ${DRAFT}.mkd )
 
 ${DRAFT}-${VERSION}.txt: ${DRAFT}.txt
@@ -13,6 +13,7 @@ ${DRAFT}-${VERSION}.txt: ${DRAFT}.txt
 %.html: %.xml
 	unset DISPLAY; XML_LIBRARY=$(XML_LIBRARY):./src xml2rfc --html -o $@ $?
 
+.PRECIOUS: ${DRAFT}.xml
 
 version:
 	echo Version: ${VERSION}
