@@ -18,10 +18,12 @@ module ietf-6tisch-short-address {
               <mailto:mcr+ietf@sandelman.ca>";
 
   description
-   "This module defines an interface to set and interrogate the short (16-bit) layer-2 address
-    used in 802.15.4 TSCH mode networks.  The short addresses are used in L2 frames
-    to save space.  A lifetime is included in terms of TSCH Absolute Slot Number, which
-    acts as a monotonically increasing clock.  ";
+   "This module defines an interface to set and interrogate
+    the short (16-bit) layer-2 address used in 802.15.4
+    TSCH mode networks.  The short addresses are used
+    in L2 frames to save space.  A lifetime is included
+    in terms of TSCH Absolute Slot Number, which acts
+    as a monotonically increasing clock.  ";
 
   revision "2017-03-01" {
     description
@@ -45,13 +47,18 @@ module ietf-6tisch-short-address {
     }
     leaf validuntil {
       type uint32;
-      description "The Absolute Slot Number/256 at which the address ceases to be valid.";
+      description "The Absolute Slot Number/256 at which
+                   the address ceases to be valid.";
       mandatory true;
     }
 
     leaf effectiveat {
       type uint32;
-      description "The Absolute Slot Number/256 at which time the address was originally set. This is a read-only attribute that records the ASN when the shortaddress element was last written or updated.";
+      description "The Absolute Slot Number/256 at which
+                   time the address was originally set.
+                   This is a read-only attribute that
+                   records the ASN when the shortaddress
+                   element was last written or updated.";
       mandatory false;
     }
   }
