@@ -1,4 +1,4 @@
 #!/bin/sh
 
-sed -n -e'/docname/s,.*minimal-security-\([0-9]*\).*,\1,p' $*
+sed -n -e'/docname/s,.*minimal-rekey-\([0-9]*\).*,\1,p' $*
 

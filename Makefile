@@ -1,4 +1,4 @@
-DRAFT:=draft-ietf-6tisch-minimal-security
+DRAFT:=draft-ietf-6tisch-minimal-rekey
 VERSION:=$(shell ./getver ${DRAFT}.mkd )
 
 ${DRAFT}-${VERSION}.txt: ${DRAFT}.txt

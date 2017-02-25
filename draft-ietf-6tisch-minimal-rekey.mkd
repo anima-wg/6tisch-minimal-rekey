@@ -1,0 +1,103 @@
+---
+title: Minimal Security rekeying mechanism for 6TiSCH
+abbrev: 6tisch-minimal-rekey
+docname: draft-ietf-6tisch-minimal-rekey-02
+
+# stand_alone: true
+
+ipr: trust200902
+area: Internet
+wg: 6TiSCH Working Group
+kw: Internet-Draft
+cat: std
+
+coding: us-ascii
+pi:
+  toc: yes
+  sortrefs: yes
+  symrefs: yes
+  tocdepth: 2
+
+author:
+      -
+        ins: M. Richardson
+        name: Michael Richardson
+        org: Sandelman Software Works
+        email: mcr+ietf@sandelman.ca
+
+normative:
+  RFC2119:
+  RFC7252:
+  RFC7049:
+  I-D.ietf-cose-msg:
+  I-D.ietf-core-object-security:
+
+informative:
+  I-D.ietf-6tisch-minimal-security:
+  I-D.ietf-6tisch-dtsecurity-secure-join:
+  I-D.ietf-6tisch-6top-protocol:
+  I-D.ietf-anima-bootstrapping-keyinfra:
+  I-D.ietf-6tisch-terminology:
+  IEEE8021542015:
+    title: "IEEE Std 802.15.4-2015 Standard for Low-Rate Wireless Personal Area Networks (WPANs)"
+    author:
+      ins: "IEEE standard for Information Technology"
+    date: 2015
+
+
+--- abstract
+
+This draft describes a mechanism to rekey the networks used by 6TISCH nodes.
+It leverages the security association created during an enrollment protocol.
+The rekey mechanism permits incremental deployment of new sets of keys,
+followed by a rollover to a new key.
+
+--- middle
+
+# Introduction        {#introduction}
+
+
+# Terminology          {#terminology}
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in {{RFC2119}}. These words
+may also appear in this document in lowercase, absent their normative meanings.
+
+The reader is expected to be familiar with the terms and concepts defined in
+{{I-D.ietf-6tisch-terminology}}, {{RFC7252}},
+{{I-D.ietf-core-object-security}}, and {{I-D.ietf-anima-bootstrapping-keyinfra}}.
+
+# An approach to rekeying
+
+TBD
+
+# A YANG model for keys
+
+It optionally also contains an IEEE 802.15.4 short-address
+{{IEEE8021542015}} assigned to pledge by JRC.
+
+# Rekey of master connection
+
+TBD
+
+# Privacy Considerations
+
+TBD
+
+# Security Considerations
+
+TBD
+
+# IANA Considerations
+
+This document allocates a SID number for the YANG model.
+There is no IANA action required for this document.
+
+# Acknowledgments
+
+--- back
+
+# Example
+
+Example COMI requests/responses.

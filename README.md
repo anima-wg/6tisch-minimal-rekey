@@ -1,5 +1,5 @@
-# 6tisch-minimal-security
-6tisch WG Minimal Security work
+# 6tisch-minimal-rekey
+6tisch WG Minimal security work: rekeying a network
 
 This is the repository for an www.ietf.org Internet Draft in the
      6tisch WG http://datatracker.ietf.org/wg/6tisch
