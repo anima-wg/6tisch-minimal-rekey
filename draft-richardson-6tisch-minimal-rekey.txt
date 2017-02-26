@@ -65,14 +65,14 @@ Table of Contents
    3.  An approach to rekeying . . . . . . . . . . . . . . . . . . .   3
    4.  YANG model for keys . . . . . . . . . . . . . . . . . . . . .   4
    5.  YANG model for short-address  . . . . . . . . . . . . . . . .   6
-   6.  Security of CoMI link . . . . . . . . . . . . . . . . . . . .   8
-   7.  Rekey of master connection  . . . . . . . . . . . . . . . . .   8
-   8.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .   8
+   6.  Security of CoMI link . . . . . . . . . . . . . . . . . . . .   7
+   7.  Rekey of master connection  . . . . . . . . . . . . . . . . .   7
+   8.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .   7
    9.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
-   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
-   11. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   9
-   12. References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
-     12.1.  Normative References . . . . . . . . . . . . . . . . . .   9
+   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
+   11. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   8
+   12. References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
+     12.1.  Normative References . . . . . . . . . . . . . . . . . .   8
      12.2.  Informative References . . . . . . . . . . . . . . . . .   9
    Appendix A.  Example  . . . . . . . . . . . . . . . . . . . . . .  10
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  10
@@ -289,47 +289,47 @@ Internet-Draft            6tisch-minimal-rekey             February 2017
 
 5.  YANG model for short-address
 
-module ietf-6tisch-symmetric-keying {
-  yang-version 1.1;
+   module ietf-6tisch-short-address {
+     yang-version 1.1;
 
-  namespace
-    "urn:ietf:params:xml:ns:yang:6tisch-keys";
-  prefix "ietf6keys";
+     namespace
+       "urn:ietf:params:xml:ns:yang:6tisch-shortaddress";
+     prefix "ietf6shortaddr";
 
-  //import ietf-yang-types { prefix yang; }
-  //import ietf-inet-types { prefix inet; }
+     //import ietf-yang-types { prefix yang; }
+     //import ietf-inet-types { prefix inet; }
 
-  organization
-   "IETF 6tisch Working Group";
+     organization
+      "IETF 6tisch Working Group";
 
-  contact
-   "WG Web:   <http://tools.ietf.org/wg/6tisch/>
-    WG List:  <mailto:6tisch@ietf.org>
-    Author:   Michael Richardson
-              <mailto:mcr+ietf@sandelman.ca>";
+     contact
+      "WG Web:   <http://tools.ietf.org/wg/6tisch/>
+       WG List:  <mailto:6tisch@ietf.org>
+       Author:   Michael Richardson
+                 <mailto:mcr+ietf@sandelman.ca>";
 
-  description
-    "This module defines the format for a set of network-wide
-     802.15.4  keys used in 6tisch networks.  There are 128
-     sets of key pairs, with one keypair (K1) used to
-     authenticate (and sometimes encrypt) multicast traffic,
-     and another keypair (K2) used to encrypt unicast traffic.
-     The 128 key pairs are numbered by the (lower) odd
-     keyindex, which otherwise is a 0-255 value.
-     Keyindex 0 is not valid.  This module is a partial
-     expression of the tables in
-https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf";
+     description
+      "This module defines an interface to set and interrogate
+       the short (16-bit) layer-2 address used in 802.15.4
+       TSCH mode networks.  The short addresses are used
+       in L2 frames to save space.  A lifetime is included
+       in terms of TSCH Absolute Slot Number, which acts
+       as a monotonically increasing clock.  ";
 
-  revision "2017-03-01" {
-    description
-     "Initial version";
-    reference
-     "RFC XXXX: 6tisch minimal security";
-  }
+     revision "2017-03-01" {
+       description
+        "Initial version";
+       reference
+        "RFC XXXX: 6tisch minimal security";
+     }
 
-  // top-level container
-  container ietf6tischkeys {
-    config false;
+     // top-level container
+     container ietf6shortaddresses {
+       config false;
+       description
+         "A 16-bit short address for use by the node.";
+
+       leaf shortaddress {
 
 
 
@@ -338,61 +338,30 @@ Richardson               Expires August 29, 2017                [Page 6]
 Internet-Draft            6tisch-minimal-rekey             February 2017
 
 
-    description
-      "A voucher that can be used to assign one or more
-       devices to an owner.";
+         type binary;
+         length 2;
+         mandatory true;
+         description
+           "The two byte short address to be set.";
+       }
+       leaf validuntil {
+         type uint32;
+         description "The Absolute Slot Number/256 at which
+                      the address ceases to be valid.";
+         mandatory true;
+       }
 
-    // secKeyIdMode is always 1, do not describe it here.
-    leaf secKeyIndex {
-      type uint8;
-      description
-        "The keyIndex for this keySet. A number between
-         1 and 255.";
-
-      reference
-        "IEEE802.15.4";
-    }
-
-    container secKeyUsage {
-      leaf txPacketsSent {
-        type uint32;
-        description "Number of packets sent with this key.";
-      }
-      leaf rxPacketsSuccess {
-        type uint32;
-        description "Number of packets received with this key
-            that were successfully decrypted and authenticated.";
-      }
-      leaf rxPacketsReceived {
-        type uint32;
-        description "Number of packets received with this key,
-            both successfully received, and unsuccessfully.";
-      }
-
-    }
-
-    container secKeyDescriptor {
-      description
-        "This container describes the details of a specific
-         cipher key";
-      leaf secKey {
-        type binary;
-        description "The actual encryption key";
-      }
-    }
-  }
-}
-
-
-
-
-
-
-
-Richardson               Expires August 29, 2017                [Page 7]
-
-Internet-Draft            6tisch-minimal-rekey             February 2017
-
+       leaf effectiveat {
+         type uint32;
+         description "The Absolute Slot Number/256 at which
+                      time the address was originally set.
+                      This is a read-only attribute that
+                      records the ASN when the shortaddress
+                      element was last written or updated.";
+         mandatory false;
+       }
+     }
+   }
 
 6.  Security of CoMI link
 
@@ -417,6 +386,14 @@ Internet-Draft            6tisch-minimal-rekey             February 2017
    using OSCOAP, so the keys are not visible, nor is the keying traffic
    distinguished in anyway to an observer.
 
+
+
+
+Richardson               Expires August 29, 2017                [Page 7]
+
+Internet-Draft            6tisch-minimal-rekey             February 2017
+
+
    As the secKeyId is not confidential in the underlying 802.15.4
    frames, an observer can determine what sets of keys are in use, and
    when a rekey is activated by observing the change in the secKeyId.
@@ -437,18 +414,6 @@ Internet-Draft            6tisch-minimal-rekey             February 2017
    mechanism, and so depends upon the initial credentials provided to
    the node.  The initial network keys would have been provided during
    the join process; this protocol permits them to be updated.
-
-
-
-
-
-
-
-
-Richardson               Expires August 29, 2017                [Page 8]
-
-Internet-Draft            6tisch-minimal-rekey             February 2017
-
 
 10.  IANA Considerations
 
@@ -475,6 +440,16 @@ Internet-Draft            6tisch-minimal-rekey             February 2017
               Schaad, J., "CBOR Object Signing and Encryption (COSE)",
               draft-ietf-cose-msg-24 (work in progress), November 2016.
 
+
+
+
+
+
+Richardson               Expires August 29, 2017                [Page 8]
+
+Internet-Draft            6tisch-minimal-rekey             February 2017
+
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -495,16 +470,6 @@ Internet-Draft            6tisch-minimal-rekey             February 2017
               Wang, Q. and X. Vilajosana, "6top Protocol (6P)", draft-
               ietf-6tisch-6top-protocol-03 (work in progress), October
               2016.
-
-
-
-
-
-
-Richardson               Expires August 29, 2017                [Page 9]
-
-Internet-Draft            6tisch-minimal-rekey             February 2017
-
 
    [I-D.ietf-6tisch-dtsecurity-secure-join]
               Richardson, M., "6tisch Secure Join protocol", draft-ietf-
@@ -533,6 +498,14 @@ Internet-Draft            6tisch-minimal-rekey             February 2017
               802.15.4-2015 Standard for Low-Rate Wireless Personal Area
               Networks (WPANs)", 2015.
 
+
+
+
+Richardson               Expires August 29, 2017                [Page 9]
+
+Internet-Draft            6tisch-minimal-rekey             February 2017
+
+
 Appendix A.  Example
 
    Example COMI requests/responses.
@@ -543,6 +516,33 @@ Author's Address
    Sandelman Software Works
 
    Email: mcr+ietf@sandelman.ca
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

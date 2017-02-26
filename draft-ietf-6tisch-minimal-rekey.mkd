@@ -1,7 +1,7 @@
 ---
 title: Minimal Security rekeying mechanism for 6TiSCH
 abbrev: 6tisch-minimal-rekey
-docname: draft-richardson-6tisch-minimal-rekey-01
+docname: draft-richardson-6tisch-minimal-rekey-02
 
 # stand_alone: true
 
@@ -127,180 +127,13 @@ fashion.
 # YANG model for keys
 
 ~~~~~~~~
-module ietf-6tisch-symmetric-keying {
-  yang-version 1.1;
-
-  namespace
-    "urn:ietf:params:xml:ns:yang:6tisch-keys";
-  prefix "ietf6keys";
-
-  //import ietf-yang-types { prefix yang; }
-  //import ietf-inet-types { prefix inet; }
-
-  organization
-   "IETF 6tisch Working Group";
-
-  contact
-   "WG Web:   <http://tools.ietf.org/wg/6tisch/>
-    WG List:  <mailto:6tisch@ietf.org>
-    Author:   Michael Richardson
-              <mailto:mcr+ietf@sandelman.ca>";
-
-  description
-    "This module defines the format for a set of network-wide 802.15.4
-    keys used in 6tisch networks.  There are 128 sets of key pairs,
-    with one keypair (K1) used to authenticate (and sometimes encrypt)
-    multicast traffic, and another keypair (K2) used to encrypt unicast
-    traffic.  The 128 key pairs are numbered by the (lower) odd
-    keyindex, which otherwise is a 0-255 value.  Keyindex 0 is
-    not valid.  This module is a partial expression of the tables in
-    https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf";
-
-  revision "2017-03-01" {
-    description
-     "Initial version";
-    reference
-     "RFC XXXX: 6tisch minimal security";
-  }
-
-  // top-level container
-  container ietf6tischkeys {
-    config false;
-    description
-      "A voucher that can be used to assign one or more
-       devices to an owner.";
-
-    // secKeyIdMode is always 1, do not describe it here.
-    leaf secKeyIndex {
-      type uint8;
-      description
-        "The keyIndex for this keySet. A number between 1 and 255.";
-
-      reference
-        "IEEE802.15.4";
-    }
-
-    container secKeyUsage {
-      leaf txPacketsSent {
-        type uint32;
-        description "Number of packets sent with this key.";
-      }
-      leaf rxPacketsSuccess {
-        type uint32;
-        description "Number of packets received with this key that were
-                     successfully decrypted and authenticated.";
-      }
-      leaf rxPacketsReceived {
-        type uint32;
-        description "Number of packets received with this key, both
-            successfully received, and unsuccessfully.";
-      }
-
-    }
-
-    container secKeyDescriptor {
-      description
-        "This container describes the details of a specific cipher key";
-      leaf secKey {
-        type binary;
-        description "The actual encryption key.
-        This value is write only, and is not returned in a
-        read, or returns all zeroes.";
-      }
-    }
-  }
-}
+{::include ietf-6tisch-symmetric-keying.yang}
 ~~~~~~~~
 
 # YANG model for short-address
 
 ~~~~~~~~
-module ietf-6tisch-symmetric-keying {
-  yang-version 1.1;
-
-  namespace
-    "urn:ietf:params:xml:ns:yang:6tisch-keys";
-  prefix "ietf6keys";
-
-  //import ietf-yang-types { prefix yang; }
-  //import ietf-inet-types { prefix inet; }
-
-  organization
-   "IETF 6tisch Working Group";
-
-  contact
-   "WG Web:   <http://tools.ietf.org/wg/6tisch/>
-    WG List:  <mailto:6tisch@ietf.org>
-    Author:   Michael Richardson
-              <mailto:mcr+ietf@sandelman.ca>";
-
-  description
-    "This module defines the format for a set of network-wide
-     802.15.4  keys used in 6tisch networks.  There are 128
-     sets of key pairs, with one keypair (K1) used to
-     authenticate (and sometimes encrypt) multicast traffic,
-     and another keypair (K2) used to encrypt unicast traffic.
-     The 128 key pairs are numbered by the (lower) odd
-     keyindex, which otherwise is a 0-255 value.
-     Keyindex 0 is not valid.  This module is a partial
-     expression of the tables in
-https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf";
-
-  revision "2017-03-01" {
-    description
-     "Initial version";
-    reference
-     "RFC XXXX: 6tisch minimal security";
-  }
-
-  // top-level container
-  container ietf6tischkeys {
-    config false;
-    description
-      "A voucher that can be used to assign one or more
-       devices to an owner.";
-
-    // secKeyIdMode is always 1, do not describe it here.
-    leaf secKeyIndex {
-      type uint8;
-      description
-        "The keyIndex for this keySet. A number between
-         1 and 255.";
-
-      reference
-        "IEEE802.15.4";
-    }
-
-    container secKeyUsage {
-      leaf txPacketsSent {
-        type uint32;
-        description "Number of packets sent with this key.";
-      }
-      leaf rxPacketsSuccess {
-        type uint32;
-        description "Number of packets received with this key
-            that were successfully decrypted and authenticated.";
-      }
-      leaf rxPacketsReceived {
-        type uint32;
-        description "Number of packets received with this key,
-            both successfully received, and unsuccessfully.";
-      }
-
-    }
-
-    container secKeyDescriptor {
-      description
-        "This container describes the details of a specific
-         cipher key";
-      leaf secKey {
-        type binary;
-        description "The actual encryption key";
-      }
-    }
-  }
-}
-
+{::include ietf-6tisch-short-address.yang}
 ~~~~~~~~
 
 # Security of CoMI link
