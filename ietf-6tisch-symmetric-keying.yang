@@ -18,16 +18,14 @@ module ietf-6tisch-symmetric-keying {
               <mailto:mcr+ietf@sandelman.ca>";
 
   description
-    "This module defines the format for a set of network-wide
-     802.15.4  keys used in 6tisch networks.  There are 128
-     sets of key pairs, with one keypair (K1) used to
-     authenticate (and sometimes encrypt) multicast traffic,
-     and another keypair (K2) used to encrypt unicast traffic.
-     The 128 key pairs are numbered by the (lower) odd
-     keyindex, which otherwise is a 0-255 value.
-     Keyindex 0 is not valid.  This module is a partial
-     expression of the tables in
-https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf";
+    "This module defines the format for a set of network-wide 802.15.4
+    keys used in 6tisch networks.  There are 128 sets of key pairs,
+    with one keypair (K1) used to authenticate (and sometimes encrypt)
+    multicast traffic, and another keypair (K2) used to encrypt unicast
+    traffic.  The 128 key pairs are numbered by the (lower) odd
+    keyindex, which otherwise is a 0-255 value.  Keyindex 0 is
+    not valid.  This module is a partial expression of the tables in
+    https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf";
 
   revision "2017-03-01" {
     description
@@ -47,8 +45,7 @@ https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictur
     leaf secKeyIndex {
       type uint8;
       description
-        "The keyIndex for this keySet. A number between
-         1 and 255.";
+        "The keyIndex for this keySet. A number between 1 and 255.";
 
       reference
         "IEEE802.15.4";
@@ -61,24 +58,25 @@ https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictur
       }
       leaf rxPacketsSuccess {
         type uint32;
-        description "Number of packets received with this key
-            that were successfully decrypted and authenticated.";
+        description "Number of packets received with this key that were
+                     successfully decrypted and authenticated.";
       }
       leaf rxPacketsReceived {
         type uint32;
-        description "Number of packets received with this key,
-            both successfully received, and unsuccessfully.";
+        description "Number of packets received with this key, both
+            successfully received, and unsuccessfully.";
       }
 
     }
 
     container secKeyDescriptor {
       description
-        "This container describes the details of a specific
-         cipher key";
+        "This container describes the details of a specific cipher key";
       leaf secKey {
         type binary;
-        description "The actual encryption key";
+        description "The actual encryption key.
+        This value is write only, and is not returned in a
+        read, or returns all zeroes.";
       }
     }
   }
