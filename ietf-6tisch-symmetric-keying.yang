@@ -2,7 +2,7 @@ module ietf-6tisch-symmetric-keying {
   yang-version 1.1;
 
   namespace
-    "urn:ietf:params:xml:ns:yang:6tisch-keys";
+    "urn:ietf:params:xml:ns:yang:ietf-6tisch-symmetric-keying";
   prefix "ietf6keys";
 
   //import ietf-yang-types { prefix yang; }
@@ -25,7 +25,8 @@ module ietf-6tisch-symmetric-keying {
     traffic.  The 128 key pairs are numbered by the (lower) odd
     keyindex, which otherwise is a 0-255 value.  Keyindex 0 is
     not valid.  This module is a partial expression of the tables in
-    https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf";
+    https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf.
+To read and write the key pairs, a monotonically increasing counter is added. A new key pair must be added with current_counter = last_counter+1. The current specification allows overwriting of earlier key pairs. It is up to the server to remove old key pairs, such that only the last three (two) pairs are stored and visible to the client.";
 
   revision "2017-03-01" {
     description
@@ -34,50 +35,102 @@ module ietf-6tisch-symmetric-keying {
      "RFC XXXX: 6tisch minimal security";
   }
 
-  // top-level container
-  container ietf6tischkeys {
-    config false;
+  // list of key pairs
+  list ietf6tischkeypairs {
+  key counter;
+  description 
+    "a list of key pairs with unique index: counter.";
+  leaf  counter {
+  type uint16{
+     range "0..256";  // for the moment 256 items
+    }
+  mandatory "true";
+  description
+    "unique reference to the key pair for client access.";
+  }  // counter
+  
+  // key descriptor for FIRST part of pair
+  container ietf6tischkey1 {
     description
       "A voucher that can be used to assign one or more
        devices to an owner.";
+// this container is pretty empty, a leaf would do the job.
 
-    // secKeyIdMode is always 1, do not describe it here.
+    container secKeyDescriptor {
+  // I assume this needs to be extended, why else a container?
+      description
+        "This container describes the details of a 
+           specific cipher key";
+      leaf secKey {
+        type binary;
+        description "The actual encryption key.
+          This value is write only, and is not returned in a
+          read, or returns all zeroes.";
+      } // secKey
+    }  // secKeyDescriptor
+
+    // leaf secKeyIdMode is always 1, not described here.
     leaf secKeyIndex {
       type uint8;
       description
-        "The keyIndex for this keySet. A number between 1 and 255.";
-
+        "The keyIndex for this keySet. 
+            A number between 1 and 255.";
       reference
         "IEEE802.15.4";
-    }
+    } // secKeyIndex
+ } // ietf6tischkey1
 
+// key descriptor for SECOND part of pair
+  container ietf6tischkey2 {
+    description
+      "A voucher that can be used to assign one or more
+       devices to an owner.";
+    container secKeyDescriptor {
+  // I assume this needs to be extended, why else a container?
+      description
+        "This container describes the details of a 
+           specific cipher key";
+      leaf secKey {
+        type binary;
+        description "The actual encryption key.
+          This value is write only, and is not returned in a
+          read, or returns all zeroes.";
+      } // secKey
+    }  // secKeyDescriptor
+
+    // leaf secKeyIdMode is always 1, not described here.
+    leaf secKeyIndex {
+      type uint8;
+      description
+        "The keyIndex for this keySet. 
+           A number between 1 and 255.";
+      reference
+        "IEEE802.15.4";
+    } // secKeyIndex
+   } // ietf6tischkey2
+ } //ietf6tischkeypairs
+
+// the usage is over all pairs
     container secKeyUsage {
+    config false; // cannot be set by client
+    description
+      "statistics of sent and received packets.";
       leaf txPacketsSent {
         type uint32;
         description "Number of packets sent with this key.";
-      }
+      } // txPacketsSent
       leaf rxPacketsSuccess {
         type uint32;
         description "Number of packets received with this key that were
                      successfully decrypted and authenticated.";
-      }
+      }// rxPacketsSuccess 
       leaf rxPacketsReceived {
         type uint32;
         description "Number of packets received with this key, both
             successfully received, and unsuccessfully.";
-      }
+      } // rxPacketsReceived 
 
-    }
+    } // secKeyUsage
 
-    container secKeyDescriptor {
-      description
-        "This container describes the details of a specific cipher key";
-      leaf secKey {
-        type binary;
-        description "The actual encryption key.
-        This value is write only, and is not returned in a
-        read, or returns all zeroes.";
-      }
-    }
-  }
-}
+    
+  } // module ietf-6tisch-symmetric-keying 
