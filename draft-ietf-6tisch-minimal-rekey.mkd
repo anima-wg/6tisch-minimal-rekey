@@ -80,6 +80,24 @@ The reader is expected to be familiar with the terms and concepts defined in
 {{I-D.ietf-6tisch-terminology}}, {{RFC7252}},
 {{I-D.ietf-core-object-security}}, and {{I-D.ietf-anima-bootstrapping-keyinfra}}.
 
+# Tree diagram notation {#treedigram}
+
+A simplified graphical representation of the data models is used in
+this document. The meaning of the symbols in these diagrams is as
+follows:
+
+* Brackets "[" and "]" enclose list keys.
+* Braces "{" and "}" enclose feature names, and indicate that the
+named feature must be present for the subtree to be present.
+* Abbreviations before data node names: "rw" (read-write) represents
+configuration data and "ro" (read-only) represents state data.
+* Symbols after data node names: "?" means an optional node, "!"
+means a presence container, and "*" denotes a list and leaf-list.
+* Parentheses enclose choice and case nodes, and case nodes are also
+marked with a colon (":").
+* Ellipsis ("...") stands for contents of subtrees that are not
+shown.
+
 # An approach to rekeying
 
 Rekeying of the network requires that all nodes be updated with the new keys.
@@ -123,14 +141,47 @@ fashion.
 
 ((EDNOTE: do we need an example?))
 
+# YANG models
 
-# YANG model for keys
+## Tree diagram
+
+A diagram of the two YANG modules looks like:
+
+
+~~~~
+module: ietf-6tisch-symmetric-keying
+    +--rw ietf6tischkeypairs* [counter]
+    |  +--rw counter           uint16
+    |  +--rw ietf6tischkey1
+    |  |  +--rw secKeyDescriptor
+    |  |  |  +--rw secKey?   binary
+    |  |  +--rw secKeyIndex?        uint8
+    |  +--rw ietf6tischkey2
+    |     +--rw secKeyDescriptor
+    |     |  +--rw secKey?   binary
+    |     +--rw secKeyIndex?        uint8
+    +--ro secKeyUsage
+       +--ro txPacketsSent?       uint32
+       +--ro rxPacketsSuccess?    uint32
+       +--ro rxPacketsReceived?   uint32
+
+module: ietf-6tisch-short-address
+    +--ro ietf6shortaddresses
+       +--ro shortaddress    binary
+       +--ro validuntil      uint32
+       +--ro effectiveat?    uint32
+
+~~~~
+{: #fig-tree title='Tree diagrams of two rekey modules' align="left"}
+
+
+## YANG model for keys
 
 ~~~~~~~~
 {::include ietf-6tisch-symmetric-keying.yang}
 ~~~~~~~~
 
-# YANG model for short-address
+## YANG model for short-address
 
 ~~~~~~~~
 {::include ietf-6tisch-short-address.yang}
