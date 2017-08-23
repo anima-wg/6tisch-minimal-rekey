@@ -21,7 +21,7 @@
 <?rfc symrefs="yes"?>
 <?rfc tocdepth="2"?>
 
-<rfc ipr="trust200902" docName="draft-richardson-6tisch-minimal-rekey-01" category="std">
+<rfc ipr="trust200902" docName="draft-richardson-6tisch-minimal-rekey-02" category="std">
 
   <front>
     <title abbrev="6tisch-minimal-rekey">Minimal Security rekeying mechanism for 6TiSCH</title>
@@ -33,7 +33,7 @@
       </address>
     </author>
 
-    <date year="2017" month="February" day="25"/>
+    <date year="2017" month="August" day="23"/>
 
     <area>Internet</area>
     <workgroup>6TiSCH Working Group</workgroup>
@@ -86,6 +86,27 @@ may also appear in this document in lowercase, absent their normative meanings.<
 <xref target="I-D.ietf-core-object-security"/>, and <xref target="I-D.ietf-anima-bootstrapping-keyinfra"/>.</t>
 
 </section>
+<section anchor="treedigram" title="Tree diagram notation">
+
+<t>A simplified graphical representation of the data models is used in
+this document. The meaning of the symbols in these diagrams is as
+follows:</t>
+
+<t><list style="symbols">
+  <t>Brackets "[" and "]" enclose list keys.</t>
+  <t>Braces "{" and "}" enclose feature names, and indicate that the
+named feature must be present for the subtree to be present.</t>
+  <t>Abbreviations before data node names: "rw" (read-write) represents
+configuration data and "ro" (read-only) represents state data.</t>
+  <t>Symbols after data node names: "?" means an optional node, "!"
+means a presence container, and "*" denotes a list and leaf-list.</t>
+  <t>Parentheses enclose choice and case nodes, and case nodes are also
+marked with a colon (":").</t>
+  <t>Ellipsis ("&#8230;") stands for contents of subtrees that are not
+shown.</t>
+</list></t>
+
+</section>
 <section anchor="an-approach-to-rekeying" title="An approach to rekeying">
 
 <t>Rekeying of the network requires that all nodes be updated with the new keys.
@@ -130,6 +151,38 @@ fashion.</t>
 <t>((EDNOTE: do we need an example?))</t>
 
 </section>
+<section anchor="yang-models" title="YANG models">
+
+<section anchor="tree-diagram" title="Tree diagram">
+
+<t>A diagram of the two YANG modules looks like:</t>
+
+<figure title="Tree diagrams of two rekey modules" align="left" anchor="fig-tree"><artwork><![CDATA[
+module: ietf-6tisch-symmetric-keying
+    +--rw ietf6tischkeypairs* [counter]
+    |  +--rw counter           uint16
+    |  +--rw ietf6tischkey1
+    |  |  +--rw secKeyDescriptor
+    |  |  |  +--rw secKey?   binary
+    |  |  +--rw secKeyIndex?        uint8
+    |  +--rw ietf6tischkey2
+    |     +--rw secKeyDescriptor
+    |     |  +--rw secKey?   binary
+    |     +--rw secKeyIndex?        uint8
+    +--ro secKeyUsage
+       +--ro txPacketsSent?       uint32
+       +--ro rxPacketsSuccess?    uint32
+       +--ro rxPacketsReceived?   uint32
+
+module: ietf-6tisch-short-address
+    +--ro ietf6shortaddresses
+       +--ro shortaddress    binary
+       +--ro validuntil      uint32
+       +--ro effectiveat?    uint32
+
+]]></artwork></figure>
+
+</section>
 <section anchor="yang-model-for-keys" title="YANG model for keys">
 
 <figure><artwork><![CDATA[
@@ -137,7 +190,7 @@ module ietf-6tisch-symmetric-keying {
   yang-version 1.1;
 
   namespace
-    "urn:ietf:params:xml:ns:yang:6tisch-keys";
+    "urn:ietf:params:xml:ns:yang:ietf-6tisch-symmetric-keying";
   prefix "ietf6keys";
 
   //import ietf-yang-types { prefix yang; }
@@ -160,7 +213,8 @@ module ietf-6tisch-symmetric-keying {
     traffic.  The 128 key pairs are numbered by the (lower) odd
     keyindex, which otherwise is a 0-255 value.  Keyindex 0 is
     not valid.  This module is a partial expression of the tables in
-    https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf";
+    https://mentor.ieee.org/802.15/dcn/15/15-15-0106-07-0mag-security-section-pictures.pdf.
+To read and write the key pairs, a monotonically increasing counter is added. A new key pair must be added with current_counter = last_counter+1. The current specification allows overwriting of earlier key pairs. It is up to the server to remove old key pairs, such that only the last three (two) pairs are stored and visible to the client.";
 
   revision "2017-03-01" {
     description
@@ -169,53 +223,105 @@ module ietf-6tisch-symmetric-keying {
      "RFC XXXX: 6tisch minimal security";
   }
 
-  // top-level container
-  container ietf6tischkeys {
-    config false;
+  // list of key pairs
+  list ietf6tischkeypairs {
+  key counter;
+  description 
+    "a list of key pairs with unique index: counter.";
+  leaf  counter {
+  type uint16{
+     range "0..256";  // for the moment 256 items
+    }
+  mandatory "true";
+  description
+    "unique reference to the key pair for client access.";
+  }  // counter
+  
+  // key descriptor for FIRST part of pair
+  container ietf6tischkey1 {
     description
       "A voucher that can be used to assign one or more
        devices to an owner.";
+// this container is pretty empty, a leaf would do the job.
 
-    // secKeyIdMode is always 1, do not describe it here.
+    container secKeyDescriptor {
+  // I assume this needs to be extended, why else a container?
+      description
+        "This container describes the details of a 
+           specific cipher key";
+      leaf secKey {
+        type binary;
+        description "The actual encryption key.
+          This value is write only, and is not returned in a
+          read, or returns all zeroes.";
+      } // secKey
+    }  // secKeyDescriptor
+
+    // leaf secKeyIdMode is always 1, not described here.
     leaf secKeyIndex {
       type uint8;
       description
-        "The keyIndex for this keySet. A number between 1 and 255.";
-
+        "The keyIndex for this keySet. 
+            A number between 1 and 255.";
       reference
         "IEEE802.15.4";
-    }
+    } // secKeyIndex
+ } // ietf6tischkey1
 
+// key descriptor for SECOND part of pair
+  container ietf6tischkey2 {
+    description
+      "A voucher that can be used to assign one or more
+       devices to an owner.";
+    container secKeyDescriptor {
+  // I assume this needs to be extended, why else a container?
+      description
+        "This container describes the details of a 
+           specific cipher key";
+      leaf secKey {
+        type binary;
+        description "The actual encryption key.
+          This value is write only, and is not returned in a
+          read, or returns all zeroes.";
+      } // secKey
+    }  // secKeyDescriptor
+
+    // leaf secKeyIdMode is always 1, not described here.
+    leaf secKeyIndex {
+      type uint8;
+      description
+        "The keyIndex for this keySet. 
+           A number between 1 and 255.";
+      reference
+        "IEEE802.15.4";
+    } // secKeyIndex
+   } // ietf6tischkey2
+ } //ietf6tischkeypairs
+
+// the usage is over all pairs
     container secKeyUsage {
+    config false; // cannot be set by client
+    description
+      "statistics of sent and received packets.";
       leaf txPacketsSent {
         type uint32;
         description "Number of packets sent with this key.";
-      }
+      } // txPacketsSent
       leaf rxPacketsSuccess {
         type uint32;
         description "Number of packets received with this key that were
                      successfully decrypted and authenticated.";
-      }
+      }// rxPacketsSuccess 
       leaf rxPacketsReceived {
         type uint32;
         description "Number of packets received with this key, both
             successfully received, and unsuccessfully.";
-      }
+      } // rxPacketsReceived 
 
-    }
+    } // secKeyUsage
 
-    container secKeyDescriptor {
-      description
-        "This container describes the details of a specific cipher key";
-      leaf secKey {
-        type binary;
-        description "The actual encryption key.
-        This value is write only, and is not returned in a
-        read, or returns all zeroes.";
-      }
-    }
-  }
-}
+    
+  } // module ietf-6tisch-symmetric-keying 
 ]]></artwork></figure>
 
 </section>
@@ -226,7 +332,7 @@ module ietf-6tisch-short-address {
   yang-version 1.1;
 
   namespace
-    "urn:ietf:params:xml:ns:yang:6tisch-shortaddress";
+    "urn:ietf:params:xml:ns:yang:ietf-6tisch-short-address";
   prefix "ietf6shortaddr";
 
   //import ietf-yang-types { prefix yang; }
@@ -263,17 +369,17 @@ module ietf-6tisch-short-address {
       "A 16-bit short address for use by the node.";
 
     leaf shortaddress {
-      type binary;
-      length 2;
+      type binary{
+         length 1..2;}
       mandatory true;
       description
         "The two byte short address to be set.";
     }
     leaf validuntil {
       type uint32;
+      mandatory true;
       description "The Absolute Slot Number/256 at which
                    the address ceases to be valid.";
-      mandatory true;
     }
 
     leaf effectiveat {
@@ -283,12 +389,12 @@ module ietf-6tisch-short-address {
                    This is a read-only attribute that
                    records the ASN when the shortaddress
                    element was last written or updated.";
-      mandatory false;
     }
   }
 }
 ]]></artwork></figure>
 
+</section>
 </section>
 <section anchor="security-of-comi-link" title="Security of CoMI link">
 
@@ -394,105 +500,129 @@ There is no IANA action required for this document.</t>
   </back>
 
 <!-- ##markdown-source:
-H4sIAE4+slgAA+1abXPbyJH+jl8xxf0i5QhK5FreDZ3KhbGVXZ1t2Wdpy8mn
-qyEwJCcCMVwMIJqr0v32e7p7BgBf4q2ry6UqVVElaxCY6enp16d7Jk3TpLZ1
-YabqvS3tWhfqzmRNZeudqsyD2dlyqdYmW+nS+rVauEq9vLd3r39M9Hxemcep
-ellbn63StcxOeVKSu6zUaxDNK72o08qCQJV7V6anhqeX4yT5Rvlal/l/6cKV
-mFhXjUkSu6n40deTy8vfXk4SXRk9VTdlbarS1Ml2OQ38qM+ueiBmf6hcs0ke
-tt2o9A0xkWS6nmKNPEkyl2PkVDU+1T6zNtnYaaJU7bKp2hmPR++qujIL3/7e
-rfs/MTI3m3o1VZMk0U29chURoL80/KuULTH+/Uh9ajfffhLZvKcPpjg1wFVg
-7w7iMMVal+rOLeotts6b9O0os9a2mKp1Vv2bNfXiDz5OGGU6SUpXrXVtHw2x
-9ulPryfj8W/D43eTq0l8vHzBb2/SNyMikmbOm3TtlwcvK4P/rO3xWzf/q8nq
-1AermUJp5aK/dDv8QPXdjOMxeR2/yjCT/tXZ8tTIl7XbpJvKQSWu2BugaZl0
-7lzt60pvNlB5yga9qPQpSjAWsOYKtxSWrq+vv7+cjK9eTC7HV6Le4CkD+qbu
-6lxhwGh8NXqR0hi8gQKgSXaTd26bftI1dGYrUxjv1UdTQcfwsBmMWN2aekva
-VGefP85u/fmAV9g3JjYhWc33ad9ECbtS3cM5hWuhkGNN2CX4SZIkTVOl57T/
-rE6S+5X14pEqNz6r7Nx4pXvuXTtxelWvjCojg403uZrv4Gg35Gilw+RRclOr
-wjyaSi9BhMZHjSntvcuscJdhqzWm5/gE54Qtm7JyRbE2Za2i2kbgzISVO2Y2
-pI/aQwggQuMhOXhd4XY82S3A4RarYgieMdcPkwVIu62wqxUt5MAi7UvzaIwa
-iVTWNs8LQ2EHYaJyeZMxv+Hv6Rvbe/ucJCHItDKh1UkOeKhNSSLCChttq5YX
-9XZ88XbCS0On4NhmZA1zozNXQutvx+fDxGBvu02t5pXTeaZ9jWCnFwub8XeI
-K1dxSFPagwGT85FSkBzWphXBHDZeu8RlGGjJ0ood1oNgF5XxKyO2A0E067lh
-RqEcWKSHz/5G8SpuCU9Zgfpqt7SG4/AqUF8jCAu1TaEzErEBOcMDZne3JGwS
-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
-dIs85Gt/ASODuPn61f8A9kkv0yotAAA=
+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
+T3LVzm2H3URpb4O+897nc1cVLUKEa7qQFGMQakJgrPcw2n20YFJU2R02/n9X
+IKA+d2q4LjoXeSCwHZbVD/rNjwW8wvAhw6SPBKGmL7/RjVesn4Sgpl+wH0Y1
+Egb27DhmlEsY48l4PH18H8a7wgDVBX5FFER1eWq33UE23MM20Uzf9/Ds3Rns
+x149v/LL2AgShyTulOoe2l/tH/SefE/q8c0gdyagLUXIHuI91Hs3GR/H/f8K
+SbsyA0w3w84rIvHBiWx8uHQamwKxE1zavPUtjQenUec1Nf2GfvJNuGHuy9bB
+maEdiRDkmiDlCdSVz/1P+SAKufdKdd93q90nT7AkfDNd2PJObqX5J7au2ppS
+uq7vKtbaqQ9MmnChIK+un746f50c/WKv7PGJaLrJe3f6F8++f/U06a7cxdCS
+/lFvGqDYIvrimF5Ty4sOeRORfGlKavUIaya67F9EE5CHoDm+/ai7aPfrFnoO
+IzPyTp2vvkbcjshdh0SiFYhs6n5rQHJ9y4UoWkZI0HsbPkyQDwGwBsdVXIbm
+A/cwQS4wNwnmUWdAHRsn+IXcenf95vRVmBlEm54S7iQ0AFJrzuvr556M0sCG
+hN33BPptT/z3Coo63ViykddzRRsylVfwwGVCbSRS5OaCP7KIouh91dLvNOy6
+uj5Rr2v7TmdbCFGvC8clvc9duo76xpliQR8WhLwodgp0rUGRVdLCxoX4hNqR
++Gol71bjs/p2mzImqK7qrSVSJ8ziBkTfx+RCJ2qonFNCW4duOR+Uhl6IXJpv
+Wsufl1D+XW6RBkvlI6nmUtWnTrD4jZD0HvnUnR1TTuzTRWj0axHh1AVvE+IL
+Hx2c9BflekxupGHdwFxwa1P3MRAfw7IKSRTPBkV7uluXcL+H9norqwY99O1N
+HqGAtO9T0cGcxvY+qXnD8R8KKOKR5WMY39KW0K2asr3vuHT3FcXS7DT2jgdG
+al+a+p9m9BuueqQMwsSk6Zxkch4VihJxvy3F2dwpzr858AqRI7fDsSI7ylL8
+twfgC90G4ijUUxRUkzpf/M2Njh1gJAwIRalxZRVb9/2HGiQSgj/7jq7VqcOd
+ZJ7b5q0pckfN0v4TIy4OsbfxfPJ2KH6WFqsl3WH4B8dr9qfw0RhZ2q5/7SSR
+K1D68sxQEzf3HxFSfiJ94eYF2PW6kbvmXomBkwA+4INU73ca0PLOsEhR30Zb
+/ZgPkBzi9WrYXMsSc3l+dX5YWrrPW3x/L7nr68tnoWQUbnK6dJO/0auNKK6s
+rMW6+wbivCNw/MiCm9gzamuGtVzSkJOv7+bImOnlhXQwJYl/UE9fsbuFH3KN
+O4WQgdz89dP/AJ++9LupPAAA
 
 -->
 
