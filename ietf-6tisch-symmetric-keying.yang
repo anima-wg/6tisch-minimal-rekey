@@ -132,5 +132,17 @@ To read and write the key pairs, a monotonically increasing counter is added. A 
 
     } // secKeyUsage
 
+ // setting new key, and validation of new key
+     leaf newKey{
+        type binary;
+        description
+        "new key value to be set by client.";
+     }  // newKey
+     rpc installNextKey{
+         description
+         "Client informs server that newKey is to be
+         used as current key.";
+     }  // installNextKey
+
     
   } // module ietf-6tisch-symmetric-keying 
