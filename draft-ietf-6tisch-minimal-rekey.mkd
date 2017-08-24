@@ -149,27 +149,31 @@ A diagram of the two YANG modules looks like:
 
 
 ~~~~
-module: ietf-6tisch-symmetric-keying
-    +--rw ietf6tischkeypairs* [counter]
-    |  +--rw counter           uint16
-    |  +--rw ietf6tischkey1
-    |  |  +--rw secKeyDescriptor
-    |  |  |  +--rw secKey?   binary
-    |  |  +--rw secKeyIndex?        uint8
-    |  +--rw ietf6tischkey2
-    |     +--rw secKeyDescriptor
-    |     |  +--rw secKey?   binary
-    |     +--rw secKeyIndex?        uint8
-    +--ro secKeyUsage
-       +--ro txPacketsSent?       uint32
-       +--ro rxPacketsSuccess?    uint32
-       +--ro rxPacketsReceived?   uint32
+1700  module: ietf-6tisch-symmetric-keying
+1701      +--rw ietf6tischkeypairs* [counter]
+1702      |  +--rw counter           uint16
+1703      |  +--rw ietf6tischkey1
+1704      |  |  +--rw secKeyDescriptor
+1705      |  |  |  +--rw secKey?   binary
+1706      |  |  +--rw secKeyIndex?        uint8
+1707      |  +--rw ietf6tischkey2
+1708      |     +--rw secKeyDescriptor
+1709      |     |  +--rw secKey?   binary
+1710      |     +--rw secKeyIndex?        uint8
+1711      +--ro secKeyUsage
+1712      |  +--ro txPacketsSent?       uint32
+1713      |  +--ro rxPacketsSuccess?    uint32
+1714      |  +--ro rxPacketsReceived?   uint32
+1715      +--rw newKey?               binary
 
-module: ietf-6tisch-short-address
-    +--ro ietf6shortaddresses
-       +--ro shortaddress    binary
-       +--ro validuntil      uint32
-       +--ro effectiveat?    uint32
+        rpcs:
+1716      +---x installNextKey
+
+1717  module: ietf-6tisch-short-address
+1718      +--ro ietf6shortaddresses
+1719         +--ro shortaddress    binary
+1720         +--ro validuntil      uint32
+1721         +--ro effectiveat?    uint32
 
 ~~~~
 {: #fig-tree title='Tree diagrams of two rekey modules' align="left"}
@@ -240,4 +244,39 @@ There is no IANA action required for this document.
 
 # Example
 
-Example COMI requests/responses.
+In the examples below, a new key value is set in the server example.com; followed by the setting of the new key value as the current key value. The SID values of new Key and installNextKey are 1715 and 1716 respectively. The corresponding base64 values are: ez and e0 respectively.
+
+The setting of the new key value is done with the PUT request with the binary value 1234567890.
+
+~~~~~~~~
+PUT coap://example.com/c/ez 
+   (Content-Format :application/yang-value+cbor)
+h'1234567890'
+
+RES: 2.01 Created
+
+Payload in CBOR:
+45            # bytes(5)
+   1234567890 # "\x124Vx\x90"
+~~~~~~~~
+
+Consecutively, the RPC is invoked with a POST method to validate the new key value.
+
+~~~~~~~~
+POST coap://example.com/c/e0 
+   (Content-Format :application/yang-value+cbor)
+
+RES: 2.05 Content
+~~~~~~~~
+
+The client can query how many TX packets have been received. The SID of secKeyUsage/txPacketsSent is 1712, corresponding with base64 ew.
+
+~~~~~~~~
+GET coap://example.com/c/ew
+   
+RES: 2.05 Content (Content-Format :application/yang-value+cbor)
+3
+
+Payload in CBOR:
+03 # unsigned(3)
+~~~~~~~~
